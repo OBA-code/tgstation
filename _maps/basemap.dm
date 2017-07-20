@@ -12,6 +12,7 @@
 #include "map_files\PubbyStation\PubbyStation.dmm"
 #include "map_files\TgStation\tgstation.2.1.3.dmm"
 #include "map_files\Cerestation\cerestation.dmm"
+#include "map_files\MicroStation\MicroStation.dmm"
 
 #ifdef TRAVISBUILDING
 #include "templates.dm"

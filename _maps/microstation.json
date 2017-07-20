@@ -1,0 +1,7 @@
+{
+    "map_name": "MicroStation",
+    "map_path": "map_files/MicroStation",
+    "map_file": "MicroStation.dmm",
+    "minetype": "lavaland",
+    "transition_config": "default"
+}
