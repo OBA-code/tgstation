@@ -13,8 +13,13 @@ Format:
 	disabled (disables the map)
 endmap
 
+<<<<<<< HEAD
 map tgstation2
 	minplayers 20
+=======
+map boxstation
+	default
+>>>>>>> 82f7b0c8c571dafdfc7e4cbc5ab0a785d80943b0
 	#voteweight 1.5
 endmap
 
