@@ -1,5 +1,5 @@
 ## Server name: This appears at the top of the screen in-game and in the BYOND hub. Uncomment and replace 'tgstation' with the name of your choice.
-# SERVERNAME tgstation
+SERVERNAME OBA-Station-13
 
 ## Server SQL name: This is the name used to identify the server to the SQL DB, distinct from SERVERNAME as it must be at most 32 characters.
 # SERVERSQLNAME tgstation
@@ -97,7 +97,7 @@ ID_CONSOLE_JOBSLOT_DELAY 30
 ALLOW_METADATA
 
 ## allow players to initiate a restart vote
-#ALLOW_VOTE_RESTART
+ALLOW_VOTE_RESTART
 
 ## allow players to initate a mode-change start
 #ALLOW_VOTE_MODE
@@ -115,13 +115,13 @@ VOTE_PERIOD 600
 # DEFAULT_NO_VOTE
 
 ## disable abandon mob
-NORESPAWN
+# NORESPAWN
 
 ## disables calling del(src) on newmobs if they logout before spawnin in
 # DONT_DEL_NEWMOB
 
 ## set a hosted by name for unix platforms
-HOSTEDBY Yournamehere
+HOSTEDBY The-OBA
 
 ## Set to jobban "Guest-" accounts from Captain, HoS, HoP, CE, RD, CMO, Warden, Security, Detective, and AI positions.
 ## Set to 1 to jobban them from those positions, set to 0 to allow them.
