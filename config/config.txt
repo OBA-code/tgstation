@@ -186,7 +186,7 @@ GITHUBURL https://github.com/OBA-code/tgstation/
 # LOAD_JOBS_FROM_TXT
 
 ## Uncomment this to forbid admins from possessing the singularity.
-#FORBID_SINGULO_POSSESSION
+FORBID_SINGULO_POSSESSION
 
 ## Uncomment to show a popup 'reply to' window to every non-admin that recieves an adminPM.
 ## The intention is to make adminPMs more visible. (although I fnd popups annoying so this defaults to off)
@@ -303,7 +303,7 @@ ALLOW_MAP_VOTING 1
 
 ## GENERATE_MINIMAPS
 ## Generating minimaps(For crew monitor) is slow and bogs down testing, so its disabled by default and must be enabled by uncommenting this config if you are running a production server.
-#GENERATE_MINIMAPS
+GENERATE_MINIMAPS
 
 ## CLIENT VERSION CONTROL
 ## This allows you to configure the minimum required client version, as well as a warning version, and message for both.
