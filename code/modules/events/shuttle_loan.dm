@@ -9,7 +9,7 @@
 /datum/round_event_control/shuttle_loan
 	name = "Shuttle Loan"
 	typepath = /datum/round_event/shuttle_loan
-	max_occurrences = 1
+	max_occurrences = 1000
 	earliest_start = 4000
 
 /datum/round_event/shuttle_loan
@@ -17,7 +17,7 @@
 	endWhen = 500
 	var/dispatched = 0
 	var/dispatch_type = 0
-	var/bonus_points = 10000
+	var/bonus_points = 20000
 	var/thanks_msg = "The cargo shuttle should return in five minutes. Have some supply points for your trouble."
 
 /datum/round_event/shuttle_loan/start()
