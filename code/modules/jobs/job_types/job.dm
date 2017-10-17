@@ -43,11 +43,6 @@
 
 	var/outfit = null
 
-	var/exp_requirements = 0
-
-	var/exp_type = ""
-	var/exp_type_department = ""
-
 //Only override this proc
 //H is usually a human unless an /equip override transformed it
 /datum/job/proc/after_spawn(mob/living/H, mob/M)
@@ -75,7 +70,7 @@
 	if(!visualsOnly && announce)
 		announce(H)
 
-	if(CONFIG_GET(flag/enforce_human_authority) && (title in GLOB.command_positions))
+	if(config.enforce_human_authority && (title in GLOB.command_positions))
 		H.dna.features["tail_human"] = "None"
 		H.dna.features["ears"] = "None"
 		H.regenerate_icons()
@@ -86,12 +81,12 @@
 
 	. = list()
 
-	if(CONFIG_GET(flag/jobs_have_minimal_access))
+	if(config.jobs_have_minimal_access)
 		. = src.minimal_access.Copy()
 	else
 		. = src.access.Copy()
 
-	if(CONFIG_GET(flag/everyone_has_maint_access)) //Config has global maint access set
+	if(config.jobs_have_maint_access & EVERYONE_HAS_MAINT_ACCESS) //Config has global maint access set
 		. |= list(ACCESS_MAINT_TUNNELS)
 
 /datum/job/proc/announce_head(var/mob/living/carbon/human/H, var/channels) //tells the given channel that the given mob is the new department head. See communications.dm for valid channels.
@@ -109,7 +104,7 @@
 /datum/job/proc/available_in_days(client/C)
 	if(!C)
 		return 0
-	if(!CONFIG_GET(flag/use_age_restriction_for_jobs))
+	if(!config.use_age_restriction_for_jobs)
 		return 0
 	if(!isnum(C.player_age))
 		return 0 //This is only a number if the db connection is established, otherwise it is text: "Requires database", meaning these restrictions cannot be enforced
@@ -131,29 +126,29 @@
 	var/jobtype = null
 
 	uniform = /obj/item/clothing/under/color/grey
-	id = /obj/item/card/id
+	id = /obj/item/weapon/card/id
 	ears = /obj/item/device/radio/headset
 	belt = /obj/item/device/pda
-	back = /obj/item/storage/backpack
+	back = /obj/item/weapon/storage/backpack
 	shoes = /obj/item/clothing/shoes/sneakers/black
 
-	var/backpack = /obj/item/storage/backpack
-	var/satchel  = /obj/item/storage/backpack/satchel
-	var/duffelbag = /obj/item/storage/backpack/duffelbag
-	var/box = /obj/item/storage/box/survival
+	var/backpack = /obj/item/weapon/storage/backpack
+	var/satchel  = /obj/item/weapon/storage/backpack/satchel
+	var/duffelbag = /obj/item/weapon/storage/backpack/duffelbag
+	var/box = /obj/item/weapon/storage/box/survival
 
 	var/pda_slot = slot_belt
 
 /datum/outfit/job/pre_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
 	switch(H.backbag)
 		if(GBACKPACK)
-			back = /obj/item/storage/backpack //Grey backpack
+			back = /obj/item/weapon/storage/backpack //Grey backpack
 		if(GSATCHEL)
-			back = /obj/item/storage/backpack/satchel //Grey satchel
+			back = /obj/item/weapon/storage/backpack/satchel //Grey satchel
 		if(GDUFFELBAG)
-			back = /obj/item/storage/backpack/duffelbag //Grey Duffel bag
+			back = /obj/item/weapon/storage/backpack/duffelbag //Grey Duffel bag
 		if(LSATCHEL)
-			back = /obj/item/storage/backpack/satchel/leather //Leather Satchel
+			back = /obj/item/weapon/storage/backpack/satchel/leather //Leather Satchel
 		if(DSATCHEL)
 			back = satchel //Department satchel
 		if(DDUFFELBAG)
@@ -175,7 +170,7 @@
 	if(!J)
 		J = SSjob.GetJob(H.job)
 
-	var/obj/item/card/id/C = H.wear_id
+	var/obj/item/weapon/card/id/C = H.wear_id
 	if(istype(C))
 		C.access = J.get_access()
 		C.registered_name = H.real_name

@@ -1,6 +1,6 @@
 #define PUMP_OUT "out"
 #define PUMP_IN "in"
-#define PUMP_MAX_PRESSURE (ONE_ATMOSPHERE * 25)
+#define PUMP_MAX_PRESSURE (ONE_ATMOSPHERE * 10)
 #define PUMP_MIN_PRESSURE (ONE_ATMOSPHERE / 10)
 #define PUMP_DEFAULT_PRESSURE (ONE_ATMOSPHERE)
 
@@ -16,7 +16,7 @@
 	volume = 1000
 
 /obj/machinery/portable_atmospherics/pump/Initialize()
-	. = ..()
+	..()
 	pump = new(src, FALSE)
 	pump.on = TRUE
 	pump.stat = 0
@@ -26,7 +26,8 @@
 	var/turf/T = get_turf(src)
 	T.assume_air(air_contents)
 	air_update_turf()
-	QDEL_NULL(pump)
+	qdel(pump)
+	pump = null
 	return ..()
 
 /obj/machinery/portable_atmospherics/pump/update_icon()
@@ -99,8 +100,8 @@
 		if("power")
 			on = !on
 			if(on && !holding)
-				var/plasma = air_contents.gases[/datum/gas/plasma]
-				var/n2o = air_contents.gases[/datum/gas/nitrous_oxide]
+				var/plasma = air_contents.gases["plasma"]
+				var/n2o = air_contents.gases["n2o"]
 				if(n2o || plasma)
 					var/area/A = get_area(src)
 					message_admins("[ADMIN_LOOKUPFLW(usr)] turned on a pump that contains [n2o ? "N2O" : ""][n2o && plasma ? " & " : ""][plasma ? "Plasma" : ""] at [A][ADMIN_JMP(src)]")

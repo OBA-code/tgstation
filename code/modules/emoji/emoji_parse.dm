@@ -1,6 +1,6 @@
 /proc/emoji_parse(text)
 	. = text
-	if(!CONFIG_GET(flag/emojis))
+	if(!config.emojis)
 		return
 	var/static/list/emojis = icon_states(icon('icons/emoji.dmi'))
 	var/parsed = ""
@@ -16,7 +16,7 @@
 			if(search)
 				emoji = lowertext(copytext(text, pos+1, search))
 				if(emoji in emojis)
-					parsed += icon2html('icons/emoji.dmi', world, emoji)
+					parsed += bicon(icon('icons/emoji.dmi', emoji))
 					pos = search + 1
 				else
 					parsed += copytext(text, pos, search)

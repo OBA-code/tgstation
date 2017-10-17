@@ -17,7 +17,6 @@
 #define TOXLOSS 4
 #define OXYLOSS 8
 #define SHAME 16
-#define MANUAL_SUICIDE 32	//suicide_act will do the actual killing.
 
 #define STUN		"stun"
 #define KNOCKDOWN		"knockdown"
@@ -44,7 +43,6 @@
 
 //Health Defines
 #define HEALTH_THRESHOLD_CRIT 0
-#define HEALTH_THRESHOLD_FULLCRIT -30
 #define HEALTH_THRESHOLD_DEAD -100
 
 //Actual combat defines
@@ -68,9 +66,6 @@
 #define GRAB_AGGRESSIVE				1
 #define GRAB_NECK					2
 #define GRAB_KILL					3
-
-//slowdown when in softcrit
-#define SOFTCRIT_ADD_SLOWDOWN 6
 
 //Attack types for checking shields/hit reactions
 #define MELEE_ATTACK 1

@@ -1,6 +1,6 @@
 /obj/structure/chair
 	name = "chair"
-	desc = "You sit in this. Either by will or force."
+	desc = "You sit in this. Either by will or force.\n<span class='notice'>Drag your sprite to sit in the chair. Alt-click to rotate it clockwise.</span>"
 	icon = 'icons/obj/chairs.dmi'
 	icon_state = "chair"
 	anchored = TRUE
@@ -14,16 +14,8 @@
 	var/item_chair = /obj/item/chair // if null it can't be picked up
 	layer = OBJ_LAYER
 
-/obj/structure/chair/examine(mob/user)
-	..()
-	to_chat(user, "<span class='notice'>It's held together by a couple of <b>bolts</b>.</span>")
-	if(!has_buckled_mobs())
-		to_chat(user, "<span class='notice'>Drag your sprite to sit in it. Alt-click to rotate.</span>")
-	else
-		to_chat(user, "<span class='notice'>Alt-click to rotate.</span>")
-
 /obj/structure/chair/Initialize()
-	. = ..()
+	..()
 	if(!anchored)	//why would you put these on the shuttle?
 		addtimer(CALLBACK(src, .proc/RemoveFromLatejoin), 0)
 
@@ -36,7 +28,7 @@
 
 /obj/structure/chair/deconstruct()
 	// If we have materials, and don't have the NOCONSTRUCT flag
-	if(buildstacktype && (!(flags_1 & NODECONSTRUCT_1)))
+	if(buildstacktype && (!(flags & NODECONSTRUCT)))
 		new buildstacktype(loc,buildstackamount)
 	..()
 
@@ -48,24 +40,19 @@
 	W.setDir(dir)
 	qdel(src)
 
-/obj/structure/chair/ratvar_act()
-	var/obj/structure/chair/brass/B = new(get_turf(src))
-	B.setDir(dir)
-	qdel(src)
-
-/obj/structure/chair/attackby(obj/item/W, mob/user, params)
-	if(istype(W, /obj/item/wrench) && !(flags_1&NODECONSTRUCT_1))
+/obj/structure/chair/attackby(obj/item/weapon/W, mob/user, params)
+	if(istype(W, /obj/item/weapon/wrench) && !(flags&NODECONSTRUCT))
 		playsound(src.loc, W.usesound, 50, 1)
 		deconstruct()
 	else if(istype(W, /obj/item/assembly/shock_kit))
-		if(!user.temporarilyRemoveItemFromInventory(W))
+		if(!user.drop_item())
 			return
 		var/obj/item/assembly/shock_kit/SK = W
 		var/obj/structure/chair/e_chair/E = new /obj/structure/chair/e_chair(src.loc)
 		playsound(src.loc, 'sound/items/deconstruct.ogg', 50, 1)
 		E.setDir(dir)
 		E.part = SK
-		SK.forceMove(E)
+		SK.loc = E
 		SK.master = E
 		qdel(src)
 	else
@@ -106,7 +93,7 @@
 	set category = "Object"
 	set src in oview(1)
 
-	if(CONFIG_GET(flag/ghost_interaction))
+	if(config.ghost_interaction)
 		spin()
 	else
 		if(!usr || !isturf(usr.loc))
@@ -148,7 +135,7 @@
 
 /obj/structure/chair/comfy
 	name = "comfy chair"
-	desc = "It looks comfy."
+	desc = "It looks comfy.\n<span class='notice'>Alt-click to rotate it clockwise.</span>"
 	icon_state = "comfychair"
 	color = rgb(255,255,255)
 	resistance_flags = FLAMMABLE
@@ -216,7 +203,7 @@
 /obj/structure/chair/MouseDrop(over_object, src_location, over_location)
 	. = ..()
 	if(over_object == usr && Adjacent(usr))
-		if(!item_chair || !usr.can_hold_items() || has_buckled_mobs() || src.flags_1 & NODECONSTRUCT_1)
+		if(!item_chair || !usr.can_hold_items() || has_buckled_mobs() || src.flags & NODECONSTRUCT)
 			return
 		if(usr.incapacitated())
 			to_chat(usr, "<span class='warning'>You can't do that right now!</span>")
@@ -238,8 +225,6 @@
 	icon = 'icons/obj/chairs.dmi'
 	icon_state = "chair_toppled"
 	item_state = "chair"
-	lefthand_file = 'icons/mob/inhands/misc/chairs_lefthand.dmi'
-	righthand_file = 'icons/mob/inhands/misc/chairs_righthand.dmi'
 	w_class = WEIGHT_CLASS_HUGE
 	force = 8
 	throwforce = 10
@@ -263,7 +248,7 @@
 		if(istype(A, /obj/structure/chair))
 			to_chat(user, "<span class='danger'>There is already a chair here.</span>")
 			return
-		if(A.density && !(A.flags_1 & ON_BORDER_1))
+		if(A.density && !(A.flags & ON_BORDER))
 			to_chat(user, "<span class='danger'>There is already something here.</span>")
 			return
 
@@ -344,34 +329,3 @@
 	desc = "You sit in this. Either by will or force. Looks REALLY uncomfortable."
 	icon_state = "chairold"
 	item_chair = null
-
-/obj/structure/chair/brass
-	name = "brass chair"
-	desc = "A spinny chair made of brass. It looks uncomfortable."
-	icon_state = "brass_chair"
-	max_integrity = 150
-	buildstacktype = /obj/item/stack/tile/brass
-	buildstackamount = 1
-
-/obj/structure/chair/brass/Destroy()
-	STOP_PROCESSING(SSfastprocess, src)
-	. = ..()
-
-/obj/structure/chair/brass/process()
-	spin()
-	playsound(src, 'sound/effects/servostep.ogg', 50, FALSE)
-
-/obj/structure/chair/brass/ratvar_act()
-	return
-
-/obj/structure/chair/brass/AltClick(mob/living/user)
-	if(!user.canUseTopic(src, be_close = TRUE))
-		return
-	if(!isprocessing)
-		user.visible_message("<span class='notice'>[user] spins [src] around, and Ratvarian technology keeps it spinning FOREVER.</span>", \
-		"<span class='notice'>Automated spinny chairs. The pinnacle of Ratvarian technology.</span>")
-		START_PROCESSING(SSfastprocess, src)
-	else
-		user.visible_message("<span class='notice'>[user] stops [src]'s uncontrollable spinning.</span>", \
-		"<span class='notice'>You grab [src] and stop its wild spinning.</span>")
-		STOP_PROCESSING(SSfastprocess, src)

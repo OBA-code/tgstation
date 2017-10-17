@@ -15,14 +15,12 @@
 #define CART_DRONEPHONE	(1<<14)
 
 
-/obj/item/cartridge
+/obj/item/weapon/cartridge
 	name = "generic cartridge"
 	desc = "A data cartridge for portable microcomputers."
 	icon = 'icons/obj/pda.dmi'
 	icon_state = "cart"
 	item_state = "electronic"
-	lefthand_file = 'icons/mob/inhands/misc/devices_lefthand.dmi'
-	righthand_file = 'icons/mob/inhands/misc/devices_righthand.dmi'
 	w_class = WEIGHT_CLASS_TINY
 
 	var/obj/item/radio/integrated/radio = null
@@ -50,143 +48,143 @@
 	var/mob/living/simple_animal/bot/active_bot
 	var/list/botlist = list()
 
-/obj/item/cartridge/Initialize()
+/obj/item/weapon/cartridge/Initialize()
 	. = ..()
 	var/obj/item/device/pda/pda = loc
 	if(istype(pda))
 		host_pda = pda
 
-/obj/item/cartridge/engineering
+/obj/item/weapon/cartridge/engineering
 	name = "\improper Power-ON cartridge"
 	icon_state = "cart-e"
 	access = CART_ENGINE | CART_DRONEPHONE
 	bot_access_flags = FLOOR_BOT
 
-/obj/item/cartridge/atmos
+/obj/item/weapon/cartridge/atmos
 	name = "\improper BreatheDeep cartridge"
 	icon_state = "cart-a"
 	access = CART_ATMOS | CART_DRONEPHONE
 	bot_access_flags = FLOOR_BOT
 
-/obj/item/cartridge/medical
+/obj/item/weapon/cartridge/medical
 	name = "\improper Med-U cartridge"
 	icon_state = "cart-m"
 	access = CART_MEDICAL
 	bot_access_flags = MED_BOT
 
-/obj/item/cartridge/chemistry
+/obj/item/weapon/cartridge/chemistry
 	name = "\improper ChemWhiz cartridge"
 	icon_state = "cart-chem"
 	access = CART_REAGENT_SCANNER
 	bot_access_flags = MED_BOT
 
-/obj/item/cartridge/security
+/obj/item/weapon/cartridge/security
 	name = "\improper R.O.B.U.S.T. cartridge"
 	icon_state = "cart-s"
 	access = CART_SECURITY
 	bot_access_flags = SEC_BOT
 
-/obj/item/cartridge/detective
+/obj/item/weapon/cartridge/detective
 	name = "\improper D.E.T.E.C.T. cartridge"
 	icon_state = "cart-s"
 	access = CART_SECURITY | CART_MEDICAL | CART_MANIFEST
 	bot_access_flags = SEC_BOT
 
-/obj/item/cartridge/janitor
+/obj/item/weapon/cartridge/janitor
 	name = "\improper CustodiPRO cartridge"
 	desc = "The ultimate in clean-room design."
 	icon_state = "cart-j"
 	access = CART_JANITOR | CART_DRONEPHONE
 	bot_access_flags = CLEAN_BOT
 
-/obj/item/cartridge/lawyer
+/obj/item/weapon/cartridge/lawyer
 	name = "\improper P.R.O.V.E. cartridge"
 	icon_state = "cart-s"
 	access = CART_SECURITY
 	spam_enabled = 1
 
-/obj/item/cartridge/curator
+/obj/item/weapon/cartridge/curator
 	name = "\improper Lib-Tweet cartridge"
 	icon_state = "cart-s"
 	access = CART_NEWSCASTER
 
 /*
-/obj/item/cartridge/botanist
+/obj/item/weapon/cartridge/botanist
 	name = "\improper Green Thumb v4.20 cartridge"
 	icon_state = "cart-b"
 	access_flora = 1
 */
 
-/obj/item/cartridge/roboticist
+/obj/item/weapon/cartridge/roboticist
 	name = "\improper B.O.O.P. Remote Control cartridge"
 	desc = "Packed with heavy duty triple-bot interlink!"
 	bot_access_flags = FLOOR_BOT | CLEAN_BOT | MED_BOT
 	access = CART_DRONEPHONE
 
-/obj/item/cartridge/signal
+/obj/item/weapon/cartridge/signal
 	name = "generic signaler cartridge"
 	desc = "A data cartridge with an integrated radio signaler module."
 
-/obj/item/cartridge/signal/toxins
+/obj/item/weapon/cartridge/signal/toxins
 	name = "\improper Signal Ace 2 cartridge"
 	desc = "Complete with integrated radio signaler!"
 	icon_state = "cart-tox"
 	access = CART_REAGENT_SCANNER | CART_ATMOS
 
-/obj/item/cartridge/signal/Initialize()
-	. = ..()
+/obj/item/weapon/cartridge/signal/Initialize()
+	..()
 	radio = new /obj/item/radio/integrated/signal(src)
 
 
 
-/obj/item/cartridge/quartermaster
+/obj/item/weapon/cartridge/quartermaster
 	name = "space parts & space vendors cartridge"
 	desc = "Perfect for the Quartermaster on the go!"
 	icon_state = "cart-q"
 	access = CART_QUARTERMASTER
 	bot_access_flags = MULE_BOT
 
-/obj/item/cartridge/head
+/obj/item/weapon/cartridge/head
 	name = "\improper Easy-Record DELUXE cartridge"
 	icon_state = "cart-h"
 	access = CART_MANIFEST | CART_STATUS_DISPLAY
 
-/obj/item/cartridge/hop
+/obj/item/weapon/cartridge/hop
 	name = "\improper HumanResources9001 cartridge"
 	icon_state = "cart-h"
 	access = CART_MANIFEST | CART_STATUS_DISPLAY | CART_JANITOR | CART_SECURITY | CART_NEWSCASTER | CART_QUARTERMASTER | CART_DRONEPHONE
 	bot_access_flags = MULE_BOT | CLEAN_BOT
 
-/obj/item/cartridge/hos
+/obj/item/weapon/cartridge/hos
 	name = "\improper R.O.B.U.S.T. DELUXE cartridge"
 	icon_state = "cart-hos"
 	access = CART_MANIFEST | CART_STATUS_DISPLAY | CART_SECURITY
 	bot_access_flags = SEC_BOT
 
 
-/obj/item/cartridge/ce
+/obj/item/weapon/cartridge/ce
 	name = "\improper Power-On DELUXE cartridge"
 	icon_state = "cart-ce"
 	access = CART_MANIFEST | CART_STATUS_DISPLAY | CART_ENGINE | CART_ATMOS | CART_DRONEPHONE
 	bot_access_flags = FLOOR_BOT
 
-/obj/item/cartridge/cmo
+/obj/item/weapon/cartridge/cmo
 	name = "\improper Med-U DELUXE cartridge"
 	icon_state = "cart-cmo"
 	access = CART_MANIFEST | CART_STATUS_DISPLAY | CART_REAGENT_SCANNER | CART_MEDICAL
 	bot_access_flags = MED_BOT
 
-/obj/item/cartridge/rd
+/obj/item/weapon/cartridge/rd
 	name = "\improper Signal Ace DELUXE cartridge"
 	icon_state = "cart-rd"
 	access = CART_MANIFEST | CART_STATUS_DISPLAY | CART_REAGENT_SCANNER | CART_ATMOS | CART_DRONEPHONE
 	bot_access_flags = FLOOR_BOT | CLEAN_BOT | MED_BOT
 
-/obj/item/cartridge/rd/Initialize()
-	. = ..()
+/obj/item/weapon/cartridge/rd/Initialize()
+	..()
 	radio = new /obj/item/radio/integrated/signal(src)
 
-/obj/item/cartridge/captain
+/obj/item/weapon/cartridge/captain
 	name = "\improper Value-PAK cartridge"
 	desc = "Now with 350% more value!" //Give the Captain...EVERYTHING! (Except Mime and Clown)
 	icon_state = "cart-c"
@@ -194,16 +192,15 @@
 	bot_access_flags = SEC_BOT | MULE_BOT | FLOOR_BOT | CLEAN_BOT | MED_BOT
 	spam_enabled = 1
 
-/obj/item/cartridge/captain/New()
+/obj/item/weapon/cartridge/captain/New()
 	..()
 	radio = new /obj/item/radio/integrated/signal(src)
 
-/obj/item/cartridge/proc/post_status(command, data1, data2)
+/obj/item/weapon/cartridge/proc/post_status(command, data1, data2)
 
 	var/datum/radio_frequency/frequency = SSradio.return_frequency(1435)
 
-	if(!frequency)
-		return
+	if(!frequency) return
 
 	var/datum/signal/status_signal = new
 	status_signal.source = src
@@ -220,7 +217,7 @@
 	frequency.post_signal(src, status_signal)
 
 
-/obj/item/cartridge/proc/generate_menu(mob/user)
+/obj/item/weapon/cartridge/proc/generate_menu(mob/user)
 	if(!host_pda)
 		return
 	switch(host_pda.mode)
@@ -303,7 +300,7 @@ Code:
 						var/obj/machinery/power/apc/A = term.master
 						L += A
 
-				menu += "<PRE>Total power: [DisplayPower(powmonitor.attached.powernet.viewavail)]<BR>Total load:  [DisplayPower(powmonitor.attached.powernet.viewload)]<BR>"
+				menu += "<PRE>Total power: [powmonitor.attached.powernet.viewavail] W<BR>Total load:  [num2text(powmonitor.attached.powernet.viewload,10)] W<BR>"
 
 				menu += "<FONT SIZE=-1>"
 
@@ -315,7 +312,7 @@ Code:
 
 					for(var/obj/machinery/power/apc/A in L)
 						menu += copytext(add_tspace(A.area.name, 30), 1, 30)
-						menu += " [S[A.equipment+1]] [S[A.lighting+1]] [S[A.environ+1]] [add_lspace(DisplayPower(A.lastused_total), 6)]  [A.cell ? "[add_lspace(round(A.cell.percent()), 3)]% [chg[A.charging+1]]" : "  N/C"]<BR>"
+						menu += " [S[A.equipment+1]] [S[A.lighting+1]] [S[A.environ+1]] [add_lspace(A.lastused_total, 6)]  [A.cell ? "[add_lspace(round(A.cell.percent()), 3)]% [chg[A.charging+1]]" : "  N/C"]<BR>"
 
 				menu += "</FONT></PRE>"
 
@@ -438,15 +435,15 @@ Code:
 			switch(SSshuttle.supply.mode)
 				if(SHUTTLE_CALL)
 					menu += "Moving to "
-					if(!(SSshuttle.supply.z in GLOB.station_z_levels))
+					if(SSshuttle.supply.z != ZLEVEL_STATION)
 						menu += "station"
 					else
-						menu += "centcom"
+						menu += "centcomm"
 					menu += " ([SSshuttle.supply.timeLeft(600)] Mins)"
 				else
 					menu += "At "
-					if(!(SSshuttle.supply.z in GLOB.station_z_levels))
-						menu += "centcom"
+					if(SSshuttle.supply.z != ZLEVEL_STATION)
+						menu += "centcomm"
 					else
 						menu += "station"
 			menu += "<BR>Current approved orders: <BR><ol>"
@@ -471,7 +468,7 @@ Code:
 				menu += "<h4>Located Mops:</h4>"
 
 				var/ldat
-				for (var/obj/item/mop/M in world)
+				for (var/obj/item/weapon/mop/M in world)
 					var/turf/ml = get_turf(M)
 
 					if(ml)
@@ -553,7 +550,7 @@ Code:
 
 	return menu
 
-/obj/item/cartridge/Topic(href, href_list)
+/obj/item/weapon/cartridge/Topic(href, href_list)
 	..()
 
 	if (!usr.canmove || usr.stat || usr.restrained() || !in_range(loc, usr))
@@ -664,7 +661,7 @@ Code:
 	host_pda.attack_self(usr)
 
 
-/obj/item/cartridge/proc/bot_control()
+/obj/item/weapon/cartridge/proc/bot_control()
 
 
 	var/mob/living/simple_animal/bot/Bot
@@ -727,12 +724,12 @@ Code:
 	return menu
 
 //If the cartridge adds a special line to the top of the messaging app
-/obj/item/cartridge/proc/message_header()
+/obj/item/weapon/cartridge/proc/message_header()
 	return ""
 
 //If the cartridge adds something to each potetial messaging target
-/obj/item/cartridge/proc/message_special(obj/item/device/pda/target)
+/obj/item/weapon/cartridge/proc/message_special(obj/item/device/pda/target)
 	return ""
 
 //This is called for special abilities of cartridges
-/obj/item/cartridge/proc/special(mov/living/user, list/params)
+/obj/item/weapon/cartridge/proc/special(mov/living/user, list/params)

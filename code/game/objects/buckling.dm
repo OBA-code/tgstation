@@ -47,9 +47,9 @@
 		return FALSE
 	if(!M.can_buckle() && !force)
 		if(M == usr)
-			to_chat(M, "<span class='warning'>You are unable to buckle yourself to [src]!</span>")
+			to_chat(M, "<span class='warning'>You are unable to buckle yourself to the [src]!</span>")
 		else
-			to_chat(usr, "<span class='warning'>You are unable to buckle [M] to [src]!</span>")
+			to_chat(usr, "<span class='warning'>You are unable to buckle [M] to the [src]!</span>")
 		return FALSE
 
 	if(M.pulledby && buckle_prevents_pull)
@@ -62,7 +62,7 @@
 	M.setDir(dir)
 	buckled_mobs |= M
 	M.update_canmove()
-	M.throw_alert("buckled", /obj/screen/alert/restrained/buckled)
+	M.throw_alert("buckled", /obj/screen/alert/restrained/buckled, new_master = src)
 	post_buckle_mob(M)
 
 	return TRUE
@@ -131,3 +131,5 @@
 				"<span class='italics'>You hear metal clanking.</span>")
 		add_fingerprint(user)
 	return M
+
+

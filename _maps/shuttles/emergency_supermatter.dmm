@@ -10,11 +10,15 @@
 /turf/closed/wall/mineral/titanium,
 /area/shuttle/escape)
 "ad" = (
-/obj/effect/spawner/structure/window/shuttle,
+/obj/structure/grille,
+/obj/structure/window/shuttle,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "ae" = (
-/turf/closed/wall/mineral/titanium,
+/turf/closed/wall/shuttle{
+	icon_state = "swall_s10";
+	dir = 2
+	},
 /area/shuttle/escape)
 "af" = (
 /turf/closed/wall/mineral/titanium,
@@ -41,7 +45,9 @@
 /area/shuttle/escape)
 "ak" = (
 /obj/structure/sign/radiation,
-/turf/closed/wall/mineral/titanium,
+/turf/closed/wall/shuttle{
+	icon_state = "swall3"
+	},
 /area/shuttle/escape)
 "al" = (
 /obj/machinery/shower{
@@ -116,10 +122,15 @@
 /turf/closed/wall/mineral/titanium/interior,
 /area/shuttle/escape)
 "ay" = (
-/turf/closed/wall/mineral/titanium,
+/turf/closed/wall/shuttle{
+	icon_state = "swall_f5";
+	dir = 2
+	},
 /area/shuttle/escape)
 "az" = (
-/turf/closed/wall/mineral/titanium,
+/turf/closed/wall/shuttle{
+	icon_state = "swallc1"
+	},
 /area/shuttle/escape)
 "aA" = (
 /obj/machinery/door/airlock/titanium{
@@ -144,9 +155,9 @@
 /area/shuttle/escape)
 "aD" = (
 /obj/structure/table/reinforced,
-/obj/item/storage/firstaid/toxin,
-/obj/item/crowbar/red,
-/obj/item/storage/box/snappops{
+/obj/item/weapon/storage/firstaid/toxin,
+/obj/item/weapon/crowbar/red,
+/obj/item/weapon/storage/box/snappops{
 	pixel_x = 4;
 	pixel_y = -4
 	},
@@ -167,11 +178,15 @@
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "aG" = (
-/turf/closed/wall/mineral/titanium,
+/turf/closed/wall/shuttle{
+	icon_state = "swallc3"
+	},
 /area/shuttle/escape)
 "aH" = (
 /obj/machinery/status_display,
-/turf/closed/wall/mineral/titanium,
+/turf/closed/wall/shuttle{
+	icon_state = "swall12"
+	},
 /area/shuttle/escape)
 "aI" = (
 /obj/structure/sign/radiation,
@@ -179,10 +194,16 @@
 /area/shuttle/escape)
 "aJ" = (
 /obj/structure/sign/radiation,
-/turf/closed/wall/mineral/titanium,
+/turf/closed/wall/shuttle{
+	icon_state = "swallc2";
+	dir = 2
+	},
 /area/shuttle/escape)
 "aK" = (
-/turf/closed/wall/mineral/titanium,
+/turf/closed/wall/shuttle{
+	icon_state = "swallc4";
+	dir = 2
+	},
 /area/shuttle/escape)
 "aL" = (
 /obj/machinery/door/airlock/external{

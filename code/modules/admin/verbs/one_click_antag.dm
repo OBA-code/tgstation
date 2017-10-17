@@ -11,56 +11,45 @@
 /datum/admins/proc/one_click_antag()
 
 	var/dat = {"
-		<a href='?src=\ref[src];[HrefToken()];makeAntag=traitors'>Make Traitors</a><br>
-		<a href='?src=\ref[src];[HrefToken()];makeAntag=changelings'>Make Changelings</a><br>
-		<a href='?src=\ref[src];[HrefToken()];makeAntag=revs'>Make Revs</a><br>
-		<a href='?src=\ref[src];[HrefToken()];makeAntag=cult'>Make Cult</a><br>
-		<a href='?src=\ref[src];[HrefToken()];makeAntag=clockcult'>Make Clockwork Cult</a><br>
-		<a href='?src=\ref[src];[HrefToken()];makeAntag=blob'>Make Blob</a><br>
-		<a href='?src=\ref[src];[HrefToken()];makeAntag=wizard'>Make Wizard (Requires Ghosts)</a><br>
-		<a href='?src=\ref[src];[HrefToken()];makeAntag=nukeops'>Make Nuke Team (Requires Ghosts)</a><br>
-		<a href='?src=\ref[src];[HrefToken()];makeAntag=centcom'>Make CentCom Response Team (Requires Ghosts)</a><br>
-		<a href='?src=\ref[src];[HrefToken()];makeAntag=abductors'>Make Abductor Team (Requires Ghosts)</a><br>
-		<a href='?src=\ref[src];[HrefToken()];makeAntag=revenant'>Make Revenant (Requires Ghost)</a><br>
+		<a href='?src=\ref[src];makeAntag=traitors'>Make Traitors</a><br>
+		<a href='?src=\ref[src];makeAntag=changelings'>Make Changelings</a><br>
+		<a href='?src=\ref[src];makeAntag=revs'>Make Revs</a><br>
+		<a href='?src=\ref[src];makeAntag=cult'>Make Cult</a><br>
+		<a href='?src=\ref[src];makeAntag=clockcult'>Make Clockwork Cult</a><br>
+		<a href='?src=\ref[src];makeAntag=blob'>Make Blob</a><br>
+		<a href='?src=\ref[src];makeAntag=gangs'>Make Gangsters</a><br>
+		<a href='?src=\ref[src];makeAntag=wizard'>Make Wizard (Requires Ghosts)</a><br>
+		<a href='?src=\ref[src];makeAntag=nukeops'>Make Nuke Team (Requires Ghosts)</a><br>
+		<a href='?src=\ref[src];makeAntag=centcom'>Make Centcom Response Team (Requires Ghosts)</a><br>
+		<a href='?src=\ref[src];makeAntag=abductors'>Make Abductor Team (Requires Ghosts)</a><br>
+		<a href='?src=\ref[src];makeAntag=revenant'>Make Revenant (Requires Ghost)</a><br>
 		"}
 
 	var/datum/browser/popup = new(usr, "oneclickantag", "Quick-Create Antagonist", 400, 400)
 	popup.set_content(dat)
 	popup.open()
 
-/datum/admins/proc/isReadytoRumble(mob/living/carbon/human/applicant, targetrole, onstation = TRUE, conscious = TRUE)
-	if(applicant.mind.special_role)
-		return FALSE
-	if(!(targetrole in applicant.client.prefs.be_special))
-		return FALSE
-	if(onstation)
-		var/turf/T = get_turf(applicant)
-		if(!(T.z in GLOB.station_z_levels))
-			return FALSE
-	if(conscious && applicant.stat) //incase you don't care about a certain antag being unconcious when made, ie if they have selfhealing abilities.
-		return FALSE
-	if(!considered_alive(applicant.mind) || considered_afk(applicant.mind)) //makes sure the player isn't a zombie, brain, or just afk all together
-		return FALSE
-	return (!jobban_isbanned(applicant, targetrole) && !jobban_isbanned(applicant, "Syndicate"))
-
-
 /datum/admins/proc/makeTraitors()
 	var/datum/game_mode/traitor/temp = new
 
-	if(CONFIG_GET(flag/protect_roles_from_antagonist))
+	if(config.protect_roles_from_antagonist)
 		temp.restricted_jobs += temp.protected_jobs
 
-	if(CONFIG_GET(flag/protect_assistant_from_antagonist))
+	if(config.protect_assistant_from_antagonist)
 		temp.restricted_jobs += "Assistant"
 
 	var/list/mob/living/carbon/human/candidates = list()
 	var/mob/living/carbon/human/H = null
 
 	for(var/mob/living/carbon/human/applicant in GLOB.player_list)
-		if(isReadytoRumble(applicant, ROLE_TRAITOR, FALSE))
-			if(temp.age_check(applicant.client))
-				if(!(applicant.job in temp.restricted_jobs))
-					candidates += applicant
+		if(ROLE_TRAITOR in applicant.client.prefs.be_special)
+			if(!applicant.stat)
+				if(applicant.mind)
+					if (!applicant.mind.special_role)
+						if(!jobban_isbanned(applicant, ROLE_TRAITOR) && !jobban_isbanned(applicant, "Syndicate"))
+							if(temp.age_check(applicant.client))
+								if(!(applicant.job in temp.restricted_jobs))
+									candidates += applicant
 
 	if(candidates.len)
 		var/numTraitors = min(candidates.len, 3)
@@ -79,20 +68,23 @@
 /datum/admins/proc/makeChanglings()
 
 	var/datum/game_mode/changeling/temp = new
-	if(CONFIG_GET(flag/protect_roles_from_antagonist))
+	if(config.protect_roles_from_antagonist)
 		temp.restricted_jobs += temp.protected_jobs
 
-	if(CONFIG_GET(flag/protect_assistant_from_antagonist))
+	if(config.protect_assistant_from_antagonist)
 		temp.restricted_jobs += "Assistant"
 
 	var/list/mob/living/carbon/human/candidates = list()
 	var/mob/living/carbon/human/H = null
 
 	for(var/mob/living/carbon/human/applicant in GLOB.player_list)
-		if(isReadytoRumble(applicant, ROLE_CHANGELING))
-			if(temp.age_check(applicant.client))
-				if(!(applicant.job in temp.restricted_jobs))
-					candidates += applicant
+		if(ROLE_CHANGELING in applicant.client.prefs.be_special)
+			var/turf/T = get_turf(applicant)
+			if(applicant.stat == CONSCIOUS && applicant.mind && !applicant.mind.special_role && T.z == ZLEVEL_STATION)
+				if(!jobban_isbanned(applicant, ROLE_CHANGELING) && !jobban_isbanned(applicant, "Syndicate"))
+					if(temp.age_check(applicant.client))
+						if(!(applicant.job in temp.restricted_jobs))
+							candidates += applicant
 
 	if(candidates.len)
 		var/numChanglings = min(candidates.len, 3)
@@ -109,20 +101,23 @@
 /datum/admins/proc/makeRevs()
 
 	var/datum/game_mode/revolution/temp = new
-	if(CONFIG_GET(flag/protect_roles_from_antagonist))
+	if(config.protect_roles_from_antagonist)
 		temp.restricted_jobs += temp.protected_jobs
 
-	if(CONFIG_GET(flag/protect_assistant_from_antagonist))
+	if(config.protect_assistant_from_antagonist)
 		temp.restricted_jobs += "Assistant"
 
 	var/list/mob/living/carbon/human/candidates = list()
 	var/mob/living/carbon/human/H = null
 
 	for(var/mob/living/carbon/human/applicant in GLOB.player_list)
-		if(isReadytoRumble(applicant, ROLE_REV))
-			if(temp.age_check(applicant.client))
-				if(!(applicant.job in temp.restricted_jobs))
-					candidates += applicant
+		if(ROLE_REV in applicant.client.prefs.be_special)
+			var/turf/T = get_turf(applicant)
+			if(applicant.stat == CONSCIOUS && applicant.mind && !applicant.mind.special_role && T.z == ZLEVEL_STATION)
+				if(!jobban_isbanned(applicant, ROLE_REV) && !jobban_isbanned(applicant, "Syndicate"))
+					if(temp.age_check(applicant.client))
+						if(!(applicant.job in temp.restricted_jobs))
+							candidates += applicant
 
 	if(candidates.len)
 		var/numRevs = min(candidates.len, 3)
@@ -148,20 +143,23 @@
 
 /datum/admins/proc/makeCult()
 	var/datum/game_mode/cult/temp = new
-	if(CONFIG_GET(flag/protect_roles_from_antagonist))
+	if(config.protect_roles_from_antagonist)
 		temp.restricted_jobs += temp.protected_jobs
 
-	if(CONFIG_GET(flag/protect_assistant_from_antagonist))
+	if(config.protect_assistant_from_antagonist)
 		temp.restricted_jobs += "Assistant"
 
 	var/list/mob/living/carbon/human/candidates = list()
 	var/mob/living/carbon/human/H = null
 
 	for(var/mob/living/carbon/human/applicant in GLOB.player_list)
-		if(isReadytoRumble(applicant, ROLE_CULTIST))
-			if(temp.age_check(applicant.client))
-				if(!(applicant.job in temp.restricted_jobs))
-					candidates += applicant
+		if(ROLE_CULTIST in applicant.client.prefs.be_special)
+			var/turf/T = get_turf(applicant)
+			if(applicant.stat == CONSCIOUS && applicant.mind && !applicant.mind.special_role && T.z == ZLEVEL_STATION)
+				if(!jobban_isbanned(applicant, ROLE_CULTIST) && !jobban_isbanned(applicant, "Syndicate"))
+					if(temp.age_check(applicant.client))
+						if(!(applicant.job in temp.restricted_jobs))
+							candidates += applicant
 
 	if(candidates.len)
 		var/numCultists = min(candidates.len, 4)
@@ -178,20 +176,23 @@
 
 /datum/admins/proc/makeClockCult()
 	var/datum/game_mode/clockwork_cult/temp = new
-	if(CONFIG_GET(flag/protect_roles_from_antagonist))
+	if(config.protect_roles_from_antagonist)
 		temp.restricted_jobs += temp.protected_jobs
 
-	if(CONFIG_GET(flag/protect_assistant_from_antagonist))
+	if(config.protect_assistant_from_antagonist)
 		temp.restricted_jobs += "Assistant"
 
 	var/list/mob/living/carbon/human/candidates = list()
 	var/mob/living/carbon/human/H = null
 
 	for(var/mob/living/carbon/human/applicant in GLOB.player_list)
-		if(isReadytoRumble(applicant, ROLE_SERVANT_OF_RATVAR))
-			if(temp.age_check(applicant.client))
-				if(!(applicant.job in temp.restricted_jobs))
-					candidates += applicant
+		if(ROLE_SERVANT_OF_RATVAR in applicant.client.prefs.be_special)
+			var/turf/T = get_turf(applicant)
+			if(applicant.stat == CONSCIOUS && applicant.mind && !applicant.mind.special_role && T.z == ZLEVEL_STATION)
+				if(!jobban_isbanned(applicant, ROLE_SERVANT_OF_RATVAR) && !jobban_isbanned(applicant, "Syndicate"))
+					if(temp.age_check(applicant.client))
+						if(!(applicant.job in temp.restricted_jobs))
+							candidates += applicant
 
 	if(candidates.len)
 		var/numCultists = min(candidates.len, 4)
@@ -340,7 +341,7 @@
 			missiondesc += "<BR><B>Your Mission</B>: [mission]"
 			to_chat(Commando, missiondesc)
 
-			if(CONFIG_GET(flag/enforce_human_authority))
+			if(config.enforce_human_authority)
 				Commando.set_species(/datum/species/human)
 
 			//Logging and cleanup
@@ -357,9 +358,46 @@
 
 	return
 
+
+/datum/admins/proc/makeGangsters()
+
+	var/datum/game_mode/gang/temp = new
+	if(config.protect_roles_from_antagonist)
+		temp.restricted_jobs += temp.protected_jobs
+
+	if(config.protect_assistant_from_antagonist)
+		temp.restricted_jobs += "Assistant"
+
+	var/list/mob/living/carbon/human/candidates = list()
+	var/mob/living/carbon/human/H = null
+
+	for(var/mob/living/carbon/human/applicant in GLOB.player_list)
+		if(ROLE_GANG in applicant.client.prefs.be_special)
+			var/turf/T = get_turf(applicant)
+			if(applicant.stat == CONSCIOUS && applicant.mind && !applicant.mind.special_role && T.z == ZLEVEL_STATION)
+				if(!jobban_isbanned(applicant, ROLE_GANG) && !jobban_isbanned(applicant, "Syndicate"))
+					if(temp.age_check(applicant.client))
+						if(!(applicant.job in temp.restricted_jobs))
+							candidates += applicant
+
+	if(candidates.len >= 2)
+		for(var/needs_assigned=2,needs_assigned>0,needs_assigned--)
+			H = pick(candidates)
+			if(GLOB.gang_colors_pool.len)
+				var/datum/gang/newgang = new()
+				SSticker.mode.gangs += newgang
+				H.mind.make_Gang(newgang)
+				candidates.Remove(H)
+			else if(needs_assigned == 2)
+				return 0
+		return 1
+
+	return 0
+
+
 /datum/admins/proc/makeOfficial()
 	var/mission = input("Assign a task for the official", "Assign Task", "Conduct a routine preformance review of [station_name()] and its Captain.")
-	var/list/mob/dead/observer/candidates = pollGhostCandidates("Do you wish to be considered to be a CentCom Official?", "deathsquad")
+	var/list/mob/dead/observer/candidates = pollGhostCandidates("Do you wish to be considered to be a Centcom Official?", "deathsquad")
 
 	if(candidates.len)
 		var/mob/dead/observer/chosen_candidate = pick(candidates)
@@ -370,7 +408,7 @@
 		newmob.real_name = newmob.dna.species.random_name(newmob.gender,1)
 		newmob.dna.update_dna_identity()
 		newmob.key = chosen_candidate.key
-		newmob.mind.assigned_role = "CentCom Official"
+		newmob.mind.assigned_role = "Centcom Official"
 		newmob.equipOutfit(/datum/outfit/centcom_official)
 
 		//Assign antag status and the mission
@@ -382,16 +420,16 @@
 		missionobj.completed = 1
 		newmob.mind.objectives += missionobj
 
-		if(CONFIG_GET(flag/enforce_human_authority))
+		if(config.enforce_human_authority)
 			newmob.set_species(/datum/species/human)
 
 		//Greet the official
-		to_chat(newmob, "<B><font size=3 color=red>You are a CentCom Official.</font></B>")
+		to_chat(newmob, "<B><font size=3 color=red>You are a Centcom Official.</font></B>")
 		to_chat(newmob, "<BR>Central Command is sending you to [station_name()] with the task: [mission]")
 
 		//Logging and cleanup
-		message_admins("CentCom Official [key_name_admin(newmob)] has spawned with the task: [mission]")
-		log_game("[key_name(newmob)] has been selected as a CentCom Official")
+		message_admins("Centcom Official [key_name_admin(newmob)] has spawned with the task: [mission]")
+		log_game("[key_name(newmob)] has been selected as a Centcom Official")
 
 		return 1
 
@@ -399,7 +437,7 @@
 
 // CENTCOM RESPONSE TEAM
 /datum/admins/proc/makeEmergencyresponseteam()
-	var/alert = input("Which team should we send?", "Select Response Level") as null|anything in list("Green: CentCom Official", "Blue: Light ERT (No Armoury Access)", "Amber: Full ERT (Armoury Access)", "Red: Elite ERT (Armoury Access + Pulse Weapons)", "Delta: Deathsquad")
+	var/alert = input("Which team should we send?", "Select Response Level") as null|anything in list("Green: Centcom Official", "Blue: Light ERT (No Armoury Access)", "Amber: Full ERT (Armoury Access)", "Red: Elite ERT (Armoury Access + Pulse Weapons)", "Delta: Deathsquad")
 	if(!alert)
 		return
 	switch(alert)
@@ -411,7 +449,7 @@
 			alert = "Amber"
 		if("Blue: Light ERT (No Armoury Access)")
 			alert = "Blue"
-		if("Green: CentCom Official")
+		if("Green: Centcom Official")
 			return makeOfficial()
 	var/teamcheck = input("Maximum size of team? (7 max)", "Select Team Size",4) as null|num
 	if(isnull(teamcheck))
@@ -497,7 +535,7 @@
 			missiondesc += "<BR><B>Your Mission</B>: [mission]"
 			to_chat(ERTOperative, missiondesc)
 
-			if(CONFIG_GET(flag/enforce_human_authority))
+			if(config.enforce_human_authority)
 				ERTOperative.set_species(/datum/species/human)
 
 			//Logging and cleanup

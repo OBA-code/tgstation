@@ -32,7 +32,7 @@
 	move_to_delay = 0
 	obj_damage = 0
 	environment_smash = ENVIRONMENT_SMASH_NONE
-	mouse_opacity = MOUSE_OPACITY_OPAQUE
+	mouse_opacity = 2
 	pass_flags = PASSTABLE | PASSGRILLE | PASSMOB
 	mob_size = MOB_SIZE_TINY
 	movement_type = FLYING
@@ -56,7 +56,7 @@
 
 
 /mob/living/simple_animal/hostile/poison/bees/Initialize()
-	. = ..()
+	..()
 	generate_bee_visuals()
 
 
@@ -105,22 +105,22 @@
 /mob/living/simple_animal/hostile/poison/bees/CanAttack(atom/the_target)
 	. = ..()
 	if(!.)
-		return FALSE
+		return 0
 	if(isliving(the_target))
 		var/mob/living/H = the_target
 		return !H.bee_friendly()
 
 
 /mob/living/simple_animal/hostile/poison/bees/Found(atom/A)
-	if(isliving(A))
-		var/mob/living/H = A
-		return !H.bee_friendly()
 	if(istype(A, /obj/machinery/hydroponics))
 		var/obj/machinery/hydroponics/Hydro = A
 		if(Hydro.myseed && !Hydro.dead && !Hydro.recent_bee_visit)
 			wanted_objects |= typecacheof(/obj/machinery/hydroponics) //so we only hunt them while they're alive/seeded/not visisted
-			return TRUE
-	return FALSE
+			return 1
+	if(isliving(A))
+		var/mob/living/H = A
+		return !H.bee_friendly()
+	return 0
 
 
 /mob/living/simple_animal/hostile/poison/bees/AttackingTarget()
@@ -128,12 +128,11 @@
 	if(istype(target, /obj/machinery/hydroponics))
 		var/obj/machinery/hydroponics/Hydro = target
 		pollinate(Hydro)
-	else if(istype(target, /obj/structure/beebox))
-		if(target == beehome)
-			var/obj/structure/beebox/BB = target
-			forceMove(BB)
-			target = null
-			wanted_objects -= typecacheof(/obj/structure/beebox) //so we don't attack beeboxes when not going home
+	else if(target == beehome)
+		var/obj/structure/beebox/BB = target
+		loc = BB
+		target = null
+		wanted_objects -= typecacheof(/obj/structure/beebox) //so we don't attack beeboxes when not going home
 		return //no don't attack the goddamm box
 	else
 		. = ..()
@@ -187,7 +186,7 @@
 		if(loc == beehome)
 			idle = min(100, ++idle)
 			if(idle >= BEE_IDLE_ROAMING && prob(BEE_PROB_GOROAM))
-				forceMove(beehome.drop_location())
+				loc = get_turf(beehome)
 		else
 			idle = max(0, --idle)
 			if(idle <= BEE_IDLE_GOHOME && prob(BEE_PROB_GOHOME))
@@ -200,7 +199,6 @@
 				continue
 			BB.bees |= src
 			beehome = BB
-			break // End loop after the first compatible find.
 
 /mob/living/simple_animal/hostile/poison/bees/toxin/Initialize()
 	. = ..()
@@ -216,7 +214,7 @@
 
  //the Queen doesn't leave the box on her own, and she CERTAINLY doesn't pollinate by herself
 /mob/living/simple_animal/hostile/poison/bees/queen/Found(atom/A)
-	return FALSE
+	return 0
 
 
 //leave pollination for the peasent bees
@@ -235,10 +233,10 @@
 
 /mob/living/simple_animal/hostile/poison/bees/proc/reagent_incompatible(mob/living/simple_animal/hostile/poison/bees/B)
 	if(!B)
-		return FALSE
+		return 0
 	if(B.beegent && beegent && B.beegent.id != beegent.id || B.beegent && !beegent || !B.beegent && beegent)
-		return TRUE
-	return FALSE
+		return 1
+	return 0
 
 
 /obj/item/queen_bee
@@ -251,12 +249,12 @@
 
 
 /obj/item/queen_bee/attackby(obj/item/I, mob/user, params)
-	if(istype(I, /obj/item/reagent_containers/syringe))
-		var/obj/item/reagent_containers/syringe/S = I
+	if(istype(I, /obj/item/weapon/reagent_containers/syringe))
+		var/obj/item/weapon/reagent_containers/syringe/S = I
 		if(S.reagents.has_reagent("royal_bee_jelly")) //checked twice, because I really don't want royal bee jelly to be duped
 			if(S.reagents.has_reagent("royal_bee_jelly",5))
 				S.reagents.remove_reagent("royal_bee_jelly", 5)
-				var/obj/item/queen_bee/qb = new(user.drop_location())
+				var/obj/item/queen_bee/qb = new(get_turf(user))
 				qb.queen = new(qb)
 				if(queen && queen.beegent)
 					qb.queen.assign_reagent(queen.beegent) //Bees use the global singleton instances of reagents, so we don't need to worry about one bee being deleted and her copies losing their reagents.
@@ -277,7 +275,7 @@
 
 
 /obj/item/queen_bee/bought/Initialize()
-	. = ..()
+	..()
 	queen = new(src)
 
 

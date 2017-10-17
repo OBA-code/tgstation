@@ -11,7 +11,7 @@
 
 	var/list/obj/machinery/am_shielding/linked_shielding
 	var/list/obj/machinery/am_shielding/linked_cores
-	var/obj/item/am_containment/fueljar
+	var/obj/item/weapon/am_containment/fueljar
 	var/update_shield_icons = 0
 	var/stability = 100
 	var/exploding = 0
@@ -29,8 +29,8 @@
 	var/stored_power = 0//Power to deploy per tick
 
 
-/obj/machinery/power/am_control_unit/Initialize()
-	. = ..()
+/obj/machinery/power/am_control_unit/New()
+	..()
 	linked_shielding = list()
 	linked_cores = list()
 
@@ -39,7 +39,8 @@
 	for(var/obj/machinery/am_shielding/AMS in linked_shielding)
 		AMS.control_unit = null
 		qdel(AMS)
-	QDEL_NULL(fueljar)
+	qdel(fueljar)
+	fueljar = null
 	return ..()
 
 
@@ -157,7 +158,7 @@
 
 
 /obj/machinery/power/am_control_unit/attackby(obj/item/W, mob/user, params)
-	if(istype(W, /obj/item/wrench))
+	if(istype(W, /obj/item/weapon/wrench))
 		if(!anchored)
 			playsound(src.loc, W.usesound, 75, 1)
 			user.visible_message("[user.name] secures the [src.name] to the floor.", \
@@ -175,7 +176,7 @@
 		else
 			to_chat(user, "<span class='warning'>Once bolted and linked to a shielding unit it the [src.name] is unable to be moved!</span>")
 
-	else if(istype(W, /obj/item/am_containment))
+	else if(istype(W, /obj/item/weapon/am_containment))
 		if(fueljar)
 			to_chat(user, "<span class='warning'>There is already a [fueljar] inside!</span>")
 			return
@@ -260,15 +261,17 @@
 			if(AMS.processing)
 				AMS.shutdown_core()
 			AMS.control_unit = null
-			addtimer(CALLBACK(AMS, /obj/machinery/am_shielding.proc/controllerscan), 10)
+			spawn(10)
+				AMS.controllerscan()
 		linked_shielding = list()
+
 	else
 		for(var/obj/machinery/am_shielding/AMS in linked_shielding)
 			AMS.update_icon()
-	addtimer(CALLBACK(src, .proc/reset_shield_icon_delay), 20)
+	spawn(20)
+		shield_icon_delay = 0
+	return
 
-/obj/machinery/power/am_control_unit/proc/reset_shield_icon_delay()
-	shield_icon_delay = 0
 
 /obj/machinery/power/am_control_unit/proc/check_core_stability()
 	if(stored_core_stability_delay || linked_cores.len <= 0)
@@ -278,10 +281,10 @@
 	for(var/obj/machinery/am_shielding/AMS in linked_cores)
 		stored_core_stability += AMS.stability
 	stored_core_stability/=linked_cores.len
-	addtimer(CALLBACK(src, .proc/reset_stored_core_stability_delay), 40)
+	spawn(40)
+		stored_core_stability_delay = 0
+	return
 
-/obj/machinery/power/am_control_unit/proc/reset_stored_core_stability_delay()
-	stored_core_stability_delay = 0
 
 /obj/machinery/power/am_control_unit/interact(mob/user)
 	if((get_dist(src, user) > 1) || (stat & (BROKEN|NOPOWER)))
@@ -304,7 +307,7 @@
 	dat += "Cores: [linked_cores.len]<BR><BR>"
 	dat += "-Current Efficiency: [reported_core_efficiency]<BR>"
 	dat += "-Average Stability: [stored_core_stability] <A href='?src=\ref[src];refreshstability=1'>(update)</A><BR>"
-	dat += "Last Produced: [DisplayPower(stored_power)]<BR>"
+	dat += "Last Produced: [stored_power]<BR>"
 
 	dat += "Fuel: "
 	if(!fueljar)

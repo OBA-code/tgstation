@@ -106,11 +106,6 @@
 	metabolization_rate = 0.05
 	taste_description = "salt"
 
-/datum/reagent/blackpowder/on_mob_life(mob/living/M)
-	..()
-	if(isplasmaman(M))
-		M.hallucination += 10
-
 /datum/reagent/blackpowder/on_ex_act()
 	var/location = get_turf(holder.my_atom)
 	var/datum/effect_system/reagents_explosion/e = new()
@@ -196,6 +191,13 @@
 		M.bodytemperature -= 15
 	..()
 
+/datum/reagent/cryostylane/on_tick()
+	if(holder.has_reagent("oxygen"))
+		holder.remove_reagent("oxygen", 1)
+		holder.chem_temp -= 10
+		holder.handle_reactions()
+	..()
+
 /datum/reagent/cryostylane/reaction_turf(turf/T, reac_volume)
 	if(reac_volume >= 5)
 		for(var/mob/living/simple_animal/slime/M in T)
@@ -213,6 +215,13 @@
 	if(M.reagents.has_reagent("oxygen"))
 		M.reagents.remove_reagent("oxygen", 0.5)
 		M.bodytemperature += 15
+	..()
+
+/datum/reagent/pyrosium/on_tick()
+	if(holder.has_reagent("oxygen"))
+		holder.remove_reagent("oxygen", 1)
+		holder.chem_temp += 10
+		holder.handle_reactions()
 	..()
 
 /datum/reagent/teslium //Teslium. Causes periodic shocks, and makes shocks against the target much more effective.

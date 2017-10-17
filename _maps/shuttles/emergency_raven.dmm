@@ -1,7 +1,7 @@
 //MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE
 "aa" = (
 /turf/open/space,
-/obj/machinery/porta_turret/centcom_shuttle{
+/obj/machinery/porta_turret/centcomm_shuttle{
 	dir = 9
 	},
 /turf/closed/wall/mineral/plastitanium{
@@ -14,7 +14,8 @@
 /turf/closed/wall/mineral/plastitanium/interior,
 /area/shuttle/escape)
 "ac" = (
-/obj/effect/spawner/structure/window/reinforced,
+/obj/structure/grille,
+/obj/structure/window/reinforced/fulltile,
 /obj/machinery/door/poddoor/shutters{
 	id = "shuttleshutters";
 	name = "blast shutters"
@@ -31,7 +32,7 @@
 /area/shuttle/escape)
 "af" = (
 /obj/structure/table/reinforced,
-/obj/item/storage/fancy/donut_box,
+/obj/item/weapon/storage/fancy/donut_box,
 /turf/open/floor/plasteel/vault,
 /area/shuttle/escape)
 "ag" = (
@@ -52,13 +53,13 @@
 /area/shuttle/escape)
 "ak" = (
 /obj/structure/table/reinforced,
-/obj/item/restraints/handcuffs,
+/obj/item/weapon/restraints/handcuffs,
 /obj/item/device/assembly/flash,
 /turf/open/floor/plasteel/vault,
 /area/shuttle/escape)
 "al" = (
 /obj/structure/table/reinforced,
-/obj/item/storage/firstaid/regular,
+/obj/item/weapon/storage/firstaid/regular,
 /turf/open/floor/plasteel/vault,
 /area/shuttle/escape)
 "am" = (
@@ -92,7 +93,7 @@
 /area/shuttle/escape)
 "as" = (
 /obj/structure/table/optable,
-/obj/item/surgical_drapes,
+/obj/item/weapon/surgical_drapes,
 /obj/item/clothing/gloves/color/latex,
 /obj/item/clothing/mask/surgical,
 /turf/open/floor/plasteel/darkpurple/side{
@@ -143,10 +144,10 @@
 /area/shuttle/escape)
 "aB" = (
 /obj/structure/table/reinforced,
-/obj/item/scalpel,
-/obj/item/circular_saw,
-/obj/item/retractor,
-/obj/item/hemostat,
+/obj/item/weapon/scalpel,
+/obj/item/weapon/circular_saw,
+/obj/item/weapon/retractor,
+/obj/item/weapon/hemostat,
 /turf/open/floor/plasteel/darkpurple/side{
 	dir = 8
 	},
@@ -162,7 +163,7 @@
 /area/shuttle/escape)
 "aE" = (
 /obj/structure/table/reinforced,
-/obj/item/defibrillator/loaded,
+/obj/item/weapon/defibrillator/loaded,
 /obj/machinery/light{
 	dir = 4
 	},
@@ -277,8 +278,8 @@
 /area/shuttle/escape)
 "aT" = (
 /obj/structure/table/reinforced,
-/obj/item/storage/firstaid/toxin,
-/obj/item/storage/firstaid/o2{
+/obj/item/weapon/storage/firstaid/toxin,
+/obj/item/weapon/storage/firstaid/o2{
 	pixel_x = 4;
 	pixel_y = 4
 	},
@@ -286,8 +287,8 @@
 /area/shuttle/escape)
 "aU" = (
 /obj/structure/table/reinforced,
-/obj/item/storage/firstaid/fire,
-/obj/item/storage/firstaid/brute{
+/obj/item/weapon/storage/firstaid/fire,
+/obj/item/weapon/storage/firstaid/brute{
 	pixel_x = 3;
 	pixel_y = 4
 	},
@@ -353,19 +354,19 @@
 	desc = "A high-visibility lifejacket complete with whistle and slot for oxygen tanks.";
 	name = "emergency lifejacket"
 	},
-/obj/item/tank/internals/emergency_oxygen/double{
+/obj/item/weapon/tank/internals/emergency_oxygen/double{
 	pixel_x = 3
 	},
-/obj/item/tank/internals/emergency_oxygen/double{
+/obj/item/weapon/tank/internals/emergency_oxygen/double{
 	pixel_x = 3
 	},
-/obj/item/tank/internals/emergency_oxygen/double{
+/obj/item/weapon/tank/internals/emergency_oxygen/double{
 	pixel_x = 3
 	},
-/obj/item/tank/internals/emergency_oxygen/double{
+/obj/item/weapon/tank/internals/emergency_oxygen/double{
 	pixel_x = 3
 	},
-/obj/item/tank/internals/emergency_oxygen/double{
+/obj/item/weapon/tank/internals/emergency_oxygen/double{
 	pixel_x = 3
 	},
 /obj/item/clothing/mask/breath{
@@ -413,6 +414,7 @@
 	dir = 1
 	},
 /turf/open/floor/plasteel/darkyellow/side{
+	icon_state = "darkyellow";
 	dir = 5
 	},
 /area/shuttle/escape)
@@ -446,7 +448,7 @@
 /area/shuttle/escape)
 "bg" = (
 /obj/structure/table/reinforced,
-/obj/item/storage/firstaid,
+/obj/item/weapon/storage/firstaid,
 /turf/open/floor/plasteel/darkpurple/side{
 	dir = 8
 	},
@@ -474,37 +476,38 @@
 "bk" = (
 /obj/machinery/suit_storage_unit/standard_unit,
 /turf/open/floor/plasteel/darkyellow/side{
+	icon_state = "darkyellow";
 	dir = 6
 	},
 /area/shuttle/escape)
 "bl" = (
-/obj/item/reagent_containers/glass/bottle/epinephrine{
+/obj/item/weapon/reagent_containers/glass/bottle/epinephrine{
 	pixel_x = 6
 	},
-/obj/item/reagent_containers/glass/bottle/charcoal{
+/obj/item/weapon/reagent_containers/glass/bottle/charcoal{
 	pixel_x = -3
 	},
-/obj/item/reagent_containers/glass/bottle/epinephrine{
+/obj/item/weapon/reagent_containers/glass/bottle/epinephrine{
 	pixel_x = -3;
 	pixel_y = 8
 	},
-/obj/item/reagent_containers/glass/bottle/charcoal{
+/obj/item/weapon/reagent_containers/glass/bottle/charcoal{
 	pixel_x = 6;
 	pixel_y = 8
 	},
-/obj/item/reagent_containers/syringe/epinephrine{
+/obj/item/weapon/reagent_containers/syringe/epinephrine{
 	pixel_x = 3;
 	pixel_y = -2
 	},
-/obj/item/reagent_containers/syringe/epinephrine{
+/obj/item/weapon/reagent_containers/syringe/epinephrine{
 	pixel_x = 4;
 	pixel_y = 1
 	},
-/obj/item/reagent_containers/syringe/epinephrine{
+/obj/item/weapon/reagent_containers/syringe/epinephrine{
 	pixel_x = -2;
 	pixel_y = 5
 	},
-/obj/item/reagent_containers/syringe/epinephrine{
+/obj/item/weapon/reagent_containers/syringe/epinephrine{
 	pixel_x = 2;
 	pixel_y = 8
 	},
@@ -554,6 +557,7 @@
 /area/shuttle/escape)
 "br" = (
 /turf/open/floor/plasteel/darkgreen/side{
+	icon_state = "darkgreen";
 	dir = 1
 	},
 /area/shuttle/escape)
@@ -600,8 +604,8 @@
 /area/shuttle/escape)
 "bB" = (
 /obj/structure/table/reinforced,
-/obj/item/paper_bin,
-/obj/item/pen/blue,
+/obj/item/weapon/paper_bin,
+/obj/item/weapon/pen/blue,
 /turf/open/floor/plasteel/darkpurple/side,
 /area/shuttle/escape)
 "bC" = (
@@ -619,7 +623,7 @@
 /obj/docking_port/mobile/emergency{
 	dwidth = 14;
 	height = 18;
-	name = "CentCom Raven Battlecruiser";
+	name = "Centcomm Raven Battlecruiser";
 	timid = 1;
 	width = 32
 	},
@@ -639,12 +643,12 @@
 /area/shuttle/escape)
 "bH" = (
 /obj/structure/rack,
-/obj/item/storage/toolbox/mechanical{
+/obj/item/weapon/storage/toolbox/mechanical{
 	pixel_x = 3;
 	pixel_y = -6
 	},
-/obj/item/storage/toolbox/emergency,
-/obj/item/storage/toolbox/electrical{
+/obj/item/weapon/storage/toolbox/emergency,
+/obj/item/weapon/storage/toolbox/electrical{
 	pixel_x = -2;
 	pixel_y = 5
 	},
@@ -656,7 +660,7 @@
 "bI" = (
 /obj/structure/rack,
 /obj/item/clothing/suit/fire/firefighter,
-/obj/item/tank/internals/oxygen/red,
+/obj/item/weapon/tank/internals/oxygen/red,
 /obj/item/clothing/mask/gas,
 /obj/item/clothing/head/hardhat/red,
 /turf/open/floor/plasteel/darkgreen/side{
@@ -664,7 +668,8 @@
 	},
 /area/shuttle/escape)
 "bJ" = (
-/obj/effect/spawner/structure/window/reinforced,
+/obj/structure/grille,
+/obj/structure/window/reinforced/fulltile,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "bK" = (
@@ -676,12 +681,13 @@
 "bL" = (
 /obj/machinery/door/airlock/hatch,
 /turf/open/floor/plasteel/darkgreen/side{
+	icon_state = "darkgreen";
 	dir = 1
 	},
 /area/shuttle/escape)
 "bM" = (
 /obj/structure/table/reinforced,
-/obj/item/dice/d20,
+/obj/item/weapon/dice/d20,
 /turf/open/floor/plasteel/darkgreen/side{
 	dir = 10
 	},
@@ -722,19 +728,19 @@
 	desc = "A high-visibility lifejacket complete with whistle and slot for oxygen tanks.";
 	name = "emergency lifejacket"
 	},
-/obj/item/tank/internals/emergency_oxygen/double{
+/obj/item/weapon/tank/internals/emergency_oxygen/double{
 	pixel_x = 3
 	},
-/obj/item/tank/internals/emergency_oxygen/double{
+/obj/item/weapon/tank/internals/emergency_oxygen/double{
 	pixel_x = 3
 	},
-/obj/item/tank/internals/emergency_oxygen/double{
+/obj/item/weapon/tank/internals/emergency_oxygen/double{
 	pixel_x = 3
 	},
-/obj/item/tank/internals/emergency_oxygen/double{
+/obj/item/weapon/tank/internals/emergency_oxygen/double{
 	pixel_x = 3
 	},
-/obj/item/tank/internals/emergency_oxygen/double{
+/obj/item/weapon/tank/internals/emergency_oxygen/double{
 	pixel_x = 3
 	},
 /obj/item/clothing/mask/breath{
@@ -808,7 +814,7 @@
 	},
 /area/shuttle/escape)
 "bV" = (
-/obj/item/twohanded/required/kirbyplants{
+/obj/item/weapon/twohanded/required/kirbyplants{
 	icon_state = "plant-22"
 	},
 /turf/open/floor/plasteel/darkgreen/side{
@@ -817,7 +823,7 @@
 	},
 /area/shuttle/escape)
 "bW" = (
-/obj/item/twohanded/required/kirbyplants{
+/obj/item/weapon/twohanded/required/kirbyplants{
 	icon_state = "plant-22"
 	},
 /turf/open/floor/plasteel/darkgreen/side{
@@ -859,6 +865,7 @@
 "cb" = (
 /obj/structure/chair,
 /turf/open/floor/plasteel/darkgreen/side{
+	icon_state = "darkgreen";
 	dir = 1
 	},
 /area/shuttle/escape)
@@ -869,7 +876,7 @@
 /turf/open/floor/plasteel/darkgreen/side,
 /area/shuttle/escape)
 "cd" = (
-/obj/item/twohanded/required/kirbyplants{
+/obj/item/weapon/twohanded/required/kirbyplants{
 	icon_state = "plant-22"
 	},
 /turf/open/floor/plasteel/darkgreen/side{
@@ -877,7 +884,7 @@
 	},
 /area/shuttle/escape)
 "ce" = (
-/obj/item/twohanded/required/kirbyplants{
+/obj/item/weapon/twohanded/required/kirbyplants{
 	icon_state = "plant-22"
 	},
 /turf/open/floor/plasteel/darkgreen/side{
@@ -973,7 +980,7 @@
 /area/shuttle/escape)
 "cr" = (
 /turf/open/space,
-/obj/machinery/porta_turret/centcom_shuttle{
+/obj/machinery/porta_turret/centcomm_shuttle{
 	dir = 5
 	},
 /turf/closed/wall/mineral/plastitanium{
@@ -988,16 +995,18 @@
 /turf/closed/wall/mineral/plastitanium/interior,
 /area/shuttle/escape)
 "cu" = (
-/obj/effect/spawner/structure/window/reinforced,
+/obj/structure/grille,
+/obj/structure/window/reinforced/fulltile,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "cv" = (
-/obj/effect/spawner/structure/window/reinforced,
+/obj/structure/grille,
+/obj/structure/window/reinforced/fulltile,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "cw" = (
 /turf/open/space,
-/obj/machinery/porta_turret/centcom_shuttle{
+/obj/machinery/porta_turret/centcomm_shuttle{
 	dir = 5
 	},
 /turf/closed/wall/mineral/plastitanium{
@@ -1030,11 +1039,12 @@
 /turf/open/floor/plasteel/darkblue/side,
 /area/shuttle/escape)
 "cA" = (
+/obj/structure/grille,
 /obj/machinery/door/poddoor/shutters{
 	id = "shuttleshutters";
 	name = "blast shutters"
 	},
-/obj/effect/spawner/structure/window/reinforced,
+/obj/structure/window/reinforced/fulltile,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "cB" = (
@@ -1069,11 +1079,13 @@
 	},
 /area/shuttle/escape)
 "cJ" = (
-/obj/effect/spawner/structure/window/reinforced,
+/obj/structure/grille,
+/obj/structure/window/reinforced/fulltile,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "cK" = (
-/obj/effect/spawner/structure/window/reinforced,
+/obj/structure/grille,
+/obj/structure/window/reinforced/fulltile,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "cL" = (
@@ -1096,7 +1108,7 @@
 /area/shuttle/escape)
 "cR" = (
 /turf/open/space,
-/obj/machinery/porta_turret/centcom_shuttle{
+/obj/machinery/porta_turret/centcomm_shuttle{
 	dir = 5
 	},
 /turf/closed/wall/mineral/plastitanium{
@@ -1111,7 +1123,8 @@
 /turf/closed/wall/mineral/plastitanium/interior,
 /area/shuttle/escape)
 "cU" = (
-/obj/effect/spawner/structure/window/reinforced,
+/obj/structure/grille,
+/obj/structure/window/reinforced/fulltile,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "cV" = (
@@ -1127,26 +1140,31 @@
 /turf/closed/wall/mineral/plastitanium/interior,
 /area/shuttle/escape)
 "cZ" = (
-/obj/effect/spawner/structure/window/reinforced,
+/obj/structure/grille,
+/obj/structure/window/reinforced/fulltile,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "da" = (
-/obj/effect/spawner/structure/window/reinforced,
+/obj/structure/grille,
+/obj/structure/window/reinforced/fulltile,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "db" = (
-/obj/effect/spawner/structure/window/reinforced,
+/obj/structure/grille,
+/obj/structure/window/reinforced/fulltile,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "dc" = (
-/obj/effect/spawner/structure/window/reinforced,
+/obj/structure/grille,
+/obj/structure/window/reinforced/fulltile,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "dd" = (
 /turf/closed/wall/mineral/plastitanium/interior,
 /area/shuttle/escape)
 "de" = (
-/obj/effect/spawner/structure/window/reinforced,
+/obj/structure/grille,
+/obj/structure/window/reinforced/fulltile,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "df" = (
@@ -1165,11 +1183,13 @@
 /turf/closed/wall/mineral/plastitanium/interior,
 /area/shuttle/escape)
 "dk" = (
-/obj/effect/spawner/structure/window/reinforced,
+/obj/structure/grille,
+/obj/structure/window/reinforced/fulltile,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "dl" = (
-/obj/effect/spawner/structure/window/reinforced,
+/obj/structure/grille,
+/obj/structure/window/reinforced/fulltile,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "dm" = (
@@ -1185,15 +1205,18 @@
 /turf/closed/wall/mineral/plastitanium/interior,
 /area/shuttle/escape)
 "dq" = (
-/obj/effect/spawner/structure/window/reinforced,
+/obj/structure/grille,
+/obj/structure/window/reinforced/fulltile,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "dr" = (
-/obj/effect/spawner/structure/window/reinforced,
+/obj/structure/grille,
+/obj/structure/window/reinforced/fulltile,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "ds" = (
-/obj/effect/spawner/structure/window/reinforced,
+/obj/structure/grille,
+/obj/structure/window/reinforced/fulltile,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "dt" = (
@@ -1225,11 +1248,13 @@
 /turf/closed/wall/mineral/plastitanium/interior,
 /area/shuttle/escape)
 "dB" = (
-/obj/effect/spawner/structure/window/reinforced,
+/obj/structure/grille,
+/obj/structure/window/reinforced/fulltile,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "dC" = (
-/obj/effect/spawner/structure/window/reinforced,
+/obj/structure/grille,
+/obj/structure/window/reinforced/fulltile,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "dD" = (
@@ -1243,7 +1268,8 @@
 /turf/closed/wall/mineral/plastitanium/interior,
 /area/shuttle/escape)
 "dF" = (
-/obj/effect/spawner/structure/window/reinforced,
+/obj/structure/grille,
+/obj/structure/window/reinforced/fulltile,
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "dG" = (
@@ -1285,7 +1311,7 @@
 /area/shuttle/escape)
 "dQ" = (
 /turf/open/space,
-/obj/machinery/porta_turret/centcom_shuttle{
+/obj/machinery/porta_turret/centcomm_shuttle{
 	dir = 5
 	},
 /turf/closed/wall/mineral/plastitanium{
@@ -1307,7 +1333,7 @@
 /area/shuttle/escape)
 "dV" = (
 /turf/open/space,
-/obj/machinery/porta_turret/centcom_shuttle{
+/obj/machinery/porta_turret/centcomm_shuttle{
 	dir = 5
 	},
 /turf/closed/wall/mineral/plastitanium{
@@ -1353,7 +1379,7 @@
 /area/shuttle/escape)
 "ei" = (
 /turf/open/space,
-/obj/machinery/porta_turret/centcom_shuttle{
+/obj/machinery/porta_turret/centcomm_shuttle{
 	dir = 10
 	},
 /turf/closed/wall/mineral/plastitanium{
@@ -1374,7 +1400,7 @@
 /area/shuttle/escape)
 "en" = (
 /turf/open/space,
-/obj/machinery/porta_turret/centcom_shuttle{
+/obj/machinery/porta_turret/centcomm_shuttle{
 	dir = 6
 	},
 /turf/closed/wall/mineral/plastitanium{
@@ -1435,7 +1461,7 @@
 /area/shuttle/escape)
 "eA" = (
 /turf/open/space,
-/obj/machinery/porta_turret/centcom_shuttle{
+/obj/machinery/porta_turret/centcomm_shuttle{
 	dir = 5
 	},
 /turf/closed/wall/mineral/plastitanium{
@@ -1478,6 +1504,7 @@
 	dir = 1
 	},
 /turf/open/floor/plasteel/darkgreen/side{
+	icon_state = "darkgreen";
 	dir = 1
 	},
 /area/shuttle/escape)
@@ -1494,6 +1521,7 @@
 	dir = 1
 	},
 /turf/open/floor/plasteel/darkgreen/side{
+	icon_state = "darkgreen";
 	dir = 1
 	},
 /area/shuttle/escape)
@@ -1519,6 +1547,7 @@
 	dir = 1
 	},
 /turf/open/floor/plasteel/darkgreen/side{
+	icon_state = "darkgreen";
 	dir = 1
 	},
 /area/shuttle/escape)
@@ -1527,6 +1556,7 @@
 	dir = 1
 	},
 /turf/open/floor/plasteel/darkgreen/side{
+	icon_state = "darkgreen";
 	dir = 1
 	},
 /area/shuttle/escape)
@@ -1535,6 +1565,7 @@
 	dir = 1
 	},
 /turf/open/floor/plasteel/darkgreen/side{
+	icon_state = "darkgreen";
 	dir = 1
 	},
 /area/shuttle/escape)

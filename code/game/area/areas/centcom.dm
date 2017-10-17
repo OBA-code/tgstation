@@ -2,26 +2,26 @@
 // CENTCOM
 
 /area/centcom
-	name = "CentCom"
+	name = "Centcom"
 	icon_state = "centcom"
 	dynamic_lighting = DYNAMIC_LIGHTING_FORCED
 	requires_power = FALSE
 	has_gravity = TRUE
 	noteleport = TRUE
 	blob_allowed = FALSE //Should go without saying, no blobs should take over centcom as a win condition.
-	flags_1 = NONE
+	flags = NONE
 
 /area/centcom/control
-	name = "CentCom Docks"
+	name = "Centcom Docks"
 
 /area/centcom/evac
-	name = "CentCom Recovery Ship"
+	name = "Centcom Recovery Ship"
 
 /area/centcom/supply
-	name = "CentCom Supply Shuttle Dock"
+	name = "Centcom Supply Shuttle Dock"
 
 /area/centcom/ferry
-	name = "CentCom Transport Shuttle Dock"
+	name = "Centcom Transport Shuttle Dock"
 
 /area/centcom/prison
 	name = "Admin Prison"
@@ -37,7 +37,7 @@
 	dynamic_lighting = DYNAMIC_LIGHTING_FORCED
 	requires_power = FALSE
 	has_gravity = TRUE
-	flags_1 = NONE
+	flags = NONE
 
 /area/tdome/arena
 	name = "Thunderdome Arena"
@@ -76,7 +76,7 @@
 	requires_power = FALSE
 	has_gravity = TRUE
 	noteleport = TRUE
-	flags_1 = NONE
+	flags = NONE
 
 //Abductors
 /area/abductor_ship
@@ -85,7 +85,7 @@
 	requires_power = FALSE
 	noteleport = TRUE
 	has_gravity = TRUE
-	flags_1 = NONE
+	flags = NONE
 
 //Syndicates
 /area/syndicate_mothership
@@ -95,7 +95,7 @@
 	has_gravity = TRUE
 	noteleport = TRUE
 	blob_allowed = FALSE //Not... entirely sure this will ever come up... but if the bus makes blobs AND ops, it shouldn't aim for the ops to win.
-	flags_1 = NONE
+	flags = NONE
 
 /area/syndicate_mothership/control
 	name = "Syndicate Control Room"
@@ -115,7 +115,7 @@
 	icon_state = "yellow"
 	requires_power = FALSE
 	has_gravity = TRUE
-	flags_1 = NO_DEATHRATTLE_1
+	flags = NO_DEATHRATTLE
 
 /area/ctf/control_room
 	name = "Control Room A"
@@ -143,18 +143,3 @@
 
 /area/ctf/flag_room2
 	name = "Flag Room B"
-
-// REEBE
-
-/area/reebe
-	name = "Reebe"
-	icon_state = "yellow"
-	requires_power = FALSE
-	has_gravity = TRUE
-	noteleport = TRUE
-	hidden = TRUE
-
-/area/reebe/city_of_cogs
-	name = "City of Cogs"
-	icon_state = "purple"
-	hidden = FALSE

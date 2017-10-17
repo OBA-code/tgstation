@@ -1,32 +1,30 @@
 /mob/living/silicon/pai
 	name = "pAI"
+	var/network = "SS13"
+	var/obj/machinery/camera/current = null
 	icon = 'icons/mob/pai.dmi'
 	icon_state = "repairbot"
-	mouse_opacity = MOUSE_OPACITY_OPAQUE
+	mouse_opacity = 2
 	density = FALSE
+	luminosity = 0
 	pass_flags = PASSTABLE | PASSMOB
 	mob_size = MOB_SIZE_TINY
 	desc = "A generic pAI mobile hard-light holographics emitter. It seems to be deactivated."
 	weather_immunities = list("ash")
 	health = 500
 	maxHealth = 500
-	layer = BELOW_MOB_LAYER
-
-	var/network = "SS13"
-	var/obj/machinery/camera/current = null
 
 	var/ram = 100	// Used as currency to purchase different abilities
 	var/list/software = list()
 	var/userDNA		// The DNA string of our assigned user
 	var/obj/item/device/paicard/card	// The card we inhabit
-	var/hacking = FALSE		//Are we hacking a door?
 
 	var/speakStatement = "states"
 	var/speakExclamation = "declares"
 	var/speakDoubleExclamation = "alarms"
 	var/speakQuery = "queries"
 
-	var/obj/item/pai_cable/cable		// The cable we produce and use when door or camera jacking
+	var/obj/item/weapon/pai_cable/cable		// The cable we produce and use when door or camera jacking
 
 	var/master				// Name of the one who commands us
 	var/master_dna			// DNA string for owner verification
@@ -55,7 +53,7 @@
 
 	var/holoform = FALSE
 	var/canholo = TRUE
-	var/obj/item/card/id/access_card = null
+	var/obj/item/weapon/card/id/access_card = null
 	var/chassis = "repairbot"
 	var/list/possible_chassis = list("cat", "mouse", "monkey", "corgi", "fox", "repairbot", "rabbit")
 
@@ -106,7 +104,7 @@
 		pda.owner = text("[]", src)
 		pda.name = pda.owner + " (" + pda.ownjob + ")"
 
-	. = ..()
+	..()
 
 	var/datum/action/innate/pai/shell/AS = new /datum/action/innate/pai/shell
 	var/datum/action/innate/pai/chassis/AC = new /datum/action/innate/pai/chassis
@@ -121,29 +119,6 @@
 	ALM.Grant(src)
 	emittersemicd = TRUE
 	addtimer(CALLBACK(src, .proc/emittercool), 600)
-
-/mob/living/silicon/pai/Life()
-	if(hacking)
-		process_hack()
-	return ..()
-
-/mob/living/silicon/pai/proc/process_hack()
-
-	if(cable && cable.machine && istype(cable.machine, /obj/machinery/door) && cable.machine == hackdoor && get_dist(src, hackdoor) <= 1)
-		hackprogress = Clamp(hackprogress + 4, 0, 100)
-	else
-		temp = "Door Jack: Connection to airlock has been lost. Hack aborted."
-		hackprogress = 0
-		hacking = FALSE
-		hackdoor = null
-		return
-	if(screen == "doorjack" && subscreen == 0) // Update our view, if appropriate
-		paiInterface()
-	if(hackprogress >= 100)
-		hackprogress = 0
-		var/obj/machinery/door/D = cable.machine
-		D.open()
-		hacking = FALSE
 
 /mob/living/silicon/pai/make_laws()
 	laws = new /datum/ai_laws/pai()
@@ -186,7 +161,6 @@
 
 /datum/action/innate/pai
 	name = "PAI Action"
-	icon_icon = 'icons/mob/actions/actions_silicon.dmi'
 	var/mob/living/silicon/pai/P
 
 /datum/action/innate/pai/Trigger()
@@ -223,10 +197,8 @@
 /datum/action/innate/pai/rest/Trigger()
 	..()
 	P.lay_down()
-
 /datum/action/innate/pai/light
 	name = "Toggle Integrated Lights"
-	icon_icon = 'icons/mob/actions/actions_spells.dmi'
 	button_icon_state = "emp"
 	background_icon_state = "bg_tech"
 

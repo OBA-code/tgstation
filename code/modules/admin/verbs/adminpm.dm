@@ -131,7 +131,7 @@
 
 	//clean the message if it's not sent by a high-rank admin
 	if(!check_rights(R_SERVER|R_DEBUG,0)||irc)//no sending html to the poor bots
-		msg = trim(sanitize(copytext(msg,1,MAX_MESSAGE_LEN)))
+		msg = sanitize(copytext(msg,1,MAX_MESSAGE_LEN))
 		if(!msg)
 			return
 
@@ -167,7 +167,7 @@
 
 			//play the recieving admin the adminhelp sound (if they have them enabled)
 			if(recipient.prefs.toggles & SOUND_ADMINHELP)
-				SEND_SOUND(recipient, sound('sound/effects/adminhelp.ogg'))
+				recipient << 'sound/effects/adminhelp.ogg'
 
 		else
 			if(holder)	//sender is an admin but recipient is not. Do BIG RED TEXT
@@ -182,10 +182,10 @@
 				admin_ticket_log(recipient, "<font color='blue'>PM From [key_name_admin(src)]: [keywordparsedmsg]</font>")
 
 				//always play non-admin recipients the adminhelp sound
-				SEND_SOUND(recipient, sound('sound/effects/adminhelp.ogg'))
+				recipient << 'sound/effects/adminhelp.ogg'
 
 				//AdminPM popup for ApocStation and anybody else who wants to use it. Set it with POPUP_ADMIN_PM in config.txt ~Carn
-				if(CONFIG_GET(flag/popup_admin_pm))
+				if(config.popup_admin_pm)
 					spawn()	//so we don't hold the caller proc up
 						var/sender = src
 						var/sendername = key
@@ -277,7 +277,7 @@
 		return "Error: Ticket could not be found"
 
 	var/static/stealthkey
-	var/adminname = CONFIG_GET(flag/show_irc_name) ? irc_tagged : "Administrator"
+	var/adminname = config.showircname ? irc_tagged : "Administrator"
 
 	if(!C)
 		return "Error: No client"
@@ -301,7 +301,7 @@
 
 	window_flash(C, ignorepref = TRUE)
 	//always play non-admin recipients the adminhelp sound
-	SEND_SOUND(C, 'sound/effects/adminhelp.ogg')
+	C << 'sound/effects/adminhelp.ogg'
 
 	C.ircreplyamount = IRCREPLYCOUNT
 

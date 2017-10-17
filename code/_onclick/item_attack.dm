@@ -9,20 +9,19 @@
 
 // Called when the item is in the active hand, and clicked; alternately, there is an 'activate held object' verb or you can hit pagedown.
 /obj/item/proc/attack_self(mob/user)
-	SendSignal(COMSIG_ITEM_ATTACK_SELF, user)
-	interact(user)
+	return
 
 /obj/item/proc/pre_attackby(atom/A, mob/living/user, params) //do stuff before attackby!
 	return TRUE //return FALSE to avoid calling attackby after this proc does stuff
 
 // No comment
 /atom/proc/attackby(obj/item/W, mob/user, params)
-	return SendSignal(COMSIG_PARENT_ATTACKBY, W, user, params)
+	return
 
 /obj/attackby(obj/item/I, mob/living/user, params)
-	return ..() || (can_be_hit && I.attack_obj(src, user))
+	return I.attack_obj(src, user)
 
-/mob/living/attackby(obj/item/I, mob/living/user, params)
+/mob/living/attackby(obj/item/I, mob/user, params)
 	user.changeNext_move(CLICK_CD_MELEE)
 	if(user.a_intent == INTENT_HARM && stat == DEAD && butcher_results) //can we butcher it?
 		var/sharpness = I.is_sharp()
@@ -36,8 +35,7 @@
 
 
 /obj/item/proc/attack(mob/living/M, mob/living/user)
-	SendSignal(COMSIG_ITEM_ATTACK, M, user)
-	if(flags_1 & NOBLUDGEON_1)
+	if(flags & NOBLUDGEON)
 		return
 	if(!force)
 		playsound(loc, 'sound/weapons/tap.ogg', get_clamped_volume(), 1, -1)
@@ -56,8 +54,7 @@
 
 //the equivalent of the standard version of attack() but for object targets.
 /obj/item/proc/attack_obj(obj/O, mob/living/user)
-	SendSignal(COMSIG_ITEM_ATTACK_OBJ, O, user)
-	if(flags_1 & NOBLUDGEON_1)
+	if(flags & NOBLUDGEON)
 		return
 	user.changeNext_move(CLICK_CD_MELEE)
 	user.do_attack_animation(O)

@@ -15,30 +15,27 @@ Bonus
 
 //////////////////////////////////////
 */
-/datum/symptom/mind_restoration
-	name = "Mind Restoration"
-	desc = "The virus strengthens the bonds between neurons, reducing the duration of any ailments of the mind."
+/datum/symptom/sensory_restoration
+	name = "Sensory Restoration"
 	stealth = -1
 	resistance = -4
 	stage_speed = -4
 	transmittable = -3
 	level = 5
+	severity = 0
 	symptom_delay_min = 5
 	symptom_delay_max = 10
 	var/purge_alcohol = FALSE
 	var/brain_heal = FALSE
-	threshold_desc = "<b>Resistance 6:</b> Heals brain damage.<br>\
-					  <b>Transmission 8:</b> Purges alcohol in the bloodstream."
 
-/datum/symptom/mind_restoration/Start(datum/disease/advance/A)
-	if(!..())
-		return
+/datum/symptom/sensory_restoration/Start(datum/disease/advance/A)
+	..()
 	if(A.properties["resistance"] >= 6) //heal brain damage
 		brain_heal = TRUE
 	if(A.properties["transmittable"] >= 8) //purge alcohol
 		purge_alcohol = TRUE
 
-/datum/symptom/mind_restoration/Activate(var/datum/disease/advance/A)
+/datum/symptom/sensory_restoration/Activate(var/datum/disease/advance/A)
 	if(!..())
 		return
 	var/mob/living/M = A.affected_mob

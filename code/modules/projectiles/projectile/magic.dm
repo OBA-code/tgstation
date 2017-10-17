@@ -139,9 +139,9 @@
 				if("syndiborg")
 					var/path
 					if(prob(50))
-						path = /mob/living/silicon/robot/modules/syndicate
+						path = /mob/living/silicon/robot/syndicate
 					else
-						path = /mob/living/silicon/robot/modules/syndicate/medical
+						path = /mob/living/silicon/robot/syndicate/medical
 					new_mob = new path(M.loc)
 				if("drone")
 					new_mob = new /mob/living/simple_animal/drone/polymorphed(M.loc)
@@ -165,7 +165,7 @@
 		if("animal")
 			var/path
 			if(prob(50))
-				var/beast = pick("carp","bear","mushroom","statue", "bat", "goat","killertomato", "spiderbase", "spiderhunter", "blobbernaut", "magicarp", "chaosmagicarp", "watcher", "goliath", "headcrab", "morph", "stickman", "stickdog", "lesserdragon", "gorilla")
+				var/beast = pick("carp","bear","mushroom","statue", "bat", "goat","killertomato", "spiderbase", "spiderhunter", "blobbernaut", "magicarp", "chaosmagicarp", "watcher", "goliath", "headcrab", "morph", "stickman", "stickdog", "lesserdragon")
 				switch(beast)
 					if("carp")
 						path = /mob/living/simple_animal/hostile/carp
@@ -205,8 +205,6 @@
 						path = /mob/living/simple_animal/hostile/stickman/dog
 					if("lesserdragon")
 						path = /mob/living/simple_animal/hostile/megafauna/dragon/lesser
-					if("gorilla")
-						path = /mob/living/simple_animal/hostile/gorilla
 			else
 				var/animal = pick("parrot","corgi","crab","pug","cat","mouse","chicken","cow","lizard","chick","fox","butterfly","cak")
 				switch(animal)
@@ -261,7 +259,7 @@
 	if(!new_mob)
 		return
 	new_mob.grant_language(/datum/language/common)
-	new_mob.flags_2 |= OMNITONGUE_2
+	SET_SECONDARY_FLAG(new_mob, OMNITONGUE)
 	new_mob.logging = M.logging
 
 	// Some forms can still wear some items
@@ -276,9 +274,7 @@
 
 	to_chat(new_mob, "<span class='warning'>Your form morphs into that of a [randomize].</span>")
 
-	var/poly_msg = CONFIG_GET(keyed_string_list/policy)["polymorph"]
-	if(poly_msg)
-		to_chat(new_mob, poly_msg)
+	to_chat(new_mob, config.policies["polymorph"])
 
 	qdel(M)
 	return new_mob
@@ -295,7 +291,7 @@
 	..()
 
 /atom/proc/animate_atom_living(var/mob/living/owner = null)
-	if((isitem(src) || isstructure(src)) && !is_type_in_list(src, GLOB.protected_objects))
+	if((isitem(src) || istype(src, /obj/structure)) && !is_type_in_list(src, GLOB.protected_objects))
 		if(istype(src, /obj/structure/statue/petrified))
 			var/obj/structure/statue/petrified/P = src
 			if(P.petrified_mob)
@@ -317,7 +313,7 @@
 				return
 		else
 			var/obj/O = src
-			if(istype(O, /obj/item/gun))
+			if(istype(O, /obj/item/weapon/gun))
 				new /mob/living/simple_animal/hostile/mimic/copy/ranged(loc, src, owner)
 			else
 				new /mob/living/simple_animal/hostile/mimic/copy(loc, src, owner)

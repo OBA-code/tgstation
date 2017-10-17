@@ -47,21 +47,21 @@
 	..()
 
 /obj/structure/mirror/obj_break(damage_flag)
-	if(!broken && !(flags_1 & NODECONSTRUCT_1))
+	if(!broken && !(flags & NODECONSTRUCT))
 		icon_state = "mirror_broke"
 		playsound(src, "shatter", 70, 1)
 		desc = "Oh no, seven years of bad luck!"
 		broken = 1
 
 /obj/structure/mirror/deconstruct(disassembled = TRUE)
-	if(!(flags_1 & NODECONSTRUCT_1))
+	if(!(flags & NODECONSTRUCT))
 		if(!disassembled)
-			new /obj/item/shard( src.loc )
+			new /obj/item/weapon/shard( src.loc )
 	qdel(src)
 
 /obj/structure/mirror/attackby(obj/item/I, mob/living/user, params)
-	if(istype(I, /obj/item/weldingtool) && user.a_intent != INTENT_HARM)
-		var/obj/item/weldingtool/WT = I
+	if(istype(I, /obj/item/weapon/weldingtool) && user.a_intent != INTENT_HARM)
+		var/obj/item/weapon/weldingtool/WT = I
 		if(broken)
 			user.changeNext_move(CLICK_CD_MELEE)
 			if(WT.remove_fuel(0, user))
@@ -101,8 +101,7 @@
 	..()
 
 /obj/structure/mirror/magic/lesser/New()
-	var/list/L = CONFIG_GET(keyed_flag_list/roundstart_races)
-	choosable_races = L.Copy()
+	choosable_races = GLOB.roundstart_species
 	..()
 
 /obj/structure/mirror/magic/badmin/New()

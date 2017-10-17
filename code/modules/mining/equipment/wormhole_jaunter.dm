@@ -5,8 +5,6 @@
 	icon = 'icons/obj/mining.dmi'
 	icon_state = "Jaunter"
 	item_state = "electronic"
-	lefthand_file = 'icons/mob/inhands/misc/devices_lefthand.dmi'
-	righthand_file = 'icons/mob/inhands/misc/devices_righthand.dmi'
 	throwforce = 0
 	w_class = WEIGHT_CLASS_SMALL
 	throw_speed = 3
@@ -17,7 +15,7 @@
 /obj/item/device/wormhole_jaunter/attack_self(mob/user)
 	user.visible_message("<span class='notice'>[user.name] activates the [src.name]!</span>")
 	SSblackbox.add_details("jaunter", "User") // user activated
-	activate(user, TRUE)
+	activate(user)
 
 /obj/item/device/wormhole_jaunter/proc/turf_check(mob/user)
 	var/turf/device_turf = get_turf(user)
@@ -41,12 +39,12 @@
 
 	for(var/obj/item/device/radio/beacon/B in GLOB.teleportbeacons)
 		var/turf/T = get_turf(B)
-		if(T.z in GLOB.station_z_levels)
+		if(T.z == ZLEVEL_STATION)
 			destinations += B
 
 	return destinations
 
-/obj/item/device/wormhole_jaunter/proc/activate(mob/user, adjacent)
+/obj/item/device/wormhole_jaunter/proc/activate(mob/user)
 	if(!turf_check(user))
 		return
 
@@ -56,8 +54,7 @@
 		return
 	var/chosen_beacon = pick(L)
 	var/obj/effect/portal/wormhole/jaunt_tunnel/J = new (get_turf(src), src, 100, null, FALSE, get_turf(chosen_beacon))
-	if(adjacent)
-		try_move_adjacent(J)
+	try_move_adjacent(J)
 	playsound(src,'sound/effects/sparks4.ogg',50,1)
 	qdel(src)
 
@@ -71,7 +68,7 @@
 			triggered = TRUE
 
 	if(triggered)
-		usr.visible_message("<span class='warning'>[src] overloads and activates!</span>")
+		usr.visible_message("<span class='warning'>The [src] overloads and activates!</span>")
 		SSblackbox.add_details("jaunter","EMP") // EMP accidental activation
 		activate(usr)
 
@@ -79,9 +76,9 @@
 	if(user.get_item_by_slot(slot_belt) == src)
 		to_chat(user, "Your [src] activates, saving you from the chasm!</span>")
 		SSblackbox.add_details("jaunter","Chasm") // chasm automatic activation
-		activate(user, FALSE)
+		activate(user)
 	else
-		to_chat(user, "[src] is not attached to your belt, preventing it from saving you from the chasm. RIP.</span>")
+		to_chat(user, "The [src] is not attached to your belt, preventing it from saving you from the chasm. RIP.</span>")
 
 //jaunter tunnel
 /obj/effect/portal/wormhole/jaunt_tunnel
@@ -94,8 +91,8 @@
 /obj/effect/portal/wormhole/jaunt_tunnel/teleport(atom/movable/M)
 	if(!ismob(M) && !isobj(M))	//No don't teleport lighting and effects!
 		return
-
-	if(M.anchored && (!ismob(M) || (ismecha(M) && !mech_sized)))
+		
+	if(M.anchored && (!ismob(M) || (istype(M, /obj/mecha) && !mech_sized)))
 		return
 
 	if(do_teleport(M, hard_target, 6))

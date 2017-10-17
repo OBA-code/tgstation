@@ -7,19 +7,48 @@
 	layer = BELOW_OBJ_LAYER
 	density = TRUE
 	anchored = TRUE
+	var/broken = 0
+	var/processing = FALSE
 	use_power = IDLE_POWER_USE
 	idle_power_usage = 5
 	active_power_usage = 50
-	circuit = /obj/item/circuitboard/machine/processor
-	var/broken = FALSE
-	var/processing = FALSE
 	var/rating_speed = 1
 	var/rating_amount = 1
 
+/obj/machinery/processor/New()
+	..()
+	var/obj/item/weapon/circuitboard/machine/B = new /obj/item/weapon/circuitboard/machine/processor(null)
+	B.apply_default_parts(src)
+
+/obj/item/weapon/circuitboard/machine/processor
+	name = "Food Processor (Machine Board)"
+	build_path = /obj/machinery/processor
+	origin_tech = "programming=1"
+	req_components = list(
+							/obj/item/weapon/stock_parts/matter_bin = 1,
+							/obj/item/weapon/stock_parts/manipulator = 1)
+
+/obj/item/weapon/circuitboard/machine/processor
+	name = "Food Processor (Machine Board)"
+	build_path = /obj/machinery/processor
+
+/obj/item/weapon/circuitboard/machine/processor/attackby(obj/item/I, mob/user, params)
+	if(istype(I, /obj/item/weapon/screwdriver))
+		if(build_path == /obj/machinery/processor)
+			name = "Slime Processor (Machine Board)"
+			build_path = /obj/machinery/processor/slime
+			to_chat(user, "<span class='notice'>Name protocols successfully updated.</span>")
+		else
+			name = "Food Processor (Machine Board)"
+			build_path = /obj/machinery/processor
+			to_chat(user, "<span class='notice'>Defaulting name protocols.</span>")
+	else
+		return ..()
+
 /obj/machinery/processor/RefreshParts()
-	for(var/obj/item/stock_parts/matter_bin/B in component_parts)
+	for(var/obj/item/weapon/stock_parts/matter_bin/B in component_parts)
 		rating_amount = B.rating
-	for(var/obj/item/stock_parts/manipulator/M in component_parts)
+	for(var/obj/item/weapon/stock_parts/manipulator/M in component_parts)
 		rating_speed = M.rating
 
 /obj/machinery/processor/process()
@@ -58,44 +87,44 @@
 
 	/* objs */
 /datum/food_processor_process/meat
-	input = /obj/item/reagent_containers/food/snacks/meat/slab
-	output = /obj/item/reagent_containers/food/snacks/faggot
+	input = /obj/item/weapon/reagent_containers/food/snacks/meat/slab
+	output = /obj/item/weapon/reagent_containers/food/snacks/faggot
 
 /datum/food_processor_process/bacon
-	input = /obj/item/reagent_containers/food/snacks/meat/rawcutlet
-	output = /obj/item/reagent_containers/food/snacks/meat/rawbacon
+	input = /obj/item/weapon/reagent_containers/food/snacks/meat/rawcutlet
+	output = /obj/item/weapon/reagent_containers/food/snacks/meat/rawbacon
 
 /datum/food_processor_process/potatowedges
-	input = /obj/item/reagent_containers/food/snacks/grown/potato/wedges
-	output = /obj/item/reagent_containers/food/snacks/fries
+	input = /obj/item/weapon/reagent_containers/food/snacks/grown/potato/wedges
+	output = /obj/item/weapon/reagent_containers/food/snacks/fries
 
 /datum/food_processor_process/sweetpotato
-	input = /obj/item/reagent_containers/food/snacks/grown/potato/sweet
-	output = /obj/item/reagent_containers/food/snacks/yakiimo
+	input = /obj/item/weapon/reagent_containers/food/snacks/grown/potato/sweet
+	output = /obj/item/weapon/reagent_containers/food/snacks/yakiimo
 
 /datum/food_processor_process/potato
-	input = /obj/item/reagent_containers/food/snacks/grown/potato
-	output = /obj/item/reagent_containers/food/snacks/tatortot
+	input = /obj/item/weapon/reagent_containers/food/snacks/grown/potato
+	output = /obj/item/weapon/reagent_containers/food/snacks/tatortot
 
 /datum/food_processor_process/carrot
-	input = /obj/item/reagent_containers/food/snacks/grown/carrot
-	output = /obj/item/reagent_containers/food/snacks/carrotfries
+	input = /obj/item/weapon/reagent_containers/food/snacks/grown/carrot
+	output = /obj/item/weapon/reagent_containers/food/snacks/carrotfries
 
 /datum/food_processor_process/soybeans
-	input = /obj/item/reagent_containers/food/snacks/grown/soybeans
-	output = /obj/item/reagent_containers/food/snacks/soydope
+	input = /obj/item/weapon/reagent_containers/food/snacks/grown/soybeans
+	output = /obj/item/weapon/reagent_containers/food/snacks/soydope
 
 /datum/food_processor_process/spaghetti
-	input = /obj/item/reagent_containers/food/snacks/doughslice
-	output = /obj/item/reagent_containers/food/snacks/spaghetti
+	input = /obj/item/weapon/reagent_containers/food/snacks/doughslice
+	output = /obj/item/weapon/reagent_containers/food/snacks/spaghetti
 
 /datum/food_processor_process/corn
-	input = /obj/item/reagent_containers/food/snacks/grown/corn
-	output = /obj/item/reagent_containers/food/snacks/tortilla
+	input = /obj/item/weapon/reagent_containers/food/snacks/grown/corn
+	output = /obj/item/weapon/reagent_containers/food/snacks/tortilla
 
 /datum/food_processor_process/parsnip
-	input = /obj/item/reagent_containers/food/snacks/grown/parsnip
-	output = /obj/item/reagent_containers/food/snacks/roastparsnip
+	input = /obj/item/weapon/reagent_containers/food/snacks/grown/parsnip
+	output = /obj/item/weapon/reagent_containers/food/snacks/roastparsnip
 
 /* mobs */
 /datum/food_processor_process/mob/process_food(loc, what, processor)
@@ -125,7 +154,7 @@
 				"<span class='notice'>You jump out from the processor!</span>", \
 				"<span class='italics'>You hear chimpering.</span>")
 		return
-	var/obj/bucket = new /obj/item/reagent_containers/glass/bucket(loc)
+	var/obj/bucket = new /obj/item/weapon/reagent_containers/glass/bucket(loc)
 
 	var/datum/reagent/blood/B = new()
 	B.holder = bucket
@@ -135,7 +164,7 @@
 
 	for(var/thing in O.viruses)
 		var/datum/disease/D = thing
-		if(!(D.spread_flags & VIRUS_SPREAD_SPECIAL))
+		if(!(D.spread_flags & SPECIAL))
 			B.data["viruses"] += D.Copy()
 	if(O.has_dna())
 		B.data["blood_DNA"] = O.dna.unique_enzymes
@@ -178,10 +207,10 @@
 	if(default_deconstruction_crowbar(O))
 		return
 
-	if(istype(O, /obj/item/storage/bag/tray))
-		var/obj/item/storage/T = O
+	if(istype(O, /obj/item/weapon/storage/bag/tray))
+		var/obj/item/weapon/storage/T = O
 		var/loaded = 0
-		for(var/obj/item/reagent_containers/food/snacks/S in T.contents)
+		for(var/obj/item/weapon/reagent_containers/food/snacks/S in T.contents)
 			var/datum/food_processor_process/P = select_recipe(S)
 			if(P)
 				T.remove_from_storage(S, src)
@@ -195,7 +224,8 @@
 	if(P)
 		user.visible_message("[user] put [O] into [src].", \
 			"You put [O] into [src].")
-		user.transferItemToLoc(O, src, TRUE)
+		user.drop_item()
+		O.loc = src
 		return 1
 	else
 		if(user.a_intent != INTENT_HARM)
@@ -270,7 +300,11 @@
 	name = "Slime processor"
 	desc = "An industrial grinder with a sticker saying appropriated for science department. Keep hands clear of intake area while operating."
 
-/obj/machinery/processor/slime/Initialize()
-	. = ..()
-	var/obj/item/circuitboard/machine/B = new /obj/item/circuitboard/machine/processor/slime(null)
+/obj/machinery/processor/slime/New()
+	..()
+	var/obj/item/weapon/circuitboard/machine/B = new /obj/item/weapon/circuitboard/machine/processor/slime(null)
 	B.apply_default_parts(src)
+
+/obj/item/weapon/circuitboard/machine/processor/slime
+	name = "Slime Processor (Machine Board)"
+	build_path = /obj/machinery/processor/slime

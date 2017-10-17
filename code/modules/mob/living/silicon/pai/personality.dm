@@ -17,12 +17,12 @@
 	var/savefile/F = new /savefile(src.savefile_path(user))
 
 
-	WRITE_FILE(F["name"], name)
-	WRITE_FILE(F["description"], description)
-	WRITE_FILE(F["role"], role)
-	WRITE_FILE(F["comments"], comments)
+	F["name"] << src.name
+	F["description"] << src.description
+	F["role"] << src.role
+	F["comments"] << src.comments
 
-	WRITE_FILE(F["version"], 1)
+	F["version"] << 1
 
 	return 1
 
@@ -42,8 +42,7 @@
 
 	var/savefile/F = new /savefile(path)
 
-	if(!F)
-		return //Not everyone has a pai savefile.
+	if(!F) return //Not everyone has a pai savefile.
 
 	var/version = null
 	F["version"] >> version

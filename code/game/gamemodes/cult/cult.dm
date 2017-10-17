@@ -21,8 +21,6 @@
 			return FALSE
 		if(M.mind.enslaved_to && !iscultist(M.mind.enslaved_to))
 			return FALSE
-		if(M.mind.unconvertable)
-			return FALSE
 	else
 		return FALSE
 	if(M.isloyal() || issilicon(M) || isbot(M) || isdrone(M) || is_servant_of_ratvar(M))
@@ -33,7 +31,6 @@
 	name = "cult"
 	config_tag = "cult"
 	antag_flag = ROLE_CULTIST
-	false_report_weight = 10
 	restricted_jobs = list("Chaplain","AI", "Cyborg", "Security Officer", "Warden", "Detective", "Head of Security", "Captain", "Head of Personnel")
 	protected_jobs = list()
 	required_players = 24
@@ -57,10 +54,10 @@
 /datum/game_mode/cult/pre_setup()
 	cult_objectives += "sacrifice"
 
-	if(CONFIG_GET(flag/protect_roles_from_antagonist))
+	if(config.protect_roles_from_antagonist)
 		restricted_jobs += protected_jobs
 
-	if(CONFIG_GET(flag/protect_assistant_from_antagonist))
+	if(config.protect_assistant_from_antagonist)
 		restricted_jobs += "Assistant"
 
 	//cult scaling goes here
@@ -81,6 +78,7 @@
 
 
 /datum/game_mode/cult/post_setup()
+	modePlayer += cultists_to_cult
 	if("sacrifice" in cult_objectives)
 		var/list/possible_targets = get_unconvertables()
 		if(!possible_targets.len)
@@ -106,7 +104,7 @@
 	if(!GLOB.summon_spots.len)
 		while(GLOB.summon_spots.len < SUMMON_POSSIBILITIES)
 			var/area/summon = pick(GLOB.sortedAreas - GLOB.summon_spots)
-			if((summon.z in GLOB.station_z_levels) && summon.valid_territory)
+			if((summon.z == ZLEVEL_STATION) && summon.valid_territory)
 				GLOB.summon_spots += summon
 	cult_objectives += "eldergod"
 
@@ -127,9 +125,9 @@
 			mob.dna.remove_mutation(CLOWNMUT)
 
 	if(tome)
-		. += cult_give_item(/obj/item/tome, mob)
+		. += cult_give_item(/obj/item/weapon/tome, mob)
 	else
-		. += cult_give_item(/obj/item/paper/talisman/supply, mob)
+		. += cult_give_item(/obj/item/weapon/paper/talisman/supply, mob)
 	to_chat(mob, "These will help you start the cult on this station. Use them well, and remember - you are not the only one.</span>")
 
 /datum/game_mode/proc/cult_give_item(obj/item/item_path, mob/living/carbon/human/mob)
@@ -146,9 +144,9 @@
 		to_chat(mob, "<span class='userdanger'>Unfortunately, you weren't able to get a [item_name]. This is very bad and you should adminhelp immediately (press F1).</span>")
 		return 0
 	else
-		to_chat(mob, "<span class='danger'>You have a [item_name] in your [where].</span>")
+		to_chat(mob, "<span class='danger'>You have a [item_name] in your [where].")
 		if(where == "backpack")
-			var/obj/item/storage/B = mob.back
+			var/obj/item/weapon/storage/B = mob.back
 			B.orient2hud(mob)
 			B.show_to(mob)
 		return 1
@@ -205,7 +203,7 @@
 	var/acolytes_survived = 0
 	for(var/datum/mind/cult_mind in cult)
 		if (cult_mind.current && cult_mind.current.stat != DEAD)
-			if(cult_mind.current.onCentCom() || cult_mind.current.onSyndieBase())
+			if(cult_mind.current.onCentcom() || cult_mind.current.onSyndieBase())
 				acolytes_survived++
 	if(acolytes_survived>=acolytes_needed)
 		return 0
@@ -260,12 +258,6 @@
 	..()
 	return 1
 
-/datum/game_mode/cult/generate_report()
-	return "Some stations in your sector have reported evidence of blood sacrifice and strange magic. Ties to the Wizards' Federation have been proven not to exist, and many employees \
-			have disappeared; even Central Command employees light-years away have felt strange presences and at times hysterical compulsions. Interrogations point towards this being the work of \
-			the cult of Nar-Sie. If evidence of this cult is discovered aboard your station, extreme caution and extreme vigilance must be taken going forward, and all resources should be \
-			devoted to stopping this cult. Note that holy water seems to weaken and eventually return the minds of cultists that ingest it, and mindshield implants will prevent conversion \
-			altogether."
 
 /datum/game_mode/proc/datum_cult_completion()
 	var/text = ""

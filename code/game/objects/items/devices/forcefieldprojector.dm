@@ -4,10 +4,8 @@
 	icon_state = "signmaker_engi"
 	slot_flags = SLOT_BELT
 	w_class = WEIGHT_CLASS_SMALL
-	flags_1 = NOBLUDGEON_1
+	flags = NOBLUDGEON
 	item_state = "electronic"
-	lefthand_file = 'icons/mob/inhands/misc/devices_lefthand.dmi'
-	righthand_file = 'icons/mob/inhands/misc/devices_righthand.dmi'
 	materials = list(MAT_METAL=250, MAT_GLASS=500)
 	origin_tech = "magnets=5;engineering=5;powerstorage=4"
 	var/max_shield_integrity = 250
@@ -77,7 +75,7 @@
 	layer = ABOVE_ALL_MOB_LAYER
 	anchored = TRUE
 	density = TRUE
-	mouse_opacity = MOUSE_OPACITY_OPAQUE
+	mouse_opacity = 2
 	resistance_flags = INDESTRUCTIBLE
 	CanAtmosPass = ATMOS_PASS_DENSITY
 	armor = list(melee = 0, bullet = 25, laser = 50, energy = 50, bomb = 25, bio = 100, rad = 100, fire = 100, acid = 100)

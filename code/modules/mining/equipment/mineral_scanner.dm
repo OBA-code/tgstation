@@ -4,10 +4,8 @@
 	name = "manual mining scanner"
 	icon_state = "mining1"
 	item_state = "analyzer"
-	lefthand_file = 'icons/mob/inhands/equipment/tools_lefthand.dmi'
-	righthand_file = 'icons/mob/inhands/equipment/tools_righthand.dmi'
 	w_class = WEIGHT_CLASS_SMALL
-	flags_1 = CONDUCT_1
+	flags = CONDUCT
 	slot_flags = SLOT_BELT
 	var/cooldown = 35
 	var/current_cooldown = 0
@@ -34,10 +32,8 @@
 	name = "advanced automatic mining scanner"
 	icon_state = "mining0"
 	item_state = "analyzer"
-	lefthand_file = 'icons/mob/inhands/equipment/tools_lefthand.dmi'
-	righthand_file = 'icons/mob/inhands/equipment/tools_righthand.dmi'
 	w_class = WEIGHT_CLASS_SMALL
-	flags_1 = CONDUCT_1
+	flags = CONDUCT
 	slot_flags = SLOT_BELT
 	var/cooldown = 35
 	var/current_cooldown = 0

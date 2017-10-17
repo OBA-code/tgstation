@@ -38,12 +38,15 @@
 			return FALSE
 	return ..()
 
-/obj/effect/portal/attackby(obj/item/W, mob/user, params)
+/obj/effect/portal/attackby(obj/item/weapon/W, mob/user, params)
 	if(user && Adjacent(user))
-		user.forceMove(get_turf(src))
+		teleport(user)
+
+/obj/effect/portal/make_frozen_visual()
+	return
 
 /obj/effect/portal/Crossed(atom/movable/AM, oldloc)
-	if(linked && (get_turf(oldloc) == get_turf(linked)))
+	if(get_turf(oldloc) == get_turf(linked))
 		return ..()
 	if(!teleport(AM))
 		return ..()
@@ -53,7 +56,7 @@
 
 /obj/effect/portal/attack_hand(mob/user)
 	if(Adjacent(user))
-		user.forceMove(get_turf(src))
+		teleport(user)
 
 /obj/effect/portal/Initialize(mapload, _creator, _lifespan = 0, obj/effect/portal/_linked, automatic_link = FALSE, turf/hard_target_override, atmos_link_override)
 	. = ..()
@@ -125,7 +128,7 @@
 	return ..()
 
 /obj/effect/portal/proc/teleport(atom/movable/M)
-	if(!istype(M) || istype(M, /obj/effect) || (ismecha(M) && !mech_sized) || (!isobj(M) && !ismob(M))) //Things that shouldn't teleport.
+	if(!istype(M) || istype(M, /obj/effect) || (istype(M, /obj/mecha) && !mech_sized) || (!isobj(M) && !ismob(M))) //Things that shouldn't teleport.
 		return
 	var/turf/real_target = get_link_target_turf()
 	if(!istype(real_target))

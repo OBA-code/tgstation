@@ -12,7 +12,7 @@
 	name = "lungs"
 	icon_state = "lungs"
 	zone = "chest"
-	slot = ORGAN_SLOT_LUNGS
+	slot = "lungs"
 	gender = PLURAL
 	w_class = WEIGHT_CLASS_NORMAL
 
@@ -95,13 +95,13 @@
 
 	var/list/breath_gases = breath.gases
 
-	breath.assert_gases(/datum/gas/oxygen, /datum/gas/plasma, /datum/gas/carbon_dioxide, /datum/gas/nitrous_oxide, /datum/gas/bz, /datum/gas/nitrogen)
+	breath.assert_gases("o2", "n2", "plasma", "co2", "n2o", "bz")
 
 	//Partial pressures in our breath
-	var/O2_pp = breath.get_breath_partial_pressure(breath_gases[/datum/gas/oxygen][MOLES])
-	var/N2_pp = breath.get_breath_partial_pressure(breath_gases[/datum/gas/nitrogen][MOLES])
-	var/Toxins_pp = breath.get_breath_partial_pressure(breath_gases[/datum/gas/plasma][MOLES])
-	var/CO2_pp = breath.get_breath_partial_pressure(breath_gases[/datum/gas/carbon_dioxide][MOLES])
+	var/O2_pp = breath.get_breath_partial_pressure(breath_gases["o2"][MOLES])
+	var/N2_pp = breath.get_breath_partial_pressure(breath_gases["n2"][MOLES])
+	var/Toxins_pp = breath.get_breath_partial_pressure(breath_gases["plasma"][MOLES])
+	var/CO2_pp = breath.get_breath_partial_pressure(breath_gases["co2"][MOLES])
 
 
 	//-- OXY --//
@@ -109,7 +109,7 @@
 	//Too much oxygen! //Yes, some species may not like it.
 	if(safe_oxygen_max)
 		if(O2_pp > safe_oxygen_max)
-			var/ratio = (breath_gases[/datum/gas/oxygen][MOLES]/safe_oxygen_max) * 10
+			var/ratio = (breath_gases["o2"][MOLES]/safe_oxygen_max) * 10
 			H.apply_damage_type(Clamp(ratio, oxy_breath_dam_min, oxy_breath_dam_max), oxy_damage_type)
 			H.throw_alert("too_much_oxy", /obj/screen/alert/too_much_oxy)
 		else
@@ -118,18 +118,17 @@
 	//Too little oxygen!
 	if(safe_oxygen_min)
 		if(O2_pp < safe_oxygen_min)
-			gas_breathed = handle_too_little_breath(H, O2_pp, safe_oxygen_min, breath_gases[/datum/gas/oxygen][MOLES])
+			gas_breathed = handle_too_little_breath(H, O2_pp, safe_oxygen_min, breath_gases["o2"][MOLES])
 			H.throw_alert("not_enough_oxy", /obj/screen/alert/not_enough_oxy)
 		else
 			H.failed_last_breath = FALSE
-			if(H.health >= HEALTH_THRESHOLD_CRIT)
-				H.adjustOxyLoss(-5)
-			gas_breathed = breath_gases[/datum/gas/oxygen][MOLES]
+			H.adjustOxyLoss(-5)
+			gas_breathed = breath_gases["o2"][MOLES]
 			H.clear_alert("not_enough_oxy")
 
 	//Exhale
-	breath_gases[/datum/gas/oxygen][MOLES] -= gas_breathed
-	breath_gases[/datum/gas/carbon_dioxide][MOLES] += gas_breathed
+	breath_gases["o2"][MOLES] -= gas_breathed
+	breath_gases["co2"][MOLES] += gas_breathed
 	gas_breathed = 0
 
 	//-- Nitrogen --//
@@ -137,7 +136,7 @@
 	//Too much nitrogen!
 	if(safe_nitro_max)
 		if(N2_pp > safe_nitro_max)
-			var/ratio = (breath_gases[/datum/gas/nitrogen][MOLES]/safe_nitro_max) * 10
+			var/ratio = (breath_gases["n2"][MOLES]/safe_nitro_max) * 10
 			H.apply_damage_type(Clamp(ratio, nitro_breath_dam_min, nitro_breath_dam_max), nitro_damage_type)
 			H.throw_alert("too_much_nitro", /obj/screen/alert/too_much_nitro)
 		else
@@ -146,18 +145,17 @@
 	//Too little nitrogen!
 	if(safe_nitro_min)
 		if(N2_pp < safe_nitro_min)
-			gas_breathed = handle_too_little_breath(H, N2_pp, safe_nitro_min, breath_gases[/datum/gas/nitrogen][MOLES])
+			gas_breathed = handle_too_little_breath(H, N2_pp, safe_nitro_min, breath_gases["n2"][MOLES])
 			H.throw_alert("nitro", /obj/screen/alert/not_enough_nitro)
 		else
 			H.failed_last_breath = FALSE
-			if(H.health >= HEALTH_THRESHOLD_CRIT)
-				H.adjustOxyLoss(-5)
-			gas_breathed = breath_gases[/datum/gas/nitrogen][MOLES]
+			H.adjustOxyLoss(-5)
+			gas_breathed = breath_gases["n2"][MOLES]
 			H.clear_alert("nitro")
 
 	//Exhale
-	breath_gases[/datum/gas/nitrogen][MOLES] -= gas_breathed
-	breath_gases[/datum/gas/carbon_dioxide][MOLES] += gas_breathed
+	breath_gases["n2"][MOLES] -= gas_breathed
+	breath_gases["co2"][MOLES] += gas_breathed
 	gas_breathed = 0
 
 	//-- CO2 --//
@@ -183,18 +181,17 @@
 	//Too little CO2!
 	if(safe_co2_min)
 		if(CO2_pp < safe_co2_min)
-			gas_breathed = handle_too_little_breath(H, CO2_pp, safe_co2_min, breath_gases[/datum/gas/carbon_dioxide][MOLES])
+			gas_breathed = handle_too_little_breath(H, CO2_pp, safe_co2_min, breath_gases["co2"][MOLES])
 			H.throw_alert("not_enough_co2", /obj/screen/alert/not_enough_co2)
 		else
 			H.failed_last_breath = FALSE
-			if(H.health >= HEALTH_THRESHOLD_CRIT)
-				H.adjustOxyLoss(-5)
-			gas_breathed = breath_gases[/datum/gas/carbon_dioxide][MOLES]
+			H.adjustOxyLoss(-5)
+			gas_breathed = breath_gases["co2"][MOLES]
 			H.clear_alert("not_enough_co2")
 
 	//Exhale
-	breath_gases[/datum/gas/carbon_dioxide][MOLES] -= gas_breathed
-	breath_gases[/datum/gas/oxygen][MOLES] += gas_breathed
+	breath_gases["co2"][MOLES] -= gas_breathed
+	breath_gases["o2"][MOLES] += gas_breathed
 	gas_breathed = 0
 
 
@@ -203,7 +200,7 @@
 	//Too much toxins!
 	if(safe_toxins_max)
 		if(Toxins_pp > safe_toxins_max)
-			var/ratio = (breath_gases[/datum/gas/plasma][MOLES]/safe_toxins_max) * 10
+			var/ratio = (breath_gases["plasma"][MOLES]/safe_toxins_max) * 10
 			H.apply_damage_type(Clamp(ratio, tox_breath_dam_min, tox_breath_dam_max), tox_damage_type)
 			H.throw_alert("too_much_tox", /obj/screen/alert/too_much_tox)
 		else
@@ -213,18 +210,17 @@
 	//Too little toxins!
 	if(safe_toxins_min)
 		if(Toxins_pp < safe_toxins_min)
-			gas_breathed = handle_too_little_breath(H, Toxins_pp, safe_toxins_min, breath_gases[/datum/gas/plasma][MOLES])
+			gas_breathed = handle_too_little_breath(H, Toxins_pp, safe_toxins_min, breath_gases["plasma"][MOLES])
 			H.throw_alert("not_enough_tox", /obj/screen/alert/not_enough_tox)
 		else
 			H.failed_last_breath = FALSE
-			if(H.health >= HEALTH_THRESHOLD_CRIT)
-				H.adjustOxyLoss(-5)
-			gas_breathed = breath_gases[/datum/gas/plasma][MOLES]
+			H.adjustOxyLoss(-5)
+			gas_breathed = breath_gases["plasma"][MOLES]
 			H.clear_alert("not_enough_tox")
 
 	//Exhale
-	breath_gases[/datum/gas/plasma][MOLES] -= gas_breathed
-	breath_gases[/datum/gas/carbon_dioxide][MOLES] += gas_breathed
+	breath_gases["plasma"][MOLES] -= gas_breathed
+	breath_gases["co2"][MOLES] += gas_breathed
 	gas_breathed = 0
 
 
@@ -234,7 +230,7 @@
 
 	// N2O
 
-		var/SA_pp = breath.get_breath_partial_pressure(breath_gases[/datum/gas/nitrous_oxide][MOLES])
+		var/SA_pp = breath.get_breath_partial_pressure(breath_gases["n2o"][MOLES])
 		if(SA_pp > SA_para_min) // Enough to make us stunned for a bit
 			H.Unconscious(60) // 60 gives them one second to wake up and run away a bit!
 			if(SA_pp > SA_sleep_min) // Enough to make us sleep as well
@@ -245,7 +241,7 @@
 
 	// BZ
 
-		var/bz_pp = breath.get_breath_partial_pressure(breath_gases[/datum/gas/bz][MOLES])
+		var/bz_pp = breath.get_breath_partial_pressure(breath_gases["bz"][MOLES])
 		if(bz_pp > BZ_trip_balls_min)
 			H.hallucination += 20
 			if(prob(33))
@@ -319,29 +315,6 @@
 	safe_oxygen_min = 0 //We don't breath this
 	safe_toxins_min = 16 //We breath THIS!
 	safe_toxins_max = 0
-
-/obj/item/organ/lungs/cybernetic
-	name = "cybernetic lungs"
-	desc = "A cybernetic version of the lungs found in traditional humanoid entities. It functions the same as an organic lung and is merely meant as a replacement."
-	icon_state = "lungs-c"
-	origin_tech = "biotech=4"
-
-/obj/item/organ/lungs/cybernetic/emp_act()
-	owner.losebreath = 20
-
-
-/obj/item/organ/lungs/cybernetic/upgraded
-	name = "upgraded cybernetic lungs"
-	desc = "A more advanced version of the stock cybernetic lungs. They are capable of filtering out lower levels of toxins and carbon dioxide."
-	icon_state = "lungs-c-u"
-	origin_tech = "biotech=5"
-
-	safe_toxins_max = 20
-	safe_co2_max = 20
-
-	cold_level_1_threshold = 200
-	cold_level_2_threshold = 140
-	cold_level_3_threshold = 100
 
 #undef HUMAN_MAX_OXYLOSS
 #undef HUMAN_CRIT_MAX_OXYLOSS

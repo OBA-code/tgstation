@@ -1,7 +1,7 @@
 /mob/living/simple_animal/shade
 	name = "Shade"
 	real_name = "Shade"
-	desc = "A bound spirit."
+	desc = "A bound spirit"
 	gender = PLURAL
 	icon = 'icons/mob/mob.dmi'
 	icon_state = "shade"
@@ -27,7 +27,7 @@
 	faction = list("cult")
 	status_flags = CANPUSH
 	movement_type = FLYING
-	loot = list(/obj/item/ectoplasm)
+	loot = list(/obj/item/weapon/ectoplasm)
 	del_on_death = TRUE
 	initial_language_holder = /datum/language_holder/construct
 
@@ -63,4 +63,4 @@
 		var/obj/item/device/soulstone/SS = O
 		SS.transfer_soul("SHADE", src, user)
 	else
-		. = ..()
+		..()

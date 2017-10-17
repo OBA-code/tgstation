@@ -33,7 +33,7 @@ FLOOR SAFES
 
 
 /obj/structure/safe/Initialize(mapload)
-	. = ..()
+	..()
 
 	if(!mapload)
 		return
@@ -53,8 +53,7 @@ FLOOR SAFES
 		if(tumbler_2_pos == tumbler_2_open)
 			to_chat(user, "<span class='italics'>You hear a [pick("tink", "krink", "plink")] from [src].</span>")
 	if(tumbler_1_pos == tumbler_1_open && tumbler_2_pos == tumbler_2_open)
-		if(user)
-			visible_message("<i><b>[pick("Spring", "Sprang", "Sproing", "Clunk", "Krunk")]!</b></i>")
+		if(user) visible_message("<i><b>[pick("Spring", "Sprang", "Sproing", "Clunk", "Krunk")]!</b></i>")
 		return 1
 	return 0
 
@@ -97,10 +96,7 @@ FLOOR SAFES
 	if(!ishuman(usr))
 		return
 	var/mob/living/carbon/human/user = usr
-	
-	if(!user.canUseTopic(src))
-		return
-	
+
 	var/canhear = 0
 	if(user.is_holding_item_of_type(/obj/item/clothing/neck/stethoscope))
 		canhear = 1
@@ -160,9 +156,10 @@ FLOOR SAFES
 		. = 1 //no afterattack
 		if(I.w_class + space <= maxspace)
 			space += I.w_class
-			if(!user.transferItemToLoc(I, src))
+			if(!user.drop_item())
 				to_chat(user, "<span class='warning'>\The [I] is stuck to your hand, you cannot put it in the safe!</span>")
 				return
+			I.forceMove(src)
 			to_chat(user, "<span class='notice'>You put [I] in [src].</span>")
 			updateUsrDialog()
 			return
@@ -195,7 +192,7 @@ FLOOR SAFES
 
 
 /obj/structure/safe/floor/Initialize(mapload)
-	. = ..()
+	..()
 	if(mapload)
 		var/turf/T = loc
 		hide(T.intact)

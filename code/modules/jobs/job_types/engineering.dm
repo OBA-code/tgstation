@@ -14,9 +14,6 @@ Chief Engineer
 	selection_color = "#ffeeaa"
 	req_admin_notify = 1
 	minimal_player_age = 7
-	exp_requirements = 180
-	exp_type = EXP_TYPE_CREW
-	exp_type_department = EXP_TYPE_ENGINEERING
 
 	outfit = /datum/outfit/job/ce
 
@@ -33,8 +30,8 @@ Chief Engineer
 	name = "Chief Engineer"
 	jobtype = /datum/job/chief_engineer
 
-	id = /obj/item/card/id/silver
-	belt = /obj/item/storage/belt/utility/chief/full
+	id = /obj/item/weapon/card/id/silver
+	belt = /obj/item/weapon/storage/belt/utility/chief/full
 	l_pocket = /obj/item/device/pda/heads/ce
 	ears = /obj/item/device/radio/headset/heads/ce
 	uniform = /obj/item/clothing/under/rank/chief_engineer
@@ -42,12 +39,12 @@ Chief Engineer
 	head = /obj/item/clothing/head/hardhat/white
 	gloves = /obj/item/clothing/gloves/color/black/ce
 	accessory = /obj/item/clothing/accessory/pocketprotector/full
-	backpack_contents = list(/obj/item/melee/classic_baton/telescopic=1, /obj/item/device/modular_computer/tablet/preset/advanced=1)
+	backpack_contents = list(/obj/item/weapon/melee/classic_baton/telescopic=1, /obj/item/device/modular_computer/tablet/preset/advanced=1)
 
-	backpack = /obj/item/storage/backpack/industrial
-	satchel = /obj/item/storage/backpack/satchel/eng
-	duffelbag = /obj/item/storage/backpack/duffelbag/engineering
-	box = /obj/item/storage/box/engineer
+	backpack = /obj/item/weapon/storage/backpack/industrial
+	satchel = /obj/item/weapon/storage/backpack/satchel/eng
+	duffelbag = /obj/item/weapon/storage/backpack/duffelbag/engineering
+	box = /obj/item/weapon/storage/box/engineer
 	pda_slot = slot_l_store
 
 /datum/outfit/job/ce/rig
@@ -56,7 +53,7 @@ Chief Engineer
 	mask = /obj/item/clothing/mask/breath
 	suit = /obj/item/clothing/suit/space/hardsuit/engine/elite
 	shoes = /obj/item/clothing/shoes/magboots/advance
-	suit_store = /obj/item/tank/internals/oxygen
+	suit_store = /obj/item/weapon/tank/internals/oxygen
 	gloves = /obj/item/clothing/gloves/color/yellow
 	head = null
 	internals_slot = slot_s_store
@@ -75,8 +72,6 @@ Station Engineer
 	spawn_positions = 5
 	supervisors = "the chief engineer"
 	selection_color = "#fff5cc"
-	exp_requirements = 60
-	exp_type = EXP_TYPE_CREW
 
 	outfit = /datum/outfit/job/engineer
 
@@ -89,7 +84,7 @@ Station Engineer
 	name = "Station Engineer"
 	jobtype = /datum/job/engineer
 
-	belt = /obj/item/storage/belt/utility/full/engi
+	belt = /obj/item/weapon/storage/belt/utility/full/engi
 	l_pocket = /obj/item/device/pda/engineering
 	ears = /obj/item/device/radio/headset/headset_eng
 	uniform = /obj/item/clothing/under/rank/engineer
@@ -98,10 +93,10 @@ Station Engineer
 	r_pocket = /obj/item/device/t_scanner
 	accessory = /obj/item/clothing/accessory/pocketprotector/full
 
-	backpack = /obj/item/storage/backpack/industrial
-	satchel = /obj/item/storage/backpack/satchel/eng
-	duffelbag = /obj/item/storage/backpack/duffelbag/engineering
-	box = /obj/item/storage/box/engineer
+	backpack = /obj/item/weapon/storage/backpack/industrial
+	satchel = /obj/item/weapon/storage/backpack/satchel/eng
+	duffelbag = /obj/item/weapon/storage/backpack/duffelbag/engineering
+	box = /obj/item/weapon/storage/box/engineer
 	pda_slot = slot_l_store
 	backpack_contents = list(/obj/item/device/modular_computer/tablet/preset/advanced=1)
 
@@ -114,7 +109,7 @@ Station Engineer
 
 	mask = /obj/item/clothing/mask/breath
 	suit = /obj/item/clothing/suit/space/hardsuit/engine
-	suit_store = /obj/item/tank/internals/oxygen
+	suit_store = /obj/item/weapon/tank/internals/oxygen
 	head = null
 	internals_slot = slot_s_store
 
@@ -132,8 +127,6 @@ Atmospheric Technician
 	spawn_positions = 2
 	supervisors = "the chief engineer"
 	selection_color = "#fff5cc"
-	exp_requirements = 60
-	exp_type = EXP_TYPE_CREW
 
 	outfit = /datum/outfit/job/atmos
 
@@ -145,17 +138,17 @@ Atmospheric Technician
 	name = "Atmospheric Technician"
 	jobtype = /datum/job/atmos
 
-	belt = /obj/item/storage/belt/utility/atmostech
+	belt = /obj/item/weapon/storage/belt/utility/atmostech
 	l_pocket = /obj/item/device/pda/atmos
 	ears = /obj/item/device/radio/headset/headset_eng
 	uniform = /obj/item/clothing/under/rank/atmospheric_technician
 	r_pocket = /obj/item/device/analyzer
 	accessory = /obj/item/clothing/accessory/pocketprotector/full
 
-	backpack = /obj/item/storage/backpack/industrial
-	satchel = /obj/item/storage/backpack/satchel/eng
-	duffelbag = /obj/item/storage/backpack/duffelbag/engineering
-	box = /obj/item/storage/box/engineer
+	backpack = /obj/item/weapon/storage/backpack/industrial
+	satchel = /obj/item/weapon/storage/backpack/satchel/eng
+	duffelbag = /obj/item/weapon/storage/backpack/duffelbag/engineering
+	box = /obj/item/weapon/storage/box/engineer
 	pda_slot = slot_l_store
 	backpack_contents = list(/obj/item/device/modular_computer/tablet/preset/advanced=1)
 
@@ -164,5 +157,5 @@ Atmospheric Technician
 
 	mask = /obj/item/clothing/mask/gas
 	suit = /obj/item/clothing/suit/space/hardsuit/engine/atmos
-	suit_store = /obj/item/tank/internals/oxygen
+	suit_store = /obj/item/weapon/tank/internals/oxygen
 	internals_slot = slot_s_store

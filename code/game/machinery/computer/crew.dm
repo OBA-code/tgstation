@@ -6,7 +6,7 @@
 	use_power = IDLE_POWER_USE
 	idle_power_usage = 250
 	active_power_usage = 500
-	circuit = /obj/item/circuitboard/computer/crew
+	circuit = /obj/item/weapon/circuitboard/computer/crew
 
 	light_color = LIGHT_COLOR_BLUE
 
@@ -66,7 +66,7 @@ GLOBAL_DATUM_INIT(crewmonitor, /datum/crewmonitor, new)
 	jobs["Janitor"] = 68
 	jobs["Lawyer"] = 69
 	jobs["Admiral"] = 200
-	jobs["CentCom Commander"] = 210
+	jobs["Centcom Commander"] = 210
 	jobs["Custodian"] = 211
 	jobs["Medical Officer"] = 212
 	jobs["Research Officer"] = 213
@@ -93,8 +93,7 @@ GLOBAL_DATUM_INIT(crewmonitor, /datum/crewmonitor, new)
 /datum/crewmonitor/proc/show(mob/mob, z)
 	if (mob.client)
 		sendResources(mob.client)
-	if (!z)
-		z = mob.z
+	if (!z) z = mob.z
 
 	if (z > 0 && src.interfaces)
 		var/datum/html_interface/hi
@@ -136,7 +135,7 @@ GLOBAL_DATUM_INIT(crewmonitor, /datum/crewmonitor, new)
 		if (ignore_unused || hi.isUsed())
 			var/list/results = list()
 			var/obj/item/clothing/under/U
-			var/obj/item/card/id/I
+			var/obj/item/weapon/card/id/I
 			var/turf/pos
 			var/ijob
 			var/name
@@ -161,8 +160,7 @@ GLOBAL_DATUM_INIT(crewmonitor, /datum/crewmonitor, new)
 						pos = H.z == 0 || U.sensor_mode == SENSOR_COORDS ? get_turf(H) : null
 
 						// Special case: If the mob is inside an object confirm the z-level on turf level.
-						if (H.z == 0 && (!pos || pos.z != z))
-							continue
+						if (H.z == 0 && (!pos || pos.z != z)) continue
 
 						I = H.wear_id ? H.wear_id.GetID() : null
 
@@ -175,10 +173,8 @@ GLOBAL_DATUM_INIT(crewmonitor, /datum/crewmonitor, new)
 							assignment = ""
 							ijob = 80
 
-						if (U.sensor_mode >= SENSOR_LIVING)
-							life_status = (!H.stat ? "true" : "false")
-						else
-							life_status = null
+						if (U.sensor_mode >= SENSOR_LIVING) life_status = (!H.stat ? "true" : "false")
+						else                    life_status = null
 
 						if (U.sensor_mode >= SENSOR_VITALS)
 							dam1 = round(H.getOxyLoss(),1)
@@ -192,8 +188,7 @@ GLOBAL_DATUM_INIT(crewmonitor, /datum/crewmonitor, new)
 							dam4 = null
 
 						if (U.sensor_mode >= SENSOR_COORDS)
-							if (!pos)
-								pos = get_turf(H)
+							if (!pos) pos = get_turf(H)
 							var/area/player_area = get_area(H)
 
 							area = format_text(player_area.name)
@@ -213,15 +208,13 @@ GLOBAL_DATUM_INIT(crewmonitor, /datum/crewmonitor, new)
 	var/z = ""
 
 	for (z in src.interfaces)
-		if (src.interfaces[z] == hi)
-			break
+		if (src.interfaces[z] == hi) break
 
 	if(hclient.client.mob && IsAdminGhost(hclient.client.mob))
 		return TRUE
 
 	if (hclient.client.mob && hclient.client.mob.stat == 0 && hclient.client.mob.z == text2num(z))
-		if (isAI(hclient.client.mob))
-			return TRUE
+		if (isAI(hclient.client.mob)) return TRUE
 		else if (iscyborg(hclient.client.mob))
 			return (locate(/obj/machinery/computer/crew, range(world.view, hclient.client.mob))) || (locate(/obj/item/device/sensor_device, hclient.client.mob.contents))
 		else
@@ -245,10 +238,8 @@ GLOBAL_DATUM_INIT(crewmonitor, /datum/crewmonitor, new)
 
 					var/obj/machinery/camera/C = locate(/obj/machinery/camera) in range(5, tile)
 
-					if (!C)
-						C = locate(/obj/machinery/camera) in urange(10, tile)
-					if (!C)
-						C = locate(/obj/machinery/camera) in urange(15, tile)
+					if (!C) C = locate(/obj/machinery/camera) in urange(10, tile)
+					if (!C) C = locate(/obj/machinery/camera) in urange(15, tile)
 
 					if (C)
 						addtimer(CALLBACK(src, .proc/update_ai, AI, C, AI.eyeobj.loc), min(30, get_dist(get_turf(C), AI.eyeobj) / 4))
@@ -263,8 +254,7 @@ GLOBAL_DATUM_INIT(crewmonitor, /datum/crewmonitor, new)
 
 		. = ..()
 
-		if (old_z != src.z)
-			GLOB.crewmonitor.queueUpdate(old_z)
+		if (old_z != src.z) GLOB.crewmonitor.queueUpdate(old_z)
 		GLOB.crewmonitor.queueUpdate(src.z)
 	else
 		return ..()

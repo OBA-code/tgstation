@@ -219,8 +219,6 @@
 			var/obj/item/I = X
 			owner.dropItemToGround(I, TRUE)
 
-	owner.wash_cream() //clean creampie overlay
-
 	//Handle dental implants
 	for(var/datum/action/item_action/hands_free/activate_pill/AP in owner.actions)
 		AP.Remove(owner)
@@ -318,7 +316,7 @@
 	name = initial(name)
 
 	//Handle dental implants
-	for(var/obj/item/reagent_containers/pill/P in src)
+	for(var/obj/item/weapon/reagent_containers/pill/P in src)
 		for(var/datum/action/item_action/hands_free/activate_pill/AP in P.actions)
 			P.forceMove(C)
 			AP.Grant(C)

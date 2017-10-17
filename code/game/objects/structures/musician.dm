@@ -1,5 +1,4 @@
 
-#define MUSICIAN_HEARCHECK_MINDELAY 4
 #define MUSIC_MAXLINES 300
 #define MUSIC_MAXLINECHARS 50
 
@@ -17,8 +16,6 @@
 	var/instrumentDir = "piano"		// the folder with the sounds
 	var/instrumentExt = "ogg"		// the file extension
 	var/obj/instrumentObj = null	// the associated obj playing the sound
-	var/last_hearcheck = 0
-	var/list/hearing_mobs
 
 /datum/song/New(dir, obj, ext = "ogg")
 	tempo = sanitize_tempo(tempo)
@@ -64,18 +61,10 @@
 		return
 	// and play
 	var/turf/source = get_turf(instrumentObj)
-	if((world.time - MUSICIAN_HEARCHECK_MINDELAY) > last_hearcheck)
-		LAZYCLEARLIST(hearing_mobs)
-		for(var/mob/M in get_hearers_in_view(15, source))
-			if(!M.client || !(M.client.prefs.toggles & SOUND_INSTRUMENTS))
-				continue
-			LAZYADD(hearing_mobs, M)
-		last_hearcheck = world.time
-
-	var/sound/music_played = sound(soundfile)
-	for(var/i in hearing_mobs)
-		var/mob/M = i
-		M.playsound_local(source, null, 100, falloff = 5, S = music_played)
+	for(var/mob/M in get_hearers_in_view(15, source))
+		if(!M.client || !(M.client.prefs.toggles & SOUND_INSTRUMENTS))
+			continue
+		M.playsound_local(source, soundfile, 100, falloff = 5)
 
 /datum/song/proc/updateDialog(mob/user)
 	instrumentObj.updateDialog()		// assumes it's an object in world, override if otherwise
@@ -97,15 +86,18 @@
 			cur_acc[i] = "n"
 
 		for(var/line in lines)
+			//to_chat(world, line)
 			for(var/beat in splittext(lowertext(line), ","))
+				//to_chat(world, "beat: [beat]")
 				var/list/notes = splittext(beat, "/")
 				for(var/note in splittext(notes[1], "-"))
+					//to_chat(world, "note: [note]")
 					if(!playing || shouldStopPlaying(user))//If the instrument is playing, or special case
 						playing = FALSE
-						hearing_mobs = null
 						return
 					if(!lentext(note))
 						continue
+					//to_chat(world, "Parse: [copytext(note,1,2)]")
 					var/cur_note = text2ascii(note) - 96
 					if(cur_note < 1 || cur_note > 7)
 						continue
@@ -133,7 +125,6 @@
 				else
 					sleep(tempo)
 		repeat--
-	hearing_mobs = null
 	playing = FALSE
 	repeat = 0
 	updateDialog(user)
@@ -170,7 +161,7 @@
 		if(help)
 			dat += "<B><A href='?src=\ref[src];help=1'>Hide Help</A></B><BR>"
 			dat += {"
-					Lines are a series of chords, separated by commas (,), each with notes separated by hyphens (-).<br>
+					Lines are a series of chords, separated by commas (,), each with notes seperated by hyphens (-).<br>
 					Every note in a chord will play together, with chord timed by the tempo.<br>
 					<br>
 					Notes are played by the names of the note, and optionally, the accidental, and/or the octave number.<br>
@@ -295,7 +286,6 @@
 
 	else if(href_list["stop"])
 		playing = FALSE
-		hearing_mobs = null
 
 	updateDialog(usr)
 	return
@@ -348,7 +338,7 @@
 	return ..()
 
 /obj/structure/piano/Initialize(mapload)
-	. = ..()
+	..()
 	if(mapload)
 		song.tempo = song.sanitize_tempo(song.tempo) // tick_lag isn't set when the map is loaded
 
@@ -369,7 +359,7 @@
 	song.interact(user)
 
 /obj/structure/piano/attackby(obj/item/O, mob/user, params)
-	if (istype(O, /obj/item/wrench))
+	if (istype(O, /obj/item/weapon/wrench))
 		if (!anchored && !isinspace())
 			playsound(src, O.usesound, 50, 1)
 			to_chat(user, "<span class='notice'> You begin to tighten \the [src] to the floor...</span>")

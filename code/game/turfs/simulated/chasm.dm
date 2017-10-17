@@ -11,7 +11,6 @@
 	canSmoothWith = list(/turf/open/floor/fakepit, /turf/open/chasm)
 	density = TRUE //This will prevent hostile mobs from pathing into chasms, while the canpass override will still let it function like an open turf
 	var/static/list/falling_atoms = list() //Atoms currently falling into the chasm
-	var/static/list/forbidden_types = typecacheof(list(/obj/effect/portal, /obj/singularity, /obj/structure/stone_tile, /obj/item/projectile, /obj/effect/abstract, /obj/effect/temp_visual))
 	var/drop_x = 1
 	var/drop_y = 1
 	var/drop_z = 1
@@ -23,7 +22,6 @@
 	return
 
 /turf/open/chasm/Entered(atom/movable/AM)
-	..()
 	START_PROCESSING(SSobj, src)
 	drop_stuff(AM)
 
@@ -89,7 +87,12 @@
 		return FALSE
 	if(!isliving(AM) && !isobj(AM))
 		return FALSE
-	if(is_type_in_typecache(AM, forbidden_types) || AM.throwing)
+	if(istype(AM, /obj/singularity) || istype(AM, /obj/item/projectile) || AM.throwing)
+		return FALSE
+	if(istype(AM, /obj/effect/portal))
+		//Portals aren't affected by gravity. Probably.
+		return FALSE
+	if(istype(AM, /obj/structure/stone_tile))
 		return FALSE
 	//Flies right over the chasm
 	if(isliving(AM))
@@ -105,7 +108,6 @@
 			J.chasm_react(H)
 			return FALSE
 	return TRUE
-
 
 /turf/open/chasm/proc/drop(atom/movable/AM)
 	//Make sure the item is still there after our sleep
@@ -125,13 +127,11 @@
 
 
 /turf/open/chasm/straight_down/Initialize()
-	. = ..()
+	..()
 	drop_x = x
 	drop_y = y
-	drop_z = z - 1
-	var/turf/T = locate(drop_x, drop_y, drop_z)
-	T.visible_message("<span class='boldwarning'>The ceiling gives way!</span>")
-	playsound(T, 'sound/effects/break_stone.ogg', 50, 1)
+	if(z+1 <= world.maxz)
+		drop_z = z+1
 
 
 /turf/open/chasm/straight_down/lava_land_surface

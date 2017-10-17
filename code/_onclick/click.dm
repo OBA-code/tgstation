@@ -32,7 +32,6 @@
 */
 /atom/Click(location,control,params)
 	if(initialized)
-		SendSignal(COMSIG_CLICK, location, control, params)
 		usr.ClickOn(src, params)
 
 /atom/DblClick(location,control,params)
@@ -96,7 +95,7 @@
 	if(!modifiers["catcher"] && A.IsObscured())
 		return
 
-	if(ismecha(loc))
+	if(istype(loc, /obj/mecha))
 		var/obj/mecha/M = loc
 		return M.click_action(A,src,params)
 
@@ -145,7 +144,7 @@
 		else
 			RangedAttack(A,params)
 
-//Is the atom obscured by a PREVENT_CLICK_UNDER_1 object above it
+//Is the atom obscured by a PREVENT_CLICK_UNDER object above it
 /atom/proc/IsObscured()
 	if(!isturf(loc)) //This only makes sense for things directly on turfs for now
 		return FALSE
@@ -153,13 +152,13 @@
 	if(!T)
 		return FALSE
 	for(var/atom/movable/AM in T)
-		if(AM.flags_1 & PREVENT_CLICK_UNDER_1 && AM.density && AM.layer > layer)
+		if(AM.flags & PREVENT_CLICK_UNDER && AM.density && AM.layer > layer)
 			return TRUE
 	return FALSE
 
 /turf/IsObscured()
 	for(var/atom/movable/AM in src)
-		if(AM.flags_1 & PREVENT_CLICK_UNDER_1 && AM.density)
+		if(AM.flags & PREVENT_CLICK_UNDER && AM.density)
 			return TRUE
 	return FALSE
 
@@ -181,7 +180,7 @@
 /atom/proc/CanReachStorage(atom/target,user,depth)
 	return FALSE
 
-/obj/item/storage/CanReachStorage(atom/target,user,depth)
+/obj/item/weapon/storage/CanReachStorage(atom/target,user,depth)
 	while(target && depth > 0)
 		target = target.loc
 		depth--
@@ -306,7 +305,6 @@
 	A.ShiftClick(src)
 	return
 /atom/proc/ShiftClick(mob/user)
-	SendSignal(COMSIG_CLICK_SHIFT, user)
 	if(user.client && user.client.eye == user || user.client.eye == user.loc)
 		user.examinate(src)
 	return
@@ -321,13 +319,12 @@
 	return
 
 /atom/proc/CtrlClick(mob/user)
-	SendSignal(COMSIG_CLICK_CTRL, user)
 	var/mob/living/ML = user
 	if(istype(ML))
 		ML.pulled(src)
 
 /mob/living/carbon/human/CtrlClick(mob/user)
-	if(ishuman(user) && Adjacent(user) && !user.incapacitated())
+	if(ishuman(user) && Adjacent(user))
 		if(world.time < user.next_move)
 			return FALSE
 		var/mob/living/carbon/human/H = user
@@ -351,7 +348,6 @@
 		..()
 
 /atom/proc/AltClick(mob/user)
-	SendSignal(COMSIG_CLICK_ALT, user)
 	var/turf/T = get_turf(src)
 	if(T && user.TurfAdjacent(T))
 		if(user.listed_turf == T)
@@ -359,6 +355,7 @@
 		else
 			user.listed_turf = T
 			user.client.statpanel = T.name
+	return
 
 /mob/proc/TurfAdjacent(turf/T)
 	return T.Adjacent(src)
@@ -376,7 +373,6 @@
 	return
 
 /atom/proc/CtrlShiftClick(mob/user)
-	SendSignal(COMSIG_CLICK_CTRL_SHIFT)
 	return
 
 /*
@@ -385,11 +381,13 @@
 	Laser Eyes: as the name implies, handles this since nothing else does currently
 	face_atom: turns the mob towards what you clicked on
 */
-/mob/proc/LaserEyes(atom/A, params)
+/mob/proc/LaserEyes(atom/A)
 	return
 
-/mob/living/LaserEyes(atom/A, params)
+/mob/living/LaserEyes(atom/A)
 	changeNext_move(CLICK_CD_RANGE)
+	var/turf/T = get_turf(src)
+	var/turf/U = get_turf(A)
 
 	var/obj/item/projectile/beam/LE = new /obj/item/projectile/beam( loc )
 	LE.icon = 'icons/effects/genetics.dmi'
@@ -398,7 +396,10 @@
 
 	LE.firer = src
 	LE.def_zone = get_organ_target()
-	LE.preparePixelProjectile(A, src, params)
+	LE.original = A
+	LE.current = T
+	LE.yo = U.y - T.y
+	LE.xo = U.x - T.x
 	LE.fire()
 
 // Simple helper to face what you clicked on, in case it should be needed in more than one place
@@ -431,26 +432,20 @@
 
 /obj/screen/click_catcher
 	icon = 'icons/mob/screen_gen.dmi'
-	icon_state = "flash"
+	icon_state = "click_catcher"
 	plane = CLICKCATCHER_PLANE
-	mouse_opacity = MOUSE_OPACITY_OPAQUE
+	mouse_opacity = 2
 	screen_loc = "CENTER"
 
 /obj/screen/click_catcher/proc/UpdateGreed(view_size_x = 7, view_size_y = 7)
-	var/icon/newicon = icon('icons/mob/screen_gen.dmi', "flash")
-	if(view_size_x > 16 || view_size_y > 16)
-		newicon.Scale((16 * 2 + 1) * world.icon_size,(16 * 2 + 1) * world.icon_size)
-		icon = newicon
-		var/tx = view_size_x/16
-		var/ty = view_size_y/16
-		var/matrix/M = new
-		M.Scale(tx, ty)
-		transform = M
-		screen_loc = "CENTER-16,CENTER-16"
-	else
-		screen_loc = "CENTER-[view_size_x],CENTER-[view_size_y]"
-		newicon.Scale((view_size_x * 2 + 1) * world.icon_size,(view_size_y * 2 + 1) * world.icon_size)
-		icon = newicon
+	screen_loc = "CENTER-[view_size_x],CENTER-[view_size_y]"
+	var/list/ret = list()
+	for(var/X in 0 to (view_size_x * 2))
+		for(var/Y in 0  to (view_size_y * 2))
+			var/obj/screen/click_catcher/CC = new()
+			CC.screen_loc = "EAST-[X],NORTH-[Y]"
+			ret += CC
+	return ret
 
 /obj/screen/click_catcher/Click(location, control, params)
 	var/list/modifiers = params2list(params)
@@ -458,7 +453,7 @@
 		var/mob/living/carbon/C = usr
 		C.swap_hand()
 	else
-		var/turf/T = params2turf(modifiers["screen-loc"], get_turf(usr))
+		var/turf/T = screen_loc2turf(screen_loc, get_turf(usr))
 		params += "&catcher=1"
 		if(T)
 			T.Click(location, control, params)

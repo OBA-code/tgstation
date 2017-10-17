@@ -46,7 +46,10 @@
 /turf/open/floor/mineral/titanium/blue,
 /area/shuttle/transport)
 "am" = (
-/obj/structure/grille/broken,
+/obj/structure/grille{
+	density = 0;
+	icon_state = "brokengrille"
+	},
 /turf/open/floor/plating/airless,
 /area/shuttle/transport)
 "an" = (
@@ -92,11 +95,15 @@
 /turf/open/floor/wood,
 /area/shuttle/transport)
 "aw" = (
-/obj/effect/spawner/structure/window/shuttle,
+/obj/structure/grille,
+/obj/structure/window/shuttle,
 /turf/closed/wall/mineral/titanium,
 /area/shuttle/transport)
 "ax" = (
-/turf/closed/wall/mineral/titanium,
+/turf/closed/wall/shuttle{
+	icon_state = "swall12";
+	dir = 2
+	},
 /area/shuttle/transport)
 "ay" = (
 /obj/structure/window/shuttle,
@@ -104,14 +111,21 @@
 /turf/open/floor/plating,
 /area/shuttle/transport)
 "az" = (
-/obj/effect/spawner/structure/window/shuttle,
+/obj/structure/grille,
+/obj/structure/window/shuttle,
 /turf/open/floor/plating,
 /area/shuttle/transport)
 "aA" = (
-/turf/closed/wall/mineral/titanium,
+/turf/closed/wall/shuttle{
+	icon_state = "swall_s10";
+	dir = 2
+	},
 /area/shuttle/transport)
 "aB" = (
-/obj/structure/grille/broken,
+/obj/structure/grille{
+	density = 0;
+	icon_state = "brokengrille"
+	},
 /obj/structure/window/fulltile,
 /turf/open/floor/mineral/titanium/blue,
 /area/shuttle/transport)
@@ -144,7 +158,7 @@
 /area/shuttle/transport)
 "aI" = (
 /obj/structure/bed,
-/obj/item/bedsheet/wiz,
+/obj/item/weapon/bedsheet/wiz,
 /turf/open/floor/mineral/titanium/blue,
 /area/shuttle/transport)
 "aJ" = (
@@ -178,7 +192,7 @@
 	name = "The Lighthouse";
 	roundstart_move = "ferry_away";
 	timid = 1;
-	port_direction = 2;
+	port_angle = 180;
 	width = 16
 	},
 /turf/open/floor/mineral/titanium/blue,
@@ -188,7 +202,8 @@
 /turf/open/floor/mineral/titanium/blue,
 /area/shuttle/transport)
 "aQ" = (
-/obj/effect/spawner/structure/window,
+/obj/structure/grille,
+/obj/structure/window/fulltile,
 /turf/open/floor/mineral/titanium/blue,
 /area/shuttle/transport)
 "aR" = (
@@ -204,12 +219,12 @@
 /area/shuttle/transport)
 "aT" = (
 /obj/structure/bed,
-/obj/item/bedsheet/centcom,
+/obj/item/weapon/bedsheet/centcom,
 /turf/open/floor/mineral/titanium/blue,
 /area/shuttle/transport)
 "aU" = (
 /obj/structure/bed,
-/obj/item/bedsheet/rainbow,
+/obj/item/weapon/bedsheet/rainbow,
 /turf/open/floor/mineral/titanium/blue,
 /area/shuttle/transport)
 "aV" = (
@@ -227,7 +242,8 @@
 /turf/open/floor/mineral/titanium/blue,
 /area/shuttle/transport)
 "aY" = (
-/obj/effect/spawner/structure/window/reinforced,
+/obj/structure/grille,
+/obj/structure/window/reinforced/fulltile,
 /turf/closed/wall/mineral/titanium,
 /area/shuttle/transport)
 "aZ" = (
@@ -253,11 +269,11 @@
 /obj/structure/window/reinforced{
 	dir = 4
 	},
-/obj/item/vending_refill/snack,
+/obj/item/weapon/vending_refill/snack,
 /turf/open/floor/wood,
 /area/shuttle/transport)
 "bd" = (
-/obj/item/twohanded/required/kirbyplants/dead{
+/obj/item/weapon/twohanded/required/kirbyplants/dead{
 	desc = "It doesn't look very healthy...";
 	name = "potted plant"
 	},

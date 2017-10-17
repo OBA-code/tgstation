@@ -4,7 +4,7 @@
 // it's """VR"""
 /obj/machinery/vr_sleeper
 	name = "virtual reality sleeper"
-	desc = "A sleeper modified to alter the subconscious state of the user, allowing them to visit virtual worlds."
+	desc = "a sleeper modified to alter the subconscious state of the user, allowing them to visit virtual worlds"
 	icon = 'icons/obj/Cryogenic2.dmi'
 	icon_state = "sleeper"
 	state_open = TRUE
@@ -49,14 +49,11 @@
 	open_machine()
 
 
-/obj/machinery/vr_sleeper/container_resist(mob/living/user)
-	open_machine()
-
-
 /obj/machinery/vr_sleeper/Destroy()
 	open_machine()
 	cleanup_vr_human()
-	QDEL_NULL(sparks)
+	qdel(sparks)
+	sparks = null
 	return ..()
 
 
@@ -98,7 +95,7 @@
 		if("vr_connect")
 			var/mob/living/carbon/human/human_occupant = occupant
 			if(human_occupant && human_occupant.mind)
-				to_chat(occupant, "<span class='warning'>Transferring to virtual reality...</span>")
+				to_chat(occupant, "<span class='warning'>Transfering to virtual reality...</span>")
 				if(vr_human)
 					vr_human.revert_to_reality(FALSE, FALSE)
 					human_occupant.mind.transfer_to(vr_human)
@@ -122,7 +119,7 @@
 				if(vr_human)
 					qdel(vr_human)
 			else
-				to_chat(usr, "<span class='warning'>The VR Sleeper's safeties prevent you from doing that.</span>")
+				to_chat(usr, "<span class='warning'>The VR Sleeper's safeties prevent you from doing that.")
 			. = TRUE
 		if("toggle_open")
 			if(state_open)

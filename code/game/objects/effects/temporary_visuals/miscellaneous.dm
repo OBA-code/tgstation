@@ -188,14 +188,11 @@
 		name = mimiced_atom.name
 		appearance = mimiced_atom.appearance
 		setDir(mimiced_atom.dir)
-		mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+		mouse_opacity = 0
 
 /obj/effect/temp_visual/decoy/fading/Initialize(mapload, atom/mimiced_atom)
 	. = ..()
 	animate(src, alpha = 0, time = duration)
-
-/obj/effect/temp_visual/decoy/fading/threesecond
-	duration = 40
 
 /obj/effect/temp_visual/decoy/fading/fivesecond
 	duration = 50
@@ -213,7 +210,7 @@
 /obj/effect/temp_visual/fire
 	icon = 'icons/effects/fire.dmi'
 	icon_state = "3"
-	light_range = LIGHT_RANGE_FIRE
+	light_range = 3
 	light_color = LIGHT_COLOR_FIRE
 	duration = 10
 
@@ -313,12 +310,12 @@
 	duration = 5
 
 /obj/effect/temp_visual/impact_effect/Initialize(mapload, atom/target, obj/item/projectile/P)
-	if(target == P.original)
-		pixel_x = target.pixel_x + P.p_x - 16
-		pixel_y = target.pixel_y + P.p_y - 16
+	if(target == P.original) //the projectile hit the target originally clicked
+		pixel_x = P.p_x + target.pixel_x - 16 + rand(-4,4)
+		pixel_y = P.p_y + target.pixel_y - 16 + rand(-4,4)
 	else
-		pixel_x = target.pixel_x + rand(2, -2)
-		pixel_y = target.pixel_y + rand(2, -2)
+		pixel_x = target.pixel_x + rand(-4,4)
+		pixel_y = target.pixel_y + rand(-4,4)
 	. = ..()
 
 /obj/effect/temp_visual/impact_effect/red_laser
@@ -397,7 +394,7 @@
 		if(warp_color)
 			color = list(warp_color, warp_color, warp_color, list(0,0,0))
 			set_light(1.4, 1, warp_color)
-		mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+		mouse_opacity = 0
 		var/matrix/skew = transform
 		skew = skew.Turn(180)
 		skew = skew.Interpolate(transform, 0.5)

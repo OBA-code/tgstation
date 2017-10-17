@@ -3,7 +3,7 @@
 /turf/template_noop,
 /area/template_noop)
 "ab" = (
-/obj/item/circular_saw,
+/obj/item/weapon/circular_saw,
 /obj/structure/lattice,
 /turf/template_noop,
 /area/template_noop)
@@ -17,16 +17,23 @@
 /turf/closed/wall/mineral/titanium/overspace,
 /area/awaymission/BMPship/Aft)
 "af" = (
-/obj/effect/spawner/structure/window/hollow/reinforced/end{
+/obj/structure/window/reinforced{
+	dir = 4
+	},
+/obj/structure/window/reinforced{
 	dir = 1
 	},
+/obj/structure/window/reinforced{
+	dir = 8
+	},
+/obj/structure/grille,
 /turf/open/floor/engine,
 /area/awaymission/BMPship/Aft)
 "ag" = (
 /obj/machinery/porta_turret{
 	dir = 8;
 	emagged = 1;
-	installation = /obj/item/gun/energy/lasercannon
+	installation = /obj/item/weapon/gun/energy/lasercannon
 	},
 /turf/open/floor/engine,
 /area/awaymission/BMPship/Aft)
@@ -40,9 +47,13 @@
 /turf/open/floor/plating,
 /area/awaymission/BMPship/Aft)
 "aj" = (
-/obj/effect/spawner/structure/window/hollow/reinforced/middle{
+/obj/structure/window/reinforced{
 	dir = 4
 	},
+/obj/structure/window/reinforced{
+	dir = 8
+	},
+/obj/structure/grille,
 /turf/open/floor/engine,
 /area/awaymission/BMPship/Aft)
 "ak" = (
@@ -58,9 +69,13 @@
 /area/template_noop)
 "an" = (
 /obj/structure/window/reinforced,
-/obj/effect/spawner/structure/window/hollow/reinforced/middle{
+/obj/structure/window/reinforced{
 	dir = 4
 	},
+/obj/structure/window/reinforced{
+	dir = 8
+	},
+/obj/structure/grille,
 /turf/open/floor/engine,
 /area/awaymission/BMPship/Aft)
 "ao" = (
@@ -89,15 +104,15 @@
 /turf/open/floor/plating/airless,
 /area/awaymission/BMPship/Midship)
 "au" = (
-/obj/item/restraints/handcuffs,
-/obj/item/restraints/handcuffs,
+/obj/item/weapon/restraints/handcuffs,
+/obj/item/weapon/restraints/handcuffs,
 /obj/structure/closet/crate,
 /turf/open/floor/plating/airless,
 /area/awaymission/BMPship/Midship)
 "av" = (
-/obj/item/scalpel,
+/obj/item/weapon/scalpel,
 /obj/structure/closet/crate,
-/obj/item/tank/internals/anesthetic,
+/obj/item/weapon/tank/internals/anesthetic,
 /turf/open/floor/plating/airless,
 /area/awaymission/BMPship/Midship)
 "aw" = (
@@ -105,7 +120,7 @@
 /turf/open/floor/plating/airless,
 /area/awaymission/BMPship/Midship)
 "ax" = (
-/obj/item/storage/box/syringes,
+/obj/item/weapon/storage/box/syringes,
 /turf/open/floor/plating/airless,
 /area/awaymission/BMPship/Midship)
 "ay" = (
@@ -142,8 +157,8 @@
 "aC" = (
 /obj/structure/closet/crate/freezer,
 /obj/item/organ/appendix,
-/obj/item/reagent_containers/food/snacks/meat/slab,
-/obj/item/reagent_containers/food/snacks/meat/slab/human/mutant/golem,
+/obj/item/weapon/reagent_containers/food/snacks/meat/slab,
+/obj/item/weapon/reagent_containers/food/snacks/meat/slab/human/mutant/golem,
 /obj/effect/turf_decal/stripes/line{
 	dir = 1
 	},
@@ -152,8 +167,8 @@
 "aD" = (
 /obj/structure/closet/crate/freezer,
 /obj/item/organ/brain,
-/obj/item/reagent_containers/food/snacks/meat/slab,
-/obj/item/reagent_containers/food/snacks/meat/slab/human/mutant/slime,
+/obj/item/weapon/reagent_containers/food/snacks/meat/slab,
+/obj/item/weapon/reagent_containers/food/snacks/meat/slab/human/mutant/slime,
 /obj/effect/turf_decal/stripes/line{
 	dir = 1
 	},
@@ -169,7 +184,7 @@
 /area/awaymission/BMPship/Aft)
 "aF" = (
 /obj/structure/table,
-/obj/item/storage/box,
+/obj/item/weapon/storage/box,
 /obj/machinery/light/small{
 	dir = 1
 	},
@@ -215,11 +230,11 @@
 /turf/open/floor/plating,
 /area/awaymission/BMPship/Aft)
 "aN" = (
-/obj/item/storage/box,
+/obj/item/weapon/storage/box,
 /turf/open/floor/plating,
 /area/awaymission/BMPship/Aft)
 "aO" = (
-/obj/item/hand_labeler,
+/obj/item/weapon/hand_labeler,
 /turf/open/floor/plating,
 /area/awaymission/BMPship/Aft)
 "aP" = (
@@ -230,21 +245,28 @@
 /turf/open/floor/plating,
 /area/awaymission/BMPship/Aft)
 "aQ" = (
-/obj/effect/spawner/structure/window/hollow/reinforced/end{
+/obj/structure/window/reinforced{
+	dir = 4
+	},
+/obj/structure/window/reinforced{
+	dir = 8
+	},
+/obj/structure/window/reinforced{
 	dir = 1
 	},
+/obj/structure/grille,
 /turf/open/floor/plating/airless,
 /area/awaymission/BMPship/Fore)
 "aR" = (
 /obj/structure/table/wood,
 /obj/item/stack/spacecash/c500,
 /obj/item/stack/spacecash/c100,
-/obj/item/reagent_containers/food/drinks/beer,
+/obj/item/weapon/reagent_containers/food/drinks/beer,
 /turf/open/floor/wood,
 /area/awaymission/BMPship/Fore)
 "aS" = (
 /obj/structure/bed,
-/obj/item/bedsheet/yellow,
+/obj/item/weapon/bedsheet/yellow,
 /turf/open/floor/wood,
 /area/awaymission/BMPship/Fore)
 "aT" = (
@@ -341,8 +363,8 @@
 /area/awaymission/BMPship/Aft)
 "bh" = (
 /obj/structure/closet/crate/freezer,
-/obj/item/reagent_containers/food/drinks/beer,
-/obj/item/reagent_containers/food/drinks/beer,
+/obj/item/weapon/reagent_containers/food/drinks/beer,
+/obj/item/weapon/reagent_containers/food/drinks/beer,
 /turf/open/floor/plating,
 /area/awaymission/BMPship/Aft)
 "bi" = (
@@ -358,9 +380,13 @@
 /turf/open/floor/plating,
 /area/awaymission/BMPship/Aft)
 "bl" = (
-/obj/effect/spawner/structure/window/hollow/reinforced/middle{
+/obj/structure/window/reinforced{
 	dir = 4
 	},
+/obj/structure/window/reinforced{
+	dir = 8
+	},
+/obj/structure/grille,
 /turf/open/floor/plating/airless,
 /area/awaymission/BMPship/Fore)
 "bm" = (
@@ -404,9 +430,13 @@
 /area/awaymission/BMPship/Aft)
 "bt" = (
 /obj/structure/window/reinforced,
-/obj/effect/spawner/structure/window/hollow/reinforced/middle{
+/obj/structure/window/reinforced{
 	dir = 4
 	},
+/obj/structure/window/reinforced{
+	dir = 8
+	},
+/obj/structure/grille,
 /turf/open/floor/plating/airless,
 /area/awaymission/BMPship/Fore)
 "bu" = (
@@ -473,7 +503,7 @@
 	d2 = 8;
 	icon_state = "4-8"
 	},
-/obj/item/hand_labeler,
+/obj/item/weapon/hand_labeler,
 /turf/open/floor/plating,
 /area/awaymission/BMPship/Aft)
 "bF" = (
@@ -490,7 +520,7 @@
 	d2 = 8;
 	icon_state = "4-8"
 	},
-/obj/item/storage/box,
+/obj/item/weapon/storage/box,
 /turf/open/floor/plating,
 /area/awaymission/BMPship/Aft)
 "bH" = (
@@ -501,7 +531,10 @@
 /area/awaymission/BMPship/Aft)
 "bI" = (
 /obj/machinery/door/unpowered/shuttle,
-/turf/open/floor/carpet,
+/turf/open/floor/plasteel{
+	icon_state = "carpetside";
+	dir = 1
+	},
 /area/awaymission/BMPship/Fore)
 "bJ" = (
 /obj/machinery/door/airlock/silver,
@@ -561,10 +594,10 @@
 /area/awaymission/BMPship/Aft)
 "bR" = (
 /obj/structure/closet/crate/freezer,
-/obj/item/reagent_containers/food/snacks/hugemushroomslice,
+/obj/item/weapon/reagent_containers/food/snacks/hugemushroomslice,
 /obj/item/organ/appendix,
-/obj/item/reagent_containers/food/snacks/meat/slab,
-/obj/item/reagent_containers/food/snacks/meat/slab/human/mutant/golem/adamantine,
+/obj/item/weapon/reagent_containers/food/snacks/meat/slab,
+/obj/item/weapon/reagent_containers/food/snacks/meat/slab/human/mutant/golem/adamantine,
 /obj/effect/turf_decal/stripes/line{
 	dir = 2
 	},
@@ -618,10 +651,13 @@
 /area/awaymission/BMPship/Fore)
 "bX" = (
 /obj/structure/table,
-/obj/item/screwdriver,
-/obj/item/screwdriver,
-/obj/item/paper/fluff/ruins/crashedship/scribbled,
-/obj/item/screwdriver,
+/obj/item/weapon/screwdriver,
+/obj/item/weapon/screwdriver,
+/obj/item/weapon/paper{
+	info = "The next person who takes one of my screwdrivers gets stabbed with one. They are MINE. - Love, Madsen";
+	name = "scribbled note"
+	},
+/obj/item/weapon/screwdriver,
 /turf/open/floor/plasteel/bar,
 /area/awaymission/BMPship/Midship)
 "bY" = (
@@ -669,14 +705,14 @@
 /area/awaymission/BMPship/Midship)
 "cf" = (
 /obj/structure/table,
-/obj/item/kitchen/knife/butcher,
-/obj/item/reagent_containers/food/drinks/beer,
-/obj/item/reagent_containers/food/snacks/meat,
+/obj/item/weapon/kitchen/knife/butcher,
+/obj/item/weapon/reagent_containers/food/drinks/beer,
+/obj/item/weapon/reagent_containers/food/snacks/meat,
 /turf/open/floor/plasteel/barber,
 /area/awaymission/BMPship/Midship)
 "cg" = (
 /obj/structure/table,
-/obj/item/storage/box/donkpockets,
+/obj/item/weapon/storage/box/donkpockets,
 /turf/open/floor/plasteel/barber,
 /area/awaymission/BMPship/Midship)
 "ch" = (
@@ -696,12 +732,12 @@
 /area/awaymission/BMPship/Midship)
 "cj" = (
 /obj/structure/table,
-/obj/item/reagent_containers/food/drinks/beer,
+/obj/item/weapon/reagent_containers/food/drinks/beer,
 /turf/open/floor/plasteel/bar,
 /area/awaymission/BMPship/Midship)
 "ck" = (
 /obj/structure/table,
-/obj/item/kitchen/knife,
+/obj/item/weapon/kitchen/knife,
 /turf/open/floor/plasteel/bar,
 /area/awaymission/BMPship/Midship)
 "cl" = (
@@ -736,14 +772,14 @@
 /turf/open/floor/carpet,
 /area/awaymission/BMPship/Fore)
 "cp" = (
-/obj/item/reagent_containers/food/snacks/hugemushroomslice,
+/obj/item/weapon/reagent_containers/food/snacks/hugemushroomslice,
 /turf/open/floor/plasteel/bar,
 /area/awaymission/BMPship/Midship)
 "cq" = (
 /turf/open/floor/plasteel,
 /area/awaymission/BMPship/Midship)
 "cr" = (
-/obj/item/reagent_containers/food/drinks/beer,
+/obj/item/weapon/reagent_containers/food/drinks/beer,
 /turf/open/floor/plasteel,
 /area/awaymission/BMPship/Midship)
 "cs" = (
@@ -805,6 +841,7 @@
 /turf/closed/wall/mineral/titanium/overspace,
 /area/template_noop)
 "cG" = (
+/turf/open/floor/carpet,
 /turf/closed/wall/mineral/titanium/interior,
 /area/awaymission/BMPship/Fore)
 "cH" = (
@@ -824,7 +861,7 @@
 /turf/open/floor/carpet,
 /area/awaymission/BMPship/Fore)
 "cJ" = (
-/obj/item/reagent_containers/food/snacks/hugemushroomslice,
+/obj/item/weapon/reagent_containers/food/snacks/hugemushroomslice,
 /turf/open/floor/plasteel,
 /area/awaymission/BMPship/Midship)
 "cK" = (
@@ -856,7 +893,7 @@
 /turf/open/floor/plasteel/barber,
 /area/awaymission/BMPship/Midship)
 "cP" = (
-/obj/item/reagent_containers/food/drinks/beer,
+/obj/item/weapon/reagent_containers/food/drinks/beer,
 /turf/open/floor/plasteel/bar,
 /area/awaymission/BMPship/Midship)
 "cQ" = (
@@ -875,8 +912,8 @@
 /area/awaymission/BMPship/Aft)
 "cS" = (
 /obj/structure/closet/crate/freezer,
-/obj/item/reagent_containers/food/snacks/meat/slab,
-/obj/item/reagent_containers/food/snacks/meat/slab,
+/obj/item/weapon/reagent_containers/food/snacks/meat/slab,
+/obj/item/weapon/reagent_containers/food/snacks/meat/slab,
 /turf/open/floor/plasteel/white,
 /area/awaymission/BMPship/Aft)
 "cT" = (
@@ -884,7 +921,7 @@
 /turf/open/floor/plasteel/white,
 /area/awaymission/BMPship/Aft)
 "cU" = (
-/obj/item/crowbar,
+/obj/item/weapon/crowbar,
 /turf/open/floor/plasteel/white,
 /area/awaymission/BMPship/Aft)
 "cV" = (
@@ -917,12 +954,15 @@
 /area/awaymission/BMPship/Aft)
 "cY" = (
 /obj/structure/table,
-/obj/item/paper/fluff/ruins/crashedship/captains_log,
+/obj/item/weapon/paper{
+	info = "I'm no scientist, but judging from the design and components, it seems to be some kind of teleporter. This thing is gonna be worth a lot of cash to the right man. The boys are excited, as they have every right to be, and I've let them crack into that case of beer we got. I normally wouldn't allow such a thing, but this is a time for celebration! It's not like a couple drinks will hurt anything.";
+	name = "Captain's log entry"
+	},
 /turf/open/floor/carpet,
 /area/awaymission/BMPship/Fore)
 "cZ" = (
 /obj/structure/table,
-/obj/item/reagent_containers/food/drinks/beer,
+/obj/item/weapon/reagent_containers/food/drinks/beer,
 /turf/open/floor/carpet,
 /area/awaymission/BMPship/Fore)
 "da" = (
@@ -1173,13 +1213,20 @@
 /turf/open/floor/plasteel,
 /area/awaymission/BMPship/Aft)
 "dG" = (
-/obj/effect/spawner/structure/window/hollow/reinforced/end{
+/obj/structure/window/reinforced{
+	dir = 8
+	},
+/obj/structure/window/reinforced{
+	dir = 4
+	},
+/obj/structure/window/reinforced{
 	dir = 1
 	},
+/obj/structure/grille,
 /turf/open/floor/plating,
 /area/awaymission/BMPship/Fore)
 "dH" = (
-/obj/item/shard,
+/obj/item/weapon/shard,
 /turf/open/floor/carpet,
 /area/awaymission/BMPship/Fore)
 "dI" = (
@@ -1325,7 +1372,7 @@
 /area/awaymission/BMPship/Aft)
 "dY" = (
 /obj/structure/rack,
-/obj/item/storage/box/lights,
+/obj/item/weapon/storage/box/lights,
 /obj/effect/turf_decal/stripes/line{
 	dir = 8
 	},
@@ -1382,9 +1429,13 @@
 /turf/open/floor/plasteel,
 /area/awaymission/BMPship/Aft)
 "ed" = (
-/obj/effect/spawner/structure/window/hollow/reinforced/middle{
+/obj/structure/window/reinforced{
+	dir = 8
+	},
+/obj/structure/window/reinforced{
 	dir = 4
 	},
+/obj/structure/grille,
 /turf/open/floor/plating,
 /area/awaymission/BMPship/Fore)
 "ee" = (
@@ -1398,7 +1449,7 @@
 /turf/open/floor/carpet,
 /area/awaymission/BMPship/Fore)
 "eg" = (
-/obj/item/shard{
+/obj/item/weapon/shard{
 	icon_state = "medium"
 	},
 /turf/open/floor/carpet,
@@ -1417,7 +1468,7 @@
 /turf/open/floor/plating,
 /area/awaymission/BMPship/Midship)
 "ek" = (
-/obj/item/reagent_containers/glass/bucket,
+/obj/item/weapon/reagent_containers/glass/bucket,
 /turf/open/floor/plasteel/bar,
 /area/awaymission/BMPship/Midship)
 "el" = (
@@ -1483,7 +1534,7 @@
 /area/awaymission/BMPship/Aft)
 "et" = (
 /obj/structure/rack,
-/obj/item/storage/belt/utility/full,
+/obj/item/weapon/storage/belt/utility/full,
 /obj/effect/turf_decal/stripes/line{
 	dir = 8
 	},
@@ -1594,7 +1645,7 @@
 /area/awaymission/BMPship/Aft)
 "eG" = (
 /obj/structure/rack,
-/obj/item/stock_parts/cell/high,
+/obj/item/weapon/stock_parts/cell/high,
 /obj/effect/turf_decal/stripes/line{
 	dir = 8
 	},
@@ -1604,9 +1655,11 @@
 /obj/structure/window/reinforced{
 	dir = 8
 	},
-/obj/effect/spawner/structure/window/hollow/reinforced/directional{
-	dir = 6
+/obj/structure/window/reinforced{
+	dir = 4
 	},
+/obj/structure/window/reinforced,
+/obj/structure/grille,
 /turf/open/floor/plating,
 /area/awaymission/BMPship/Fore)
 "eI" = (
@@ -1710,7 +1763,7 @@
 /turf/open/floor/carpet,
 /area/awaymission/BMPship/Fore)
 "eV" = (
-/obj/item/wrench,
+/obj/item/weapon/wrench,
 /turf/open/floor/plating,
 /area/awaymission/BMPship/Midship)
 "eW" = (
@@ -1734,7 +1787,7 @@
 /obj/structure/window/reinforced{
 	dir = 4
 	},
-/obj/item/kitchen/knife,
+/obj/item/weapon/kitchen/knife,
 /turf/open/floor/plating,
 /area/awaymission/BMPship/Aft)
 "fa" = (
@@ -1743,7 +1796,7 @@
 	d2 = 2;
 	icon_state = "1-2"
 	},
-/obj/item/stock_parts/cell/high,
+/obj/item/weapon/stock_parts/cell/high,
 /turf/open/floor/plasteel,
 /area/awaymission/BMPship/Aft)
 "fb" = (
@@ -1789,7 +1842,7 @@
 	dir = 4;
 	id = "meatConvey2"
 	},
-/obj/item/kitchen/knife,
+/obj/item/weapon/kitchen/knife,
 /turf/open/floor/plating,
 /area/awaymission/BMPship/Midship)
 "fj" = (
@@ -1877,7 +1930,7 @@
 /turf/open/floor/plating/airless,
 /area/awaymission/BMPship/Fore)
 "fx" = (
-/obj/item/shard{
+/obj/item/weapon/shard{
 	icon_state = "small"
 	},
 /obj/structure/cable{
@@ -1913,7 +1966,7 @@
 	d2 = 8;
 	icon_state = "1-8"
 	},
-/obj/item/kitchen/knife,
+/obj/item/weapon/kitchen/knife,
 /turf/open/floor/plasteel/bar,
 /area/awaymission/BMPship/Midship)
 "fB" = (
@@ -1947,7 +2000,7 @@
 /turf/open/floor/plasteel/showroomfloor,
 /area/awaymission/BMPship/Aft)
 "fF" = (
-/obj/item/mop,
+/obj/item/weapon/mop,
 /turf/open/floor/plasteel/showroomfloor,
 /area/awaymission/BMPship/Aft)
 "fG" = (
@@ -1967,7 +2020,7 @@
 	},
 /area/awaymission/BMPship/Fore)
 "fJ" = (
-/obj/item/shard,
+/obj/item/weapon/shard,
 /turf/open/floor/plating/airless{
 	icon_state = "platingdmg1"
 	},
@@ -2002,11 +2055,11 @@
 /area/awaymission/BMPship/Midship)
 "fO" = (
 /obj/structure/closet/crate/freezer,
-/obj/item/reagent_containers/food/snacks/meat,
+/obj/item/weapon/reagent_containers/food/snacks/meat,
 /turf/open/floor/plasteel/showroomfloor,
 /area/awaymission/BMPship/Aft)
 "fP" = (
-/obj/item/reagent_containers/glass/bucket,
+/obj/item/weapon/reagent_containers/glass/bucket,
 /turf/open/floor/plasteel/showroomfloor,
 /area/awaymission/BMPship/Aft)
 "fQ" = (
@@ -2114,13 +2167,16 @@
 /area/awaymission/BMPship/Aft)
 "gh" = (
 /obj/structure/table,
-/obj/item/paper/fluff/ruins/crashedship/old_diary,
+/obj/item/weapon/paper{
+	info = "DEAR DAIRY: So we was doing our typpical route when the captain says we've been picking up weird signals on some backwatter planet. Madsen wanted to stay on course but he ain't the captain, so we went out of the way to check it out. There was lots of rocks on the way, but we got to the planet fine. Found a big fancy camp with nobody around and this big metal donut thing with NT stamps all over it right in the middle. Case of beer too. Captain reckons we can pass it off to some buyer in the Syndicate. Ingram says it's bad luck and that someone is going to come look for it but it sounds like better money than selling bad meat to jerky companies.";
+	name = "Old Diary"
+	},
 /turf/open/floor/plasteel,
 /area/awaymission/BMPship/Aft)
 "gi" = (
 /obj/structure/table,
-/obj/item/pen/red,
-/obj/item/reagent_containers/food/drinks/beer,
+/obj/item/weapon/pen/red,
+/obj/item/weapon/reagent_containers/food/drinks/beer,
 /turf/open/floor/plasteel,
 /area/awaymission/BMPship/Aft)
 "gj" = (
@@ -2129,16 +2185,23 @@
 /turf/open/floor/plasteel,
 /area/awaymission/BMPship/Aft)
 "gk" = (
-/obj/effect/spawner/structure/window/hollow/reinforced/end{
+/obj/structure/window/reinforced{
 	dir = 1
 	},
+/obj/structure/window/reinforced{
+	dir = 8
+	},
+/obj/structure/window/reinforced{
+	dir = 4
+	},
+/obj/structure/grille,
 /turf/open/floor/plating/airless,
 /area/awaymission/BMPship/Fore)
 "gl" = (
 /obj/machinery/porta_turret{
 	dir = 8;
 	emagged = 1;
-	installation = /obj/item/gun/energy/lasercannon
+	installation = /obj/item/weapon/gun/energy/lasercannon
 	},
 /turf/open/floor/engine,
 /area/awaymission/BMPship/Fore)
@@ -2263,10 +2326,11 @@
 /turf/open/floor/plating/asteroid/airless,
 /area/awaymission/BMPship)
 "gF" = (
-/obj/effect/spawner/structure/window/hollow/reinforced/directional{
+/obj/structure/window/reinforced{
 	dir = 4
 	},
-/obj/item/shard{
+/obj/structure/grille,
+/obj/item/weapon/shard{
 	icon_state = "small"
 	},
 /turf/open/floor/plating/airless,
@@ -2306,8 +2370,8 @@
 /area/awaymission/BMPship/Aft)
 "gO" = (
 /obj/structure/bed,
-/obj/item/bedsheet,
-/obj/item/storage/wallet/random,
+/obj/item/weapon/bedsheet,
+/obj/item/weapon/storage/wallet/random,
 /obj/structure/cable{
 	d1 = 1;
 	d2 = 2;
@@ -2326,9 +2390,11 @@
 /turf/open/floor/plating/asteroid/airless,
 /area/awaymission/BMPship)
 "gR" = (
-/obj/effect/spawner/structure/window/hollow/reinforced/directional{
-	dir = 6
+/obj/structure/window/reinforced{
+	dir = 4
 	},
+/obj/structure/window/reinforced,
+/obj/structure/grille,
 /turf/open/floor/plating/airless,
 /area/awaymission/BMPship/Fore)
 "gS" = (
@@ -2379,7 +2445,7 @@
 /turf/open/floor/plasteel,
 /area/awaymission/BMPship/Aft)
 "gZ" = (
-/obj/item/shard{
+/obj/item/weapon/shard{
 	icon_state = "medium"
 	},
 /turf/template_noop,
@@ -2396,7 +2462,7 @@
 /area/awaymission/BMPship/Aft)
 "hc" = (
 /obj/structure/bed,
-/obj/item/bedsheet,
+/obj/item/weapon/bedsheet,
 /turf/open/floor/plasteel,
 /area/awaymission/BMPship/Aft)
 "hd" = (
@@ -2431,7 +2497,7 @@
 	},
 /area/awaymission/BMPship/Midship)
 "hh" = (
-/obj/item/caution,
+/obj/item/weapon/caution,
 /turf/open/floor/plating/airless,
 /area/awaymission/BMPship/Midship)
 "hi" = (
@@ -2468,9 +2534,16 @@
 /turf/open/floor/plating/asteroid/airless,
 /area/awaymission/BMPship)
 "ho" = (
-/obj/effect/spawner/structure/window/hollow/reinforced/end{
+/obj/structure/window/reinforced{
+	dir = 4
+	},
+/obj/structure/window/reinforced{
+	dir = 8
+	},
+/obj/structure/window/reinforced{
 	dir = 1
 	},
+/obj/structure/grille,
 /turf/open/floor/engine,
 /area/awaymission/BMPship/Aft)
 "hp" = (
@@ -2480,23 +2553,31 @@
 /turf/open/floor/engine,
 /area/awaymission/BMPship/Aft)
 "hq" = (
-/obj/item/storage/box/matches,
-/obj/item/storage/fancy/cigarettes/dromedaryco,
+/obj/item/weapon/storage/box/matches,
+/obj/item/weapon/storage/fancy/cigarettes/dromedaryco,
 /turf/open/floor/plating,
 /area/awaymission/BMPship/Aft)
 "hr" = (
-/obj/item/poster/random_contraband,
+/obj/item/weapon/poster/random_contraband,
 /turf/open/floor/plating,
 /area/awaymission/BMPship/Aft)
 "hs" = (
-/obj/item/reagent_containers/food/drinks/beer,
+/obj/item/weapon/reagent_containers/food/drinks/beer,
 /turf/open/floor/plating,
 /area/awaymission/BMPship/Aft)
 "ht" = (
+/turf/open/floor/plating,
 /turf/closed/wall/mineral/titanium/interior,
 /area/awaymission/BMPship/Aft)
 "hu" = (
-/obj/effect/spawner/structure/window/hollow/reinforced/end,
+/obj/structure/window/reinforced{
+	dir = 4
+	},
+/obj/structure/window/reinforced{
+	dir = 8
+	},
+/obj/structure/window/reinforced,
+/obj/structure/grille,
 /turf/open/floor/engine,
 /area/awaymission/BMPship/Aft)
 "hv" = (

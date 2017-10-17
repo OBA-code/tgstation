@@ -1,15 +1,10 @@
 
 /turf/open/floor/engine
 	name = "reinforced floor"
-	desc = "Extremely sturdy."
 	icon_state = "engine"
 	thermal_conductivity = 0.025
 	heat_capacity = INFINITY
 	floor_tile = /obj/item/stack/rods
-
-/turf/open/floor/engine/examine(mob/user)
-	..()
-	to_chat(user, "<span class='notice'>The reinforcement rods are <b>wrenched</b> firmly in place.</span>")
 
 /turf/open/floor/engine/airless
 	initial_gas_mix = "TEMP=2.7"
@@ -25,10 +20,10 @@
 		..()
 	return //unplateable
 
-/turf/open/floor/engine/attackby(obj/item/C, mob/user, params)
+/turf/open/floor/engine/attackby(obj/item/weapon/C, mob/user, params)
 	if(!C || !user)
 		return
-	if(istype(C, /obj/item/wrench))
+	if(istype(C, /obj/item/weapon/wrench))
 		to_chat(user, "<span class='notice'>You begin removing rods...</span>")
 		playsound(src, C.usesound, 80, 1)
 		if(do_after(user, 30*C.toolspeed, target = src))
@@ -63,7 +58,6 @@
 				make_plating(1)
 
 /turf/open/floor/engine/singularity_pull(S, current_size)
-	..()
 	if(current_size >= STAGE_FIVE)
 		if(floor_tile)
 			if(prob(30))
@@ -113,7 +107,7 @@
 	var/obj/effect/clockwork/overlay/floor/bloodcult/realappearence
 
 /turf/open/floor/engine/cult/Initialize()
-	. = ..()
+	..()
 	new /obj/effect/temp_visual/cult/turf/floor(src)
 	realappearence = new /obj/effect/clockwork/overlay/floor/bloodcult(src)
 	realappearence.linked = src
@@ -122,7 +116,7 @@
 	be_removed()
 	return ..()
 
-/turf/open/floor/engine/cult/ChangeTurf(path, new_baseturf, defer_change = FALSE, ignore_air = FALSE, forceop = FALSE)
+/turf/open/floor/engine/cult/ChangeTurf(path, defer_change = FALSE)
 	if(path != type)
 		be_removed()
 	return ..()

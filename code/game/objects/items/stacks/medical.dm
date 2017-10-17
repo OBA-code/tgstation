@@ -1,7 +1,7 @@
 /obj/item/stack/medical
 	name = "medical pack"
 	singular_name = "medical pack"
-	icon = 'icons/obj/stack_objects.dmi'
+	icon = 'icons/obj/items.dmi'
 	amount = 6
 	max_amount = 6
 	w_class = WEIGHT_CLASS_TINY
@@ -18,7 +18,7 @@
 
 /obj/item/stack/medical/attack(mob/living/M, mob/user)
 
-	if(M.stat == DEAD)
+	if(M.stat == 2)
 		var/t_him = "it"
 		if(M.gender == MALE)
 			t_him = "him"
@@ -107,8 +107,6 @@
 	singular_name = "bruise pack"
 	desc = "A theraputic gel pack and bandages designed to treat blunt-force trauma."
 	icon_state = "brutepack"
-	lefthand_file = 'icons/mob/inhands/equipment/medical_lefthand.dmi'
-	righthand_file = 'icons/mob/inhands/equipment/medical_righthand.dmi'
 	heal_brute = 40
 	origin_tech = "biotech=2"
 	self_delay = 20
@@ -140,8 +138,6 @@
 	gender = PLURAL
 	singular_name = "ointment"
 	icon_state = "ointment"
-	lefthand_file = 'icons/mob/inhands/equipment/medical_lefthand.dmi'
-	righthand_file = 'icons/mob/inhands/equipment/medical_righthand.dmi'
 	heal_burn = 40
 	origin_tech = "biotech=2"
 	self_delay = 20

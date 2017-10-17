@@ -17,8 +17,6 @@
 	icon_state = "pod_0"
 	req_access = list(ACCESS_CLONING) //FOR PREMATURE UNLOCKING.
 	verb_say = "states"
-	circuit = /obj/item/circuitboard/machine/clonepod
-
 	var/heal_level //The clone is released once its health reaches this level.
 	var/obj/machinery/computer/cloning/connected = null //So we remember the connected clone machine.
 	var/mess = FALSE //Need to clean out it if it's full of exploded clone.
@@ -48,6 +46,8 @@
 
 /obj/machinery/clonepod/Initialize()
 	. = ..()
+	var/obj/item/weapon/circuitboard/machine/B = new /obj/item/weapon/circuitboard/machine/clonepod(null)
+	B.apply_default_parts(src)
 
 	countdown = new(src)
 
@@ -59,19 +59,24 @@
 
 /obj/machinery/clonepod/Destroy()
 	go_out()
-	QDEL_NULL(radio)
-	QDEL_NULL(countdown)
+	qdel(radio)
+	radio = null
+	qdel(countdown)
+	countdown = null
 	if(connected)
 		connected.DetachCloner(src)
-	QDEL_LIST(unattached_flesh)
+	for(var/i in unattached_flesh)
+		qdel(i)
+	LAZYCLEARLIST(unattached_flesh)
+	unattached_flesh = null
 	. = ..()
 
 /obj/machinery/clonepod/RefreshParts()
 	speed_coeff = 0
 	efficiency = 0
-	for(var/obj/item/stock_parts/scanning_module/S in component_parts)
+	for(var/obj/item/weapon/stock_parts/scanning_module/S in component_parts)
 		efficiency += S.rating
-	for(var/obj/item/stock_parts/manipulator/P in component_parts)
+	for(var/obj/item/weapon/stock_parts/manipulator/P in component_parts)
 		speed_coeff += P.rating
 	heal_level = (efficiency * 15) + 10
 	if(heal_level < MINIMUM_HEAL_LEVEL)
@@ -79,25 +84,35 @@
 	if(heal_level > 100)
 		heal_level = 100
 
+/obj/item/weapon/circuitboard/machine/clonepod
+	name = "Clone Pod (Machine Board)"
+	build_path = /obj/machinery/clonepod
+	origin_tech = "programming=2;biotech=2"
+	req_components = list(
+							/obj/item/stack/cable_coil = 2,
+							/obj/item/weapon/stock_parts/scanning_module = 2,
+							/obj/item/weapon/stock_parts/manipulator = 2,
+							/obj/item/stack/sheet/glass = 1)
+
 //The return of data disks?? Just for transferring between genetics machine/cloning machine.
 //TO-DO: Make the genetics machine accept them.
-/obj/item/disk/data
+/obj/item/weapon/disk/data
 	name = "cloning data disk"
 	icon_state = "datadisk0" //Gosh I hope syndies don't mistake them for the nuke disk.
 	var/list/fields = list()
 	var/read_only = 0 //Well,it's still a floppy disk
 
 //Disk stuff.
-/obj/item/disk/data/New()
+/obj/item/weapon/disk/data/New()
 	..()
 	icon_state = "datadisk[rand(0,6)]"
 	add_overlay("datadisk_gene")
 
-/obj/item/disk/data/attack_self(mob/user)
+/obj/item/weapon/disk/data/attack_self(mob/user)
 	read_only = !read_only
 	to_chat(user, "<span class='notice'>You flip the write-protect tab to [read_only ? "protected" : "unprotected"].</span>")
 
-/obj/item/disk/data/examine(mob/user)
+/obj/item/weapon/disk/data/examine(mob/user)
 	..()
 	to_chat(user, "The write-protect tab is set to [read_only ? "protected" : "unprotected"].")
 
@@ -163,7 +178,7 @@
 	var/mob/living/carbon/human/H = new /mob/living/carbon/human(src)
 
 	if(clonemind.changeling)
-		var/obj/item/organ/brain/B = H.getorganslot(ORGAN_SLOT_BRAIN)
+		var/obj/item/organ/brain/B = H.getorganslot("brain")
 		B.vital = FALSE
 		B.decoy_override = TRUE
 
@@ -229,9 +244,9 @@
 
 		else if(mob_occupant.cloneloss > (100 - heal_level))
 			mob_occupant.Unconscious(80)
-			var/dmg_mult = CONFIG_GET(number/damage_multiplier)
+
 			 //Slowly get that clone healed and finished.
-			mob_occupant.adjustCloneLoss(-((speed_coeff / 2) * dmg_mult))
+			mob_occupant.adjustCloneLoss(-((speed_coeff/2) * config.damage_multiplier))
 			var/progress = CLONE_INITIAL_DAMAGE - mob_occupant.getCloneLoss()
 			// To avoid the default cloner making incomplete clones
 			progress += (100 - MINIMUM_HEAL_LEVEL)
@@ -249,7 +264,7 @@
 					BP.attach_limb(mob_occupant)
 
 			//Premature clones may have brain damage.
-			mob_occupant.adjustBrainLoss(-((speed_coeff / 2) * dmg_mult))
+			mob_occupant.adjustBrainLoss(-((speed_coeff/2) * config.damage_multiplier))
 
 			check_brine()
 
@@ -278,7 +293,7 @@
 		use_power(200)
 
 //Let's unlock this early I guess.  Might be too early, needs tweaking.
-/obj/machinery/clonepod/attackby(obj/item/W, mob/user, params)
+/obj/machinery/clonepod/attackby(obj/item/weapon/W, mob/user, params)
 	if(!(occupant || mess))
 		if(default_deconstruction_screwdriver(user, "[icon_state]_maintenance", "[initial(icon_state)]",W))
 			return
@@ -388,13 +403,10 @@
 		flash_color(mob_occupant, flash_color="#960000", flash_time=100)
 		to_chat(mob_occupant, "<span class='warning'><b>Agony blazes across your consciousness as your body is torn apart.</b><br><i>Is this what dying is like? Yes it is.</i></span>")
 		playsound(src.loc, 'sound/machines/warning-buzzer.ogg', 50, 0)
-		SEND_SOUND(mob_occupant, sound('sound/hallucinations/veryfar_noise.ogg',0,1,50))
+		mob_occupant << sound('sound/hallucinations/veryfar_noise.ogg',0,1,50)
 		QDEL_IN(mob_occupant, 40)
 
 /obj/machinery/clonepod/relaymove(mob/user)
-	container_resist()
-
-/obj/machinery/clonepod/container_resist(mob/living/user)
 	if(user.stat == CONSCIOUS)
 		go_out()
 
@@ -471,7 +483,7 @@
  *	Manual -- A big ol' manual.
  */
 
-/obj/item/paper/guides/jobs/medical/cloning
+/obj/item/weapon/paper/Cloning
 	name = "paper - 'H-87 Cloning Apparatus Manual"
 	info = {"<h4>Getting Started</h4>
 	Congratulations, your station has purchased the H-87 industrial cloning device!<br>

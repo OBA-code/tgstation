@@ -7,7 +7,7 @@
 	var/volume_rate = 1000
 	volume = 1000
 
-	var/list/scrubbing = list(/datum/gas/plasma, /datum/gas/carbon_dioxide, /datum/gas/nitrous_oxide, /datum/gas/oxygen_agent_b, /datum/gas/bz, /datum/gas/freon, /datum/gas/water_vapor)
+	var/list/scrubbing = list("plasma", "co2", "n2o", "agent_b", "bz", "freon", "water_vapor")
 
 /obj/machinery/portable_atmospherics/scrubber/Destroy()
 	var/turf/T = get_turf(src)
@@ -45,7 +45,7 @@
 
 	filtered.temperature = filtering.temperature
 	for(var/gas in filtering.gases & scrubbing)
-		ADD_GAS(gas, filtered.gases)
+		filtered.add_gas(gas)
 		filtered.gases[gas][MOLES] = filtering.gases[gas][MOLES] // Shuffle the "bad" gasses to the filtered mixture.
 		filtering.gases[gas][MOLES] = 0
 	filtering.garbage_collect() // Now that the gasses are set to 0, clean up the mixture.
@@ -127,7 +127,7 @@
 		for(var/turf/AT in T.GetAtmosAdjacentTurfs(alldir = TRUE))
 			scrub(AT.return_air())
 
-/obj/machinery/portable_atmospherics/scrubber/huge/attackby(obj/item/W, mob/user)
+/obj/machinery/portable_atmospherics/scrubber/huge/attackby(obj/item/weapon/W, mob/user)
 	if(default_unfasten_wrench(user, W))
 		if(!movable)
 			on = FALSE

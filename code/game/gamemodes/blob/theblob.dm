@@ -8,7 +8,6 @@
 	opacity = 0
 	anchored = TRUE
 	layer = BELOW_MOB_LAYER
-	CanAtmosPass = ATMOS_PASS_PROC
 	var/point_return = 0 //How many points the blob gets back when it removes a blob of that type. If less than 0, blob cannot be removed.
 	max_integrity = 30
 	armor = list(melee = 0, bullet = 0, laser = 0, energy = 0, bomb = 0, bio = 0, rad = 0, fire = 80, acid = 70)
@@ -17,8 +16,17 @@
 	var/heal_timestamp = 0 //we got healed when?
 	var/brute_resist = 0.5 //multiplies brute damage by this
 	var/fire_resist = 1 //multiplies burn damage by this
-	var/atmosblock = FALSE //if the blob blocks atmos and heat spread
+	var/atmosblock = 0 //if the blob blocks atmos and heat spread
 	var/mob/camera/blob/overmind
+
+/obj/structure/blob/attack_hand(mob/M)
+	. = ..()
+	M.changeNext_move(CLICK_CD_MELEE)
+	var/a = pick("gently stroke", "nuzzle", "affectionatly pet", "cuddle")
+	M.visible_message("<span class='notice'>[M] [a]s [src]!</span>", "<span class='notice'>You [a] [src]!</span>")
+	playsound(src, 'sound/effects/blobattack.ogg', 50, 1) //SQUISH SQUISH
+	
+
 
 /obj/structure/blob/Initialize()
 	var/area/Ablob = get_area(loc)
@@ -28,16 +36,17 @@
 	setDir(pick(GLOB.cardinals))
 	update_icon()
 	.= ..()
-	if(atmosblock)
-		air_update_turf(1)
 	ConsumeTile()
+	if(atmosblock)
+		CanAtmosPass = ATMOS_PASS_NO
+		air_update_turf(1)
 
 /obj/structure/blob/proc/creation_action() //When it's created by the overmind, do this.
 	return
 
 /obj/structure/blob/Destroy()
 	if(atmosblock)
-		atmosblock = FALSE
+		atmosblock = 0
 		air_update_turf(1)
 	GLOB.blobs_legit -= src  //if it was in the legit blobs list, it isn't now
 	GLOB.blobs -= src //it's no longer in the all blobs list either
@@ -69,9 +78,6 @@
 		return 1
 	return 0
 
-/obj/structure/blob/CanAtmosPass(turf/T)
-	return !atmosblock
-
 /obj/structure/blob/CanAStarPass(ID, dir, caller)
 	. = 0
 	if(ismovableatom(caller))
@@ -90,10 +96,8 @@
 /obj/structure/blob/proc/Life()
 	return
 
-/obj/structure/blob/proc/Pulse_Area(mob/camera/blob/pulsing_overmind, claim_range = 10, pulse_range = 3, expand_range = 2)
-	if(QDELETED(pulsing_overmind))
-		pulsing_overmind = overmind
-	Be_Pulsed()
+/obj/structure/blob/proc/Pulse_Area(pulsing_overmind = overmind, claim_range = 10, pulse_range = 3, expand_range = 2)
+	src.Be_Pulsed()
 	var/expanded = FALSE
 	if(prob(70) && expand())
 		expanded = TRUE
@@ -190,7 +194,7 @@
 		B.density = TRUE
 		if(T.Enter(B,src)) //NOW we can attempt to move into the tile
 			B.density = initial(B.density)
-			B.forceMove(T)
+			B.loc = T
 			B.update_icon()
 			if(B.overmind && expand_reaction)
 				B.overmind.blob_reagent_datum.expand_reaction(src, B, T, controller)
@@ -231,7 +235,7 @@
 	if(istype(I, /obj/item/device/analyzer))
 		user.changeNext_move(CLICK_CD_MELEE)
 		to_chat(user, "<b>The analyzer beeps once, then reports:</b><br>")
-		SEND_SOUND(user, sound('sound/machines/ping.ogg'))
+		user << 'sound/machines/ping.ogg'
 		chemeffectreport(user)
 		typereport(user)
 	else

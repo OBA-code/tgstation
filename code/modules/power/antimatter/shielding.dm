@@ -3,8 +3,7 @@
 	var/list/things = list()
 	for(var/direction in GLOB.cardinals)
 		var/turf/T = get_step(center, direction)
-		if(!T)
-			continue
+		if(!T) continue
 		things += T.contents
 	return things
 
@@ -33,24 +32,16 @@
 	. = ..()
 	addtimer(CALLBACK(src, .proc/controllerscan), 10)
 
-/obj/machinery/am_shielding/proc/overheat()
-	visible_message("<span class='danger'>[src] melts!</span>")
-	new /obj/effect/hotspot(loc)
-	qdel(src)
-
-/obj/machinery/am_shielding/proc/collapse()
-	visible_message("<span class='notice'>[src] collapses back into a container!</span>")
-	new /obj/item/device/am_shielding_container(drop_location())
-	qdel(src)
 
 /obj/machinery/am_shielding/proc/controllerscan(priorscan = 0)
 	//Make sure we are the only one here
-	if(!isturf(loc))
-		collapse()
+	if(!istype(src.loc, /turf))
+		qdel(src)
+		return
 	for(var/obj/machinery/am_shielding/AMS in loc.contents)
 		if(AMS == src)
 			continue
-		collapse()
+		qdel(src)
 		return
 
 	//Search for shielding first
@@ -68,7 +59,7 @@
 		if(!priorscan)
 			addtimer(CALLBACK(src, .proc/controllerscan, 1), 20)
 			return
-		collapse()
+		qdel(src)
 
 
 /obj/machinery/am_shielding/Destroy()
@@ -76,6 +67,7 @@
 		control_unit.remove_shielding(src)
 	if(processing)
 		shutdown_core()
+	visible_message("<span class='danger'>The [src.name] melts!</span>")
 	//Might want to have it leave a mess on the floor but no sprites for now
 	return ..()
 
@@ -217,7 +209,7 @@
 	if(injecting_fuel && control_unit)
 		control_unit.exploding = 1
 	if(src)
-		overheat()
+		qdel(src)
 	return
 
 
@@ -238,10 +230,8 @@
 	icon = 'icons/obj/machines/antimatter.dmi'
 	icon_state = "box"
 	item_state = "electronic"
-	lefthand_file = 'icons/mob/inhands/misc/devices_lefthand.dmi'
-	righthand_file = 'icons/mob/inhands/misc/devices_righthand.dmi'
 	w_class = WEIGHT_CLASS_BULKY
-	flags_1 = CONDUCT_1
+	flags = CONDUCT
 	throwforce = 5
 	throw_speed = 1
 	throw_range = 2

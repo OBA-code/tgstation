@@ -14,14 +14,7 @@
 	/turf/closed/wall,
 	/obj/structure/falsewall)
 	smooth = SMOOTH_MORE
-	//	flags = CONDUCT_1
-
-/obj/structure/lattice/examine(mob/user)
-	..()
-	deconstruction_hints(user)
-
-/obj/structure/lattice/proc/deconstruction_hints(mob/user)
-	to_chat(user, "<span class='notice'>The rods look like they could be <b>cut</b>. There's space for more <i>rods</i> or a <i>tile</i>.</span>")
+	//	flags = CONDUCT
 
 /obj/structure/lattice/Initialize(mapload)
 	. = ..()
@@ -33,12 +26,13 @@
 	return
 
 /obj/structure/lattice/ratvar_act()
-	new /obj/structure/lattice/clockwork(loc)
+	if(IsEven(x + y))
+		new /obj/structure/lattice/clockwork(loc)
+	else
+		new /obj/structure/lattice/clockwork/large(loc)
 
 /obj/structure/lattice/attackby(obj/item/C, mob/user, params)
-	if(resistance_flags & INDESTRUCTIBLE)
-		return
-	if(istype(C, /obj/item/wirecutters))
+	if(istype(C, /obj/item/weapon/wirecutters))
 		to_chat(user, "<span class='notice'>Slicing [name] joints ...</span>")
 		deconstruct()
 	else
@@ -46,7 +40,7 @@
 		return T.attackby(C, user) //hand this off to the turf instead (for building plating, catwalks, etc)
 
 /obj/structure/lattice/deconstruct(disassembled = TRUE)
-	if(!(flags_1 & NODECONSTRUCT_1))
+	if(!(flags & NODECONSTRUCT))
 		new /obj/item/stack/rods(get_turf(src), number_of_rods)
 	qdel(src)
 
@@ -60,22 +54,22 @@
 	icon = 'icons/obj/smooth_structures/lattice_clockwork.dmi'
 
 /obj/structure/lattice/clockwork/Initialize(mapload)
-	canSmoothWith += /turf/open/indestructible/clock_spawn_room //list overrides are a terrible thing
-	. = ..()
+	..()
 	ratvar_act()
-	if(z == ZLEVEL_CITYOFCOGS)
-		resistance_flags |= INDESTRUCTIBLE
 
 /obj/structure/lattice/clockwork/ratvar_act()
 	if(IsOdd(x+y))
-		icon = 'icons/obj/smooth_structures/lattice_clockwork_large.dmi'
-		pixel_x = -9
-		pixel_y = -9
-	else
-		icon = 'icons/obj/smooth_structures/lattice_clockwork.dmi'
-		pixel_x = 0
-		pixel_y = 0
-	return TRUE
+		new /obj/structure/lattice/clockwork/large(loc) // deletes old one
+
+/obj/structure/lattice/clockwork/large/Initialize(mapload)
+	..()
+	icon = 'icons/obj/smooth_structures/lattice_clockwork_large.dmi'
+	pixel_x = -9
+	pixel_y = -9
+
+/obj/structure/lattice/clockwork/large/ratvar_act()
+	if(IsEven(x + y))
+		new /obj/structure/lattice/clockwork(loc)
 
 /obj/structure/lattice/catwalk
 	name = "catwalk"
@@ -85,9 +79,6 @@
 	number_of_rods = 2
 	smooth = SMOOTH_TRUE
 	canSmoothWith = null
-
-/obj/structure/lattice/catwalk/deconstruction_hints(mob/user)
-	to_chat(user, "<span class='notice'>The supporting rods look like they could be <b>cut</b>.</span>")
 
 /obj/structure/lattice/catwalk/ratvar_act()
 	new /obj/structure/lattice/catwalk/clockwork(loc)
@@ -107,29 +98,11 @@
 /obj/structure/lattice/catwalk/clockwork
 	name = "clockwork catwalk"
 	icon = 'icons/obj/smooth_structures/catwalk_clockwork.dmi'
-	canSmoothWith = list(/obj/structure/lattice,
-	/turf/open/floor,
-	/turf/open/indestructible/clock_spawn_room,
-	/turf/closed/wall,
-	/obj/structure/falsewall)
-	smooth = SMOOTH_MORE
 
 /obj/structure/lattice/catwalk/clockwork/Initialize(mapload)
-	. = ..()
-	ratvar_act()
-	if(!mapload)
-		new /obj/effect/temp_visual/ratvar/floor/catwalk(loc)
-		new /obj/effect/temp_visual/ratvar/beam/catwalk(loc)
-	if(z == ZLEVEL_CITYOFCOGS)
-		resistance_flags |= INDESTRUCTIBLE
+	..()
+	new /obj/effect/temp_visual/ratvar/floor/catwalk(loc)
+	new /obj/effect/temp_visual/ratvar/beam/catwalk(loc)
 
 /obj/structure/lattice/catwalk/clockwork/ratvar_act()
-	if(IsOdd(x+y))
-		icon = 'icons/obj/smooth_structures/catwalk_clockwork_large.dmi'
-		pixel_x = -9
-		pixel_y = -9
-	else
-		icon = 'icons/obj/smooth_structures/catwalk_clockwork.dmi'
-		pixel_x = 0
-		pixel_y = 0
-	return TRUE
+	return

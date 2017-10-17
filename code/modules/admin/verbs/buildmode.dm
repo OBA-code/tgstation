@@ -101,7 +101,6 @@
 	stored = null
 	for(var/button in buttons)
 		qdel(button)
-	return ..()
 
 /datum/buildmode/proc/create_buttons()
 	buttons += new /obj/screen/buildmode/mode(src)
@@ -181,8 +180,7 @@
 			if(varholder in locked && !check_rights(R_DEBUG,0))
 				return 1
 			var/thetype = input(user,"Select variable type:" ,"Type") in list("text","number","mob-reference","obj-reference","turf-reference")
-			if(!thetype)
-				return 1
+			if(!thetype) return 1
 			switch(thetype)
 				if("text")
 					valueholder = input(user,"Enter variable value:" ,"Value", "value") as text
@@ -196,15 +194,11 @@
 					valueholder = input(user,"Enter variable value:" ,"Value") as turf in world
 		if(AREA_BUILDMODE)
 			var/list/gen_paths = subtypesof(/datum/mapGenerator)
-			var/list/options = list()
-			for(var/path in gen_paths)
-				var/datum/mapGenerator/MP = path
-				options[initial(MP.buildmode_name)] = path
-			var/type = input(user,"Select Generator Type","Type") as null|anything in options
-			if(!type)
-				return
 
-			generator_path = options[type]
+			var/type = input(user,"Select Generator Type","Type") as null|anything in gen_paths
+			if(!type) return
+
+			generator_path = type
 			cornerA = null
 			cornerB = null
 
@@ -348,12 +342,7 @@
 				if(cornerA && cornerB)
 					if(!generator_path)
 						to_chat(user, "<span class='warning'>Select generator type first.</span>")
-						return
 					var/datum/mapGenerator/G = new generator_path
-					if(istype(G, /datum/mapGenerator/repair/reload_station_map))
-						if(GLOB.reloading_map)
-							to_chat(user, "<span class='boldwarning'>You are already reloading an area! Please wait for it to fully finish loading before trying to load another!</span>")
-							return
 					G.defineRegion(cornerA,cornerB,1)
 					G.generate()
 					cornerA = null

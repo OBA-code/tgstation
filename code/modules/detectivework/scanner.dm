@@ -8,9 +8,7 @@
 	icon_state = "forensicnew"
 	w_class = WEIGHT_CLASS_SMALL
 	item_state = "electronic"
-	lefthand_file = 'icons/mob/inhands/misc/devices_lefthand.dmi'
-	righthand_file = 'icons/mob/inhands/misc/devices_righthand.dmi'
-	flags_1 = CONDUCT_1 | NOBLUDGEON_1
+	flags = CONDUCT | NOBLUDGEON
 	slot_flags = SLOT_BELT
 	var/scanning = 0
 	var/list/log = list()
@@ -31,7 +29,7 @@
 
 /obj/item/device/detective_scanner/proc/PrintReport()
 	// Create our paper
-	var/obj/item/paper/P = new(get_turf(src))
+	var/obj/item/weapon/paper/P = new(get_turf(src))
 	P.name = "paper- 'Scanner Report'"
 	P.info = "<center><font size='6'><B>Scanner Report</B></font></center><HR><BR>"
 	P.info += jointext(log, "<BR>")
@@ -41,7 +39,7 @@
 	if(ismob(loc))
 		var/mob/M = loc
 		M.put_in_hands(P)
-		to_chat(M, "<span class='notice'>Report printed. Log cleared.</span>")
+		to_chat(M, "<span class='notice'>Report printed. Log cleared.<span>")
 
 	// Clear the logs
 	log = list()

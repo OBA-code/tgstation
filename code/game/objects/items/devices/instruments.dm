@@ -4,8 +4,6 @@
 	resistance_flags = FLAMMABLE
 	max_integrity = 100
 	icon = 'icons/obj/musician.dmi'
-	lefthand_file = 'icons/mob/inhands/equipment/instruments_lefthand.dmi'
-	righthand_file = 'icons/mob/inhands/equipment/instruments_righthand.dmi'
 	var/datum/song/handheld/song
 	var/instrumentId = "generic"
 	var/instrumentExt = "mid"
@@ -24,7 +22,7 @@
 	return (BRUTELOSS)
 
 /obj/item/device/instrument/Initialize(mapload)
-	. = ..()
+	..()
 	if(mapload)
 		song.tempo = song.sanitize_tempo(song.tempo) // tick_lag isn't set when the map is loaded
 
@@ -153,8 +151,6 @@
 	desc = "An exquisitely decorated bike horn, capable of honking in a variety of notes."
 	icon_state = "bike_horn"
 	item_state = "bike_horn"
-	lefthand_file = 'icons/mob/inhands/equipment/horns_lefthand.dmi'
-	righthand_file = 'icons/mob/inhands/equipment/horns_righthand.dmi'
 	attack_verb = list("beautifully honks")
 	instrumentId = "bikehorn"
 	instrumentExt = "ogg"

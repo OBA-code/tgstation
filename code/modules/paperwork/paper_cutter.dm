@@ -1,4 +1,4 @@
-/obj/item/papercutter
+/obj/item/weapon/papercutter
 	name = "paper cutter"
 	desc = "Standard office equipment. Precisely cuts paper using a large blade."
 	icon = 'icons/obj/bureaucracy.dmi'
@@ -6,19 +6,19 @@
 	force = 5
 	throwforce = 5
 	w_class = WEIGHT_CLASS_NORMAL
-	var/obj/item/paper/storedpaper = null
-	var/obj/item/hatchet/cutterblade/storedcutter = null
+	var/obj/item/weapon/paper/storedpaper = null
+	var/obj/item/weapon/hatchet/cutterblade/storedcutter = null
 	var/cuttersecured = TRUE
 	pass_flags = PASSTABLE
 
 
-/obj/item/papercutter/New()
+/obj/item/weapon/papercutter/New()
 	..()
-	storedcutter = new /obj/item/hatchet/cutterblade(src)
+	storedcutter = new /obj/item/weapon/hatchet/cutterblade(src)
 	update_icon()
 
 
-/obj/item/papercutter/suicide_act(mob/user)
+/obj/item/weapon/papercutter/suicide_act(mob/user)
 	if(storedcutter)
 		user.visible_message("<span class='suicide'>[user] is beheading [user.p_them()]self with [src.name]! It looks like [user.p_theyre()] trying to commit suicide!</span>")
 		if(iscarbon(user))
@@ -34,7 +34,7 @@
 		return (BRUTELOSS)
 
 
-/obj/item/papercutter/update_icon()
+/obj/item/weapon/papercutter/update_icon()
 	..()
 	cut_overlays()
 	icon_state = (storedcutter ? "[initial(icon_state)]-cutter" : "[initial(icon_state)]")
@@ -42,24 +42,25 @@
 		add_overlay("paper")
 
 
-/obj/item/papercutter/attackby(obj/item/P, mob/user, params)
-	if(istype(P, /obj/item/paper) && !storedpaper)
-		if(!user.transferItemToLoc(P, src))
+/obj/item/weapon/papercutter/attackby(obj/item/P, mob/user, params)
+	if(istype(P, /obj/item/weapon/paper) && !storedpaper)
+		if(!user.drop_item())
 			return
 		playsound(loc, "pageturn", 60, 1)
 		to_chat(user, "<span class='notice'>You place [P] in [src].</span>")
+		P.loc = src
 		storedpaper = P
 		update_icon()
 		return
-	if(istype(P, /obj/item/hatchet/cutterblade) && !storedcutter)
-		if(!user.transferItemToLoc(P, src))
+	if(istype(P, /obj/item/weapon/hatchet/cutterblade) && !storedcutter)
+		if(!user.drop_item())
 			return
 		to_chat(user, "<span class='notice'>You replace [src]'s [P].</span>")
 		P.loc = src
 		storedcutter = P
 		update_icon()
 		return
-	if(istype(P, /obj/item/screwdriver) && storedcutter)
+	if(istype(P, /obj/item/weapon/screwdriver) && storedcutter)
 		playsound(src, P.usesound, 50, 1)
 		to_chat(user, "<span class='notice'>[storedcutter] has been [cuttersecured ? "unsecured" : "secured"].</span>")
 		cuttersecured = !cuttersecured
@@ -67,7 +68,7 @@
 	..()
 
 
-/obj/item/papercutter/attack_hand(mob/user)
+/obj/item/weapon/papercutter/attack_hand(mob/user)
 	add_fingerprint(user)
 	if(!storedcutter)
 		to_chat(user, "<span class='notice'>The cutting blade is gone! You can't use [src] now.</span>")
@@ -84,12 +85,12 @@
 		to_chat(user, "<span class='notice'>You neatly cut [storedpaper].</span>")
 		storedpaper = null
 		qdel(storedpaper)
-		new /obj/item/paperslip(get_turf(src))
-		new /obj/item/paperslip(get_turf(src))
+		new /obj/item/weapon/paperslip(get_turf(src))
+		new /obj/item/weapon/paperslip(get_turf(src))
 		update_icon()
 
 
-/obj/item/papercutter/MouseDrop(atom/over_object)
+/obj/item/weapon/papercutter/MouseDrop(atom/over_object)
 	var/mob/M = usr
 	if(M.incapacitated() || !Adjacent(M))
 		return
@@ -103,7 +104,7 @@
 	add_fingerprint(M)
 
 
-/obj/item/paperslip
+/obj/item/weapon/paperslip
 	name = "paper slip"
 	desc = "A little slip of paper left over after a larger piece was cut. Whoa."
 	icon_state = "paperslip"
@@ -111,17 +112,15 @@
 	resistance_flags = FLAMMABLE
 	max_integrity = 50
 
-/obj/item/paperslip/New()
+/obj/item/weapon/paperslip/New()
 	..()
 	pixel_x = rand(-5, 5)
 	pixel_y = rand(-5, 5)
 
 
-/obj/item/hatchet/cutterblade
+/obj/item/weapon/hatchet/cutterblade
 	name = "paper cutter"
 	desc = "The blade of a paper cutter. Most likely removed for polishing or sharpening."
 	icon = 'icons/obj/bureaucracy.dmi'
 	icon_state = "cutterblade"
 	item_state = "knife"
-	lefthand_file = 'icons/mob/inhands/equipment/kitchen_lefthand.dmi'
-	righthand_file = 'icons/mob/inhands/equipment/kitchen_righthand.dmi'

@@ -4,8 +4,8 @@
 	icon_screen = "security"
 	icon_keyboard = "security_key"
 	req_one_access = list(ACCESS_SECURITY, ACCESS_FORENSICS_LOCKERS)
-	circuit = /obj/item/circuitboard/computer/secure_data
-	var/obj/item/card/id/scan = null
+	circuit = /obj/item/weapon/circuitboard/computer/secure_data
+	var/obj/item/weapon/card/id/scan = null
 	var/authenticated = null
 	var/rank = null
 	var/screen = null
@@ -23,11 +23,6 @@
 
 	light_color = LIGHT_COLOR_RED
 
-/obj/machinery/computer/secure_data/examine(mob/user)
-	..()
-	if(scan)
-		to_chat(user, "<span class='notice'>Alt-click to eject the ID card.</span>")
-
 /obj/machinery/computer/secure_data/syndie
 	icon_keyboard = "syndie_key"
 
@@ -40,14 +35,13 @@
 	clockwork = TRUE //it'd look weird
 
 /obj/machinery/computer/secure_data/attackby(obj/item/O, mob/user, params)
-	if(istype(O, /obj/item/card/id))
+	if(istype(O, /obj/item/weapon/card/id))
 		if(!scan)
-			if(!user.transferItemToLoc(O, src))
+			if(!user.drop_item())
 				return
+			O.loc = src
 			scan = O
 			to_chat(user, "<span class='notice'>You insert [O].</span>")
-			playsound(src, 'sound/machines/terminal_insert_disc.ogg', 50, 0)
-			updateUsrDialog()
 		else
 			to_chat(user, "<span class='warning'>There's already an ID card in the console.</span>")
 	else
@@ -181,18 +175,18 @@
 				if(3)
 					dat += "<font size='4'><b>Security Record</b></font><br>"
 					if(istype(active1, /datum/data/record) && GLOB.data_core.general.Find(active1))
-						if(istype(active1.fields["photo_front"], /obj/item/photo))
-							var/obj/item/photo/P1 = active1.fields["photo_front"]
+						if(istype(active1.fields["photo_front"], /obj/item/weapon/photo))
+							var/obj/item/weapon/photo/P1 = active1.fields["photo_front"]
 							user << browse_rsc(P1.img, "photo_front")
-						if(istype(active1.fields["photo_side"], /obj/item/photo))
-							var/obj/item/photo/P2 = active1.fields["photo_side"]
+						if(istype(active1.fields["photo_side"], /obj/item/weapon/photo))
+							var/obj/item/weapon/photo/P2 = active1.fields["photo_side"]
 							user << browse_rsc(P2.img, "photo_side")
 						dat += {"<table><tr><td><table>
 						<tr><td>Name:</td><td><A href='?src=\ref[src];choice=Edit Field;field=name'>&nbsp;[active1.fields["name"]]&nbsp;</A></td></tr>
 						<tr><td>ID:</td><td><A href='?src=\ref[src];choice=Edit Field;field=id'>&nbsp;[active1.fields["id"]]&nbsp;</A></td></tr>
 						<tr><td>Sex:</td><td><A href='?src=\ref[src];choice=Edit Field;field=sex'>&nbsp;[active1.fields["sex"]]&nbsp;</A></td></tr>
 						<tr><td>Age:</td><td><A href='?src=\ref[src];choice=Edit Field;field=age'>&nbsp;[active1.fields["age"]]&nbsp;</A></td></tr>"}
-						if(CONFIG_GET(flag/join_with_mutant_race))
+						if(config.mutant_races)
 							dat += "<tr><td>Species:</td><td><A href ='?src=\ref[src];choice=Edit Field;field=species'>&nbsp;[active1.fields["species"]]&nbsp;</A></td></tr>"
 						dat += {"<tr><td>Rank:</td><td><A href='?src=\ref[src];choice=Edit Field;field=rank'>&nbsp;[active1.fields["rank"]]&nbsp;</A></td></tr>
 						<tr><td>Fingerprint:</td><td><A href='?src=\ref[src];choice=Edit Field;field=fingerprint'>&nbsp;[active1.fields["fingerprint"]]&nbsp;</A></td></tr>
@@ -308,7 +302,19 @@ What a mess.*/
 				active2 = null
 
 			if("Confirm Identity")
-				eject_id(usr)
+				if(scan)
+					if(ishuman(usr) && !usr.get_active_held_item())
+						usr.put_in_hands(scan)
+					else
+						scan.loc = get_turf(src)
+					scan = null
+				else
+					var/obj/item/I = usr.get_active_held_item()
+					if(istype(I, /obj/item/weapon/card/id))
+						if(!usr.drop_item())
+							return
+						I.loc = src
+						scan = I
 
 			if("Log Out")
 				authenticated = null
@@ -330,7 +336,7 @@ What a mess.*/
 					authenticated = usr.client.holder.admin_signature
 					rank = "Central Command"
 					screen = 1
-				else if(istype(scan, /obj/item/card/id))
+				else if(istype(scan, /obj/item/weapon/card/id))
 					active1 = null
 					active2 = null
 					if(check_access(scan))
@@ -363,11 +369,11 @@ What a mess.*/
 					GLOB.data_core.securityPrintCount++
 					playsound(loc, 'sound/items/poster_being_created.ogg', 100, 1)
 					sleep(30)
-					var/obj/item/paper/P = new /obj/item/paper( loc )
+					var/obj/item/weapon/paper/P = new /obj/item/weapon/paper( loc )
 					P.info = "<CENTER><B>Security Record - (SR-[GLOB.data_core.securityPrintCount])</B></CENTER><BR>"
 					if((istype(active1, /datum/data/record) && GLOB.data_core.general.Find(active1)))
 						P.info += text("Name: [] ID: []<BR>\nSex: []<BR>\nAge: []<BR>", active1.fields["name"], active1.fields["id"], active1.fields["sex"], active1.fields["age"])
-						if(CONFIG_GET(flag/join_with_mutant_race))
+						if(config.mutant_races)
 							P.info += "\nSpecies: [active1.fields["species"]]<BR>"
 						P.info += text("\nFingerprint: []<BR>\nPhysical Status: []<BR>\nMental Status: []<BR>", active1.fields["fingerprint"], active1.fields["p_stat"], active1.fields["m_stat"])
 					else
@@ -445,8 +451,8 @@ What a mess.*/
 							printing = 1
 							sleep(30)
 							if((istype(active1, /datum/data/record) && GLOB.data_core.general.Find(active1)))//make sure the record still exists.
-								var/obj/item/photo/photo = active1.fields["photo_front"]
-								new /obj/item/poster/wanted(src.loc, photo.img, wanted_name, info)
+								var/obj/item/weapon/photo/photo = active1.fields["photo_front"]
+								new /obj/item/weapon/poster/wanted(src.loc, photo.img, wanted_name, info)
 							printing = 0
 
 //RECORD DELETE
@@ -513,7 +519,7 @@ What a mess.*/
 				G.fields["rank"] = "Unassigned"
 				G.fields["sex"] = "Male"
 				G.fields["age"] = "Unknown"
-				if(CONFIG_GET(flag/join_with_mutant_race))
+				if(config.mutant_races)
 					G.fields["species"] = "Human"
 				G.fields["photo_front"] = new /icon()
 				G.fields["photo_side"] = new /icon()
@@ -598,14 +604,14 @@ What a mess.*/
 							active1.fields["age"] = t1
 					if("species")
 						if(istype(active1, /datum/data/record))
-							var/t1 = input("Select a species", "Species Selection") as null|anything in CONFIG_GET(keyed_flag_list/roundstart_races)
+							var/t1 = input("Select a species", "Species Selection") as null|anything in GLOB.roundstart_species
 							if(!canUseSecurityRecordsConsole(usr, t1, a1))
 								return
 							active1.fields["species"] = t1
 					if("show_photo_front")
 						if(active1.fields["photo_front"])
-							if(istype(active1.fields["photo_front"], /obj/item/photo))
-								var/obj/item/photo/P = active1.fields["photo_front"]
+							if(istype(active1.fields["photo_front"], /obj/item/weapon/photo))
+								var/obj/item/weapon/photo/P = active1.fields["photo_front"]
 								P.show(usr)
 					if("upd_photo_front")
 						var/icon/photo = get_photo(usr)
@@ -614,8 +620,8 @@ What a mess.*/
 							active1.fields["photo_front"] = photo
 					if("show_photo_side")
 						if(active1.fields["photo_side"])
-							if(istype(active1.fields["photo_side"], /obj/item/photo))
-								var/obj/item/photo/P = active1.fields["photo_side"]
+							if(istype(active1.fields["photo_side"], /obj/item/weapon/photo))
+								var/obj/item/weapon/photo/P = active1.fields["photo_side"]
 								P.show(usr)
 					if("upd_photo_side")
 						var/icon/photo = get_photo(usr)
@@ -731,14 +737,14 @@ What a mess.*/
 	return
 
 /obj/machinery/computer/secure_data/proc/get_photo(mob/user)
-	var/obj/item/photo/P = null
+	var/obj/item/weapon/photo/P = null
 	if(issilicon(user))
 		var/mob/living/silicon/tempAI = user
 		var/datum/picture/selection = tempAI.GetPhoto()
 		if(selection)
 			P = new()
 			P.photocreate(selection.fields["icon"], selection.fields["img"], selection.fields["desc"])
-	else if(istype(user.get_active_held_item(), /obj/item/photo))
+	else if(istype(user.get_active_held_item(), /obj/item/weapon/photo))
 		P = user.get_active_held_item()
 	return P
 
@@ -766,7 +772,7 @@ What a mess.*/
 				if(6)
 					R.fields["m_stat"] = pick("*Insane*", "*Unstable*", "*Watch*", "Stable")
 				if(7)
-					R.fields["species"] = pick(CONFIG_GET(keyed_flag_list/roundstart_races))
+					R.fields["species"] = pick(GLOB.roundstart_species)
 				if(8)
 					var/datum/data/record/G = pick(GLOB.data_core.general)
 					R.fields["photo_front"] = G.fields["photo_front"]
@@ -789,20 +795,3 @@ What a mess.*/
 					if(!record2 || record2 == active2)
 						return 1
 	return 0
-
-/obj/machinery/computer/secure_data/AltClick(mob/user)
-	if(user.canUseTopic(src) && scan)
-		eject_id(user)
-
-/obj/machinery/computer/secure_data/proc/eject_id(mob/user)
-	if(scan)
-		user.put_in_hands(scan)
-		scan = null
-		playsound(src, 'sound/machines/terminal_insert_disc.ogg', 50, 0)
-	else //switching the ID with the one you're holding
-		var/obj/item/I = user.is_holding_item_of_type(/obj/item/card/id)
-		if(I)
-			if(!user.transferItemToLoc(I, src))
-				return
-			scan = I
-			playsound(src, 'sound/machines/terminal_insert_disc.ogg', 50, 0)

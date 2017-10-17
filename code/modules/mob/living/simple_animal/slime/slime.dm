@@ -94,12 +94,6 @@
 	set_colour(new_colour)
 	. = ..()
 
-/mob/living/simple_animal/slime/Destroy()
-	for (var/A in actions)
-		var/datum/action/AC = A
-		AC.Remove(src)
-	return ..()
-
 /mob/living/simple_animal/slime/proc/set_colour(new_colour)
 	colour = new_colour
 	update_name()
@@ -152,10 +146,7 @@
 	if(health <= 0) // if damaged, the slime moves twice as slow
 		. *= 2
 
-	var/static/config_slime_delay
-	if(isnull(config_slime_delay))
-		config_slime_delay = CONFIG_GET(number/slime_delay)
-	. += config_slime_delay
+	. += config.slime_delay
 
 /mob/living/simple_animal/slime/ObjCollide(obj/O)
 	if(!client && powerlevel > 0)
@@ -356,7 +347,7 @@
 
 /mob/living/simple_animal/slime/examine(mob/user)
 
-	var/msg = "<span class='info'>*---------*\nThis is [icon2html(src, user)] \a <EM>[src]</EM>!\n"
+	var/msg = "<span class='info'>*---------*\nThis is [bicon(src)] \a <EM>[src]</EM>!\n"
 	if (src.stat == DEAD)
 		msg += "<span class='deadsay'>It is limp and unresponsive.</span>\n"
 	else

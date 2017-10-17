@@ -4,7 +4,7 @@
 	name = "autosurgeon"
 	desc = "A device that automatically inserts an implant or organ into the user without the hassle of extensive surgery. It has a slot to insert implants/organs and a screwdriver slot for removing accidentally added items."
 	icon_state = "autoimplanter"
-	item_state = "nothing"
+	item_state = "walkietalkie"//left as this so as to intentionally not have inhands
 	w_class = WEIGHT_CLASS_SMALL
 	var/obj/item/organ/storedorgan
 	var/organ_type = /obj/item/organ
@@ -38,9 +38,6 @@
 	if(!uses)
 		desc = "[initial(desc)] Looks like it's been used up."
 
-/obj/item/device/autosurgeon/attack_self_tk(mob/user)
-	return //stops TK fuckery
-
 /obj/item/device/autosurgeon/attackby(obj/item/I, mob/user, params)
 	if(istype(I, organ_type))
 		if(storedorgan)
@@ -49,11 +46,12 @@
 		else if(!uses)
 			to_chat(user, "<span class='notice'>[src] has already been used up.</span>")
 			return
-		if(!user.transferItemToLoc(I, src))
+		if(!user.drop_item())
 			return
+		I.forceMove(src)
 		storedorgan = I
 		to_chat(user, "<span class='notice'>You insert the [I] into [src].</span>")
-	else if(istype(I, /obj/item/screwdriver))
+	else if(istype(I, /obj/item/weapon/screwdriver))
 		if(!storedorgan)
 			to_chat(user, "<span class='notice'>There's no implant in [src] for you to remove.</span>")
 		else

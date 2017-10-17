@@ -4,7 +4,7 @@
 	icon_screen = "mecha"
 	icon_keyboard = "tech_key"
 	req_access = list(ACCESS_ROBOTICS)
-	circuit = /obj/item/circuitboard/computer/mecha_control
+	circuit = /obj/item/weapon/circuitboard/computer/mecha_control
 	var/list/located = list()
 	var/screen = 0
 	var/stored_data
@@ -92,15 +92,15 @@
 	qdel(src)
 
 /obj/item/mecha_parts/mecha_tracking/Destroy()
-	if(ismecha(loc))
+	if(istype(loc, /obj/mecha))
 		var/obj/mecha/M = loc
 		if(src in M.trackers)
 			M.trackers -= src
 	return ..()
 
 /obj/item/mecha_parts/mecha_tracking/proc/in_mecha()
-	if(ismecha(loc))
-		return loc
+	if(istype(src.loc, /obj/mecha))
+		return src.loc
 	return 0
 
 /obj/item/mecha_parts/mecha_tracking/proc/shock()
@@ -110,7 +110,7 @@
 	qdel(src)
 
 /obj/item/mecha_parts/mecha_tracking/proc/get_mecha_log()
-	if(!ismecha(loc))
+	if(!istype(loc, /obj/mecha))
 		return 0
 	var/obj/mecha/M = src.loc
 	return M.get_log_html()
@@ -123,10 +123,10 @@
 	ai_beacon = TRUE
 
 
-/obj/item/storage/box/mechabeacons
+/obj/item/weapon/storage/box/mechabeacons
 	name = "exosuit tracking beacons"
 
-/obj/item/storage/box/mechabeacons/New()
+/obj/item/weapon/storage/box/mechabeacons/New()
 	..()
 	new /obj/item/mecha_parts/mecha_tracking(src)
 	new /obj/item/mecha_parts/mecha_tracking(src)

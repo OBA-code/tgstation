@@ -1,4 +1,5 @@
 /datum/objective/abductee
+	dangerrating = 5
 	completed = 1
 
 /datum/objective/abductee/random

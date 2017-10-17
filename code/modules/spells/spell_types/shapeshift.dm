@@ -46,7 +46,7 @@
 			return
 
 	var/mob/living/shape = new shapeshift_type(caster.loc)
-	caster.forceMove(shape)
+	caster.loc = shape
 	caster.status_flags |= GODMODE
 
 	current_shapes |= shape
@@ -64,7 +64,7 @@
 			break
 	if(!caster)
 		return
-	caster.forceMove(shape.loc)
+	caster.loc = shape.loc
 	caster.status_flags &= ~GODMODE
 
 	clothes_req = initial(clothes_req)

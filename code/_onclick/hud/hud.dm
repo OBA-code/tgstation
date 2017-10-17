@@ -23,6 +23,9 @@
 
 	var/obj/screen/devil/soul_counter/devilsouldisplay
 
+	var/obj/screen/deity_power_display
+	var/obj/screen/deity_follower_display
+
 	var/obj/screen/nightvisionicon
 	var/obj/screen/action_intent
 	var/obj/screen/zone_select
@@ -55,8 +58,6 @@
 
 	hide_actions_toggle = new
 	hide_actions_toggle.InitialiseIcon(src)
-	if(mymob.client)
-		hide_actions_toggle.locked = mymob.client.prefs.buttons_locked
 
 	hand_slots = list()
 
@@ -111,6 +112,8 @@
 	blobpwrdisplay = null
 	alien_plasma_display = null
 	alien_queen_finder = null
+	deity_power_display = null
+	deity_follower_display = null
 	nightvisionicon = null
 
 	if(plane_masters.len)

@@ -49,8 +49,8 @@ field_generator power level display
 		add_overlay("+p[power_level]")
 
 
-/obj/machinery/field/generator/Initialize()
-	. = ..()
+/obj/machinery/field/generator/New()
+	..()
 	fields = list()
 	connected_gens = list()
 
@@ -63,18 +63,18 @@ field_generator power level display
 	if(state == FG_WELDED)
 		if(get_dist(src, user) <= 1)//Need to actually touch the thing to turn it on
 			if(active >= FG_CHARGING)
-				to_chat(user, "<span class='warning'>You are unable to turn off [src] once it is online!</span>")
+				to_chat(user, "<span class='warning'>You are unable to turn off the [name] once it is online!</span>")
 				return 1
 			else
-				user.visible_message("[user] turns on [src].", \
-					"<span class='notice'>You turn on [src].</span>", \
+				user.visible_message("[user.name] turns on the [name].", \
+					"<span class='notice'>You turn on the [name].</span>", \
 					"<span class='italics'>You hear heavy droning.</span>")
 				turn_on()
 				investigate_log("<font color='green'>activated</font> by [user.key].", INVESTIGATE_SINGULO)
 
 				add_fingerprint(user)
 	else
-		to_chat(user, "<span class='warning'>[src] needs to be firmly secured to the floor first!</span>")
+		to_chat(user, "<span class='warning'>The [src] needs to be firmly secured to the floor first!</span>")
 
 /obj/machinery/field/generator/can_be_unfasten_wrench(mob/user, silent)
 	if(state == FG_WELDED)
@@ -83,7 +83,7 @@ field_generator power level display
 		return FAILED_UNFASTEN
 	return ..()
 
-/obj/machinery/field/generator/default_unfasten_wrench(mob/user, obj/item/wrench/W, time = 20)
+/obj/machinery/field/generator/default_unfasten_wrench(mob/user, obj/item/weapon/wrench/W, time = 20)
 	. = ..()
 	if(. == SUCCESSFUL_UNFASTEN)
 		if(anchored)
@@ -95,19 +95,19 @@ field_generator power level display
 	if(active)
 		to_chat(user, "<span class='warning'>[src] needs to be off!</span>")
 		return
-	else if(istype(W, /obj/item/wrench))
+	else if(istype(W, /obj/item/weapon/wrench))
 		default_unfasten_wrench(user, W, 0)
 
-	else if(istype(W, /obj/item/weldingtool))
-		var/obj/item/weldingtool/WT = W
+	else if(istype(W, /obj/item/weapon/weldingtool))
+		var/obj/item/weapon/weldingtool/WT = W
 		switch(state)
 			if(FG_UNSECURED)
-				to_chat(user, "<span class='warning'>[src] needs to be wrenched to the floor!</span>")
+				to_chat(user, "<span class='warning'>The [name] needs to be wrenched to the floor!</span>")
 
 			if(FG_SECURED)
 				if (WT.remove_fuel(0,user))
 					playsound(loc, WT.usesound, 50, 1)
-					user.visible_message("[user] starts to weld [src] to the floor.", \
+					user.visible_message("[user.name] starts to weld the [name] to the floor.", \
 						"<span class='notice'>You start to weld \the [src] to the floor...</span>", \
 						"<span class='italics'>You hear welding.</span>")
 					if(do_after(user,20*W.toolspeed, target = src) && state == FG_SECURED && WT.isOn())
@@ -117,7 +117,7 @@ field_generator power level display
 			if(FG_WELDED)
 				if (WT.remove_fuel(0,user))
 					playsound(loc, WT.usesound, 50, 1)
-					user.visible_message("[user] starts to cut [src] free from the floor.", \
+					user.visible_message("[user.name] starts to cut the [name] free from the floor.", \
 						"<span class='notice'>You start to cut \the [src] free from the floor...</span>", \
 						"<span class='italics'>You hear welding.</span>")
 					if(do_after(user,20*W.toolspeed, target = src) && state == FG_WELDED && WT.isOn())
@@ -128,7 +128,7 @@ field_generator power level display
 		return ..()
 
 /obj/machinery/field/generator/attack_animal(mob/living/simple_animal/M)
-	if(M.environment_smash & ENVIRONMENT_SMASH_RWALLS && active == FG_OFFLINE && state != FG_UNSECURED)
+	if(M.environment_smash >= 3 && active == FG_OFFLINE && state != FG_UNSECURED)
 		state = FG_UNSECURED
 		anchored = FALSE
 		M.visible_message("<span class='warning'>[M] rips [src] free from its moorings!</span>")

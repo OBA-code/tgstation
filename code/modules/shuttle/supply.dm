@@ -3,7 +3,7 @@ GLOBAL_LIST_INIT(blacklisted_cargo_types, typecacheof(list(
 		/obj/structure/blob,
 		/obj/effect/rune,
 		/obj/structure/spider/spiderling,
-		/obj/item/disk/nuclear,
+		/obj/item/weapon/disk/nuclear,
 		/obj/machinery/nuclearbomb,
 		/obj/item/device/radio/beacon,
 		/obj/singularity,
@@ -16,12 +16,7 @@ GLOBAL_LIST_INIT(blacklisted_cargo_types, typecacheof(list(
 		/obj/structure/recieving_pad,
 		/obj/effect/clockwork/spatial_gateway,
 		/obj/structure/destructible/clockwork/powered/clockwork_obelisk,
-		/obj/item/device/warp_cube,
-		/obj/machinery/r_n_d/protolathe, //print tracking beacons, send shuttle
-		/obj/machinery/autolathe, //same
-		/obj/item/projectile/beam/wormhole,
-		/obj/effect/portal,
-		/obj/item/device/shared_storage
+		/obj/item/device/warp_cube
 	)))
 
 /obj/docking_port/mobile/supply
@@ -30,7 +25,7 @@ GLOBAL_LIST_INIT(blacklisted_cargo_types, typecacheof(list(
 	callTime = 600
 
 	dir = WEST
-	port_direction = EAST
+	port_angle = 90
 	width = 12
 	dwidth = 5
 	height = 7
@@ -45,7 +40,7 @@ GLOBAL_LIST_INIT(blacklisted_cargo_types, typecacheof(list(
 	SSshuttle.supply = src
 
 /obj/docking_port/mobile/supply/canMove()
-	if(z in GLOB.station_z_levels)
+	if(z == ZLEVEL_STATION)
 		return check_blacklist(shuttle_areas)
 	return ..()
 
@@ -67,8 +62,7 @@ GLOBAL_LIST_INIT(blacklisted_cargo_types, typecacheof(list(
 /obj/docking_port/mobile/supply/dock()
 	if(getDockedId() == "supply_away") // Buy when we leave home.
 		buy()
-	. = ..() // Fly/enter transit.
-	if(. != DOCKING_SUCCESS)
+	if(..()) // Fly/enter transit.
 		return
 	if(getDockedId() == "supply_away") // Sell when we get home
 		sell()
@@ -120,7 +114,7 @@ GLOBAL_LIST_INIT(blacklisted_cargo_types, typecacheof(list(
 	for(var/place in shuttle_areas)
 		var/area/shuttle/shuttle_area = place
 		for(var/atom/movable/AM in shuttle_area)
-			if(AM.anchored || iscameramob(AM))
+			if(AM.anchored)
 				continue
 			sold_atoms += export_item_and_contents(AM, contraband, emagged, dry_run = FALSE)
 

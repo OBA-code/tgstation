@@ -11,7 +11,6 @@
 	var/status = 0
 
 	var/last_pressure_delta = 0
-	pipe_flags = PIPING_ONE_PER_TURF
 
 	anchored = TRUE
 	density = TRUE
@@ -41,6 +40,8 @@
 
 		last_pressure_delta = pressure_delta
 
+		//to_chat(world, "pressure_delta = [pressure_delta]; transfer_moles = [transfer_moles];")
+
 		//Actually transfer the gas
 		var/datum/gas_mixture/removed = air2.remove(transfer_moles)
 
@@ -56,7 +57,7 @@
 	update_icon()
 
 /obj/machinery/atmospherics/components/binary/circulator/update_icon()
-	if(!is_operational())
+	if(stat & (BROKEN|NOPOWER))
 		icon_state = "circ[side]-p"
 	else if(last_pressure_delta > 0)
 		if(last_pressure_delta > ONE_ATMOSPHERE)
@@ -65,3 +66,5 @@
 			icon_state = "circ[side]-slow"
 	else
 		icon_state = "circ[side]-off"
+
+	return 1

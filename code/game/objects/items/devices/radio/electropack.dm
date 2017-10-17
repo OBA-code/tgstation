@@ -4,9 +4,7 @@
 	icon = 'icons/obj/radio.dmi'
 	icon_state = "electropack0"
 	item_state = "electropack"
-	lefthand_file = 'icons/mob/inhands/misc/devices_lefthand.dmi'
-	righthand_file = 'icons/mob/inhands/misc/devices_righthand.dmi'
-	flags_1 = CONDUCT_1
+	flags = CONDUCT
 	slot_flags = SLOT_BACK
 	w_class = WEIGHT_CLASS_HUGE
 	materials = list(MAT_METAL=10000, MAT_GLASS=2500)
@@ -20,11 +18,12 @@
 	return (FIRELOSS)
 
 /obj/item/device/electropack/Initialize()
-	. = ..()
+	..()
 	SSradio.add_object(src, frequency, GLOB.RADIO_CHAT)
 
 /obj/item/device/electropack/Destroy()
-	SSradio.remove_object(src, frequency)
+	if(SSradio)
+		SSradio.remove_object(src, frequency)
 	return ..()
 
 /obj/item/device/electropack/attack_hand(mob/user)
@@ -35,7 +34,7 @@
 			return
 	..()
 
-/obj/item/device/electropack/attackby(obj/item/W, mob/user, params)
+/obj/item/device/electropack/attackby(obj/item/weapon/W, mob/user, params)
 	if(istype(W, /obj/item/clothing/head/helmet))
 		var/obj/item/assembly/shock_kit/A = new /obj/item/assembly/shock_kit( user )
 		A.icon = 'icons/obj/assemblies.dmi'
@@ -52,8 +51,8 @@
 
 		user.put_in_hands(A)
 		A.add_fingerprint(user)
-		if(src.flags_1 & NODROP_1)
-			A.flags_1 |= NODROP_1
+		if(src.flags & NODROP)
+			A.flags |= NODROP
 	else
 		return ..()
 

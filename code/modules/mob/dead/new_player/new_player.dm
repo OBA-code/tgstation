@@ -4,7 +4,7 @@
 	var/ready = 0
 	var/spawning = 0//Referenced when you want to delete the new_player later on in the code.
 
-	flags_1 = NONE
+	flags = NONE
 
 	invisibility = INVISIBILITY_ABSTRACT
 
@@ -24,9 +24,6 @@
 		loc = pick(GLOB.newplayer_start)
 	else
 		loc = locate(1,1,1)
-
-	ComponentInitialize()
-
 	. = ..()
 
 /mob/dead/new_player/prepare_huds()
@@ -35,7 +32,7 @@
 /mob/dead/new_player/proc/new_player_panel()
 	var/output = "<center><p><a href='byond://?src=\ref[src];show_preferences=1'>Setup Character</a></p>"
 
-	if(SSticker.current_state <= GAME_STATE_PREGAME)
+	if(SSticker && SSticker.current_state <= GAME_STATE_PREGAME)
 		switch(ready)
 			if(PLAYER_NOT_READY)
 				output += "<p>\[ [LINKIFY_READY("Ready", PLAYER_READY_TO_PLAY)] | <b>Not Ready</b> | [LINKIFY_READY("Observe", PLAYER_READY_TO_OBSERVE)] \]</p>"
@@ -82,12 +79,9 @@
 
 		if(SSticker.current_state == GAME_STATE_PREGAME)
 			var/time_remaining = SSticker.GetTimeLeft()
-			if(time_remaining > 0)
-				stat("Time To Start:", "[round(time_remaining/10)]s")
-			else if(time_remaining == -10)
-				stat("Time To Start:", "DELAYED")
-			else
-				stat("Time To Start:", "SOON")
+			if(time_remaining >= 0)
+				time_remaining /= 10
+			stat("Time To Start:", (time_remaining >= 0) ? "[round(time_remaining)]s" : "DELAYED")
 
 			stat("Players:", "[SSticker.totalPlayers]")
 			if(client.holder)
@@ -103,29 +97,28 @@
 
 	//Determines Relevent Population Cap
 	var/relevant_cap
-	var/hpc = CONFIG_GET(number/hard_popcap)
-	var/epc = CONFIG_GET(number/extreme_popcap)
-	if(hpc && epc)
-		relevant_cap = min(hpc, epc)
+	if(config.hard_popcap && config.extreme_popcap)
+		relevant_cap = min(config.hard_popcap, config.extreme_popcap)
 	else
-		relevant_cap = max(hpc, epc)
+		relevant_cap = max(config.hard_popcap, config.extreme_popcap)
 
 	if(href_list["show_preferences"])
 		client.prefs.ShowChoices(src)
 		return 1
 
 	if(href_list["ready"])
-		var/tready = text2num(href_list["ready"])
-		//Avoid updating ready if we're after PREGAME (they should use latejoin instead)
-		//This is likely not an actual issue but I don't have time to prove that this
-		//no longer is required
-		if(SSticker.current_state <= GAME_STATE_PREGAME)
-			ready = tready
-		//if it's post initialisation and they're trying to observe we do the needful
-		if(!SSticker.current_state < GAME_STATE_PREGAME && tready == PLAYER_READY_TO_OBSERVE)
-			ready = tready
-			make_me_an_observer()
-			return
+		if(SSticker)
+			var/tready = text2num(href_list["ready"])
+			//Avoid updating ready if we're after PREGAME (they should use latejoin instead)
+			//This is likely not an actual issue but I don't have time to prove that this 
+			//no longer is required
+			if(SSticker.current_state <= GAME_STATE_PREGAME)
+				ready = tready
+			//if it's post initialisation and they're trying to observe we do the needful
+			if(!SSticker.current_state < GAME_STATE_PREGAME && tready == PLAYER_READY_TO_OBSERVE)
+				ready = tready
+				make_me_an_observer()
+				return
 
 	if(href_list["refresh"])
 		src << browse(null, "window=playersetup") //closes the player setup window
@@ -141,7 +134,7 @@
 			return
 
 		if(SSticker.queued_players.len || (relevant_cap && living_player_count() >= relevant_cap && !(ckey(key) in GLOB.admin_datums)))
-			to_chat(usr, "<span class='danger'>[CONFIG_GET(string/hard_popcap_message)]</span>")
+			to_chat(usr, "<span class='danger'>[config.hard_popcap_message]</span>")
 
 			var/queue_position = SSticker.queued_players.Find(usr)
 			if(queue_position == 1)
@@ -279,7 +272,7 @@
 
 	observer.started_as_observer = TRUE
 	close_spawn_windows()
-	var/obj/effect/landmark/observer_start/O = locate(/obj/effect/landmark/observer_start) in GLOB.landmarks_list
+	var/obj/O = locate("landmark*Observer-Start")
 	to_chat(src, "<span class='notice'>Now teleporting.</span>")
 	if (O)
 		observer.loc = O.loc
@@ -315,9 +308,7 @@
 		return 0
 	if(!job.player_old_enough(src.client))
 		return 0
-	if(job.required_playtime_remaining(client))
-		return 0
-	if(CONFIG_GET(flag/enforce_human_authority) && !client.prefs.pref_species.qualifies_for_rank(rank, client.prefs.features))
+	if(config.enforce_human_authority && !client.prefs.pref_species.qualifies_for_rank(rank, client.prefs.features))
 		return 0
 	return 1
 
@@ -325,7 +316,7 @@
 /mob/dead/new_player/proc/AttemptLateSpawn(rank)
 	if(!IsJobAvailable(rank))
 		alert(src, "[rank] is not available. Please try another.")
-		return FALSE
+		return 0
 
 	if(SSticker.late_join_disabled)
 		alert(src, "An administrator has disabled late join spawning.")
@@ -334,12 +325,9 @@
 	var/arrivals_docked = TRUE
 	if(SSshuttle.arrivals)
 		close_spawn_windows()	//In case we get held up
-		if(SSshuttle.arrivals.damaged && CONFIG_GET(flag/arrivals_shuttle_require_safe_latejoin))
+		if(SSshuttle.arrivals.damaged && config.arrivals_shuttle_require_safe_latejoin)
 			src << alert("The arrivals shuttle is currently malfunctioning! You cannot join.")
 			return FALSE
-
-		if(CONFIG_GET(flag/arrivals_shuttle_require_undocked))
-			SSshuttle.arrivals.RequireUndocked(src)
 		arrivals_docked = SSshuttle.arrivals.mode != SHUTTLE_CALL
 
 	//Remove the player from the join queue if he was in one and reset the timer
@@ -381,7 +369,7 @@
 
 	GLOB.joined_player_list += character.ckey
 
-	if(CONFIG_GET(flag/allow_latejoin_antagonists) && humanc)	//Borgs aren't allowed to be antags. Will need to be tweaked if we get true latejoin ais.
+	if(config.allow_latejoin_antagonists && humanc)	//Borgs aren't allowed to be antags. Will need to be tweaked if we get true latejoin ais.
 		if(SSshuttle.emergency)
 			switch(SSshuttle.emergency.mode)
 				if(SHUTTLE_RECALL, SHUTTLE_IDLE)
@@ -389,8 +377,6 @@
 				if(SHUTTLE_CALL)
 					if(SSshuttle.emergency.timeLeft(1) > initial(SSshuttle.emergencyCallTime)*0.5)
 						SSticker.mode.make_antag_chance(humanc)
-
-	log_manifest(character.mind.key,character.mind,character,latejoin = TRUE)
 
 /mob/dead/new_player/proc/AddEmploymentContract(mob/living/carbon/human/employee)
 	//TODO:  figure out a way to exclude wizards/nukeops/demons from this.
@@ -401,7 +387,12 @@
 
 
 /mob/dead/new_player/proc/LateChoices()
-	var/dat = "<div class='notice'>Round Duration: [DisplayTimeText(world.time - SSticker.round_start_time)]</div>"
+	var/mills = world.time - SSticker.round_start_time // 1/10 of a second, not real milliseconds but whatever
+	//var/secs = ((mills % 36000) % 600) / 10 //Not really needed, but I'll leave it here for refrence.. or something
+	var/mins = (mills % 36000) / 600
+	var/hours = mills / 36000
+
+	var/dat = "<div class='notice'>Round Duration: [round(hours)]h [round(mins)]m</div>"
 
 	if(SSshuttle.emergency)
 		switch(SSshuttle.emergency.mode)
@@ -415,11 +406,6 @@
 	for(var/datum/job/job in SSjob.occupations)
 		if(job && IsJobAvailable(job.title))
 			available_job_count++;
-
-
-	for(var/datum/job/prioritized_job in SSjob.prioritized_jobs)
-		if(prioritized_job.current_positions >= prioritized_job.total_positions)
-			SSjob.prioritized_jobs -= prioritized_job
 
 	if(length(SSjob.prioritized_jobs))
 		dat += "<div class='notice red'>The station has flagged these jobs as high priority:<br>"
@@ -446,8 +432,7 @@
 			dat += "<a class='[position_class]' href='byond://?src=\ref[src];SelectedJob=[job.title]'>[job.title] ([job.current_positions])</a><br>"
 	if(!job_count) //if there's nowhere to go, assistant opens up.
 		for(var/datum/job/job in SSjob.occupations)
-			if(job.title != "Assistant")
-				continue
+			if(job.title != "Assistant") continue
 			dat += "<a class='otherPosition' href='byond://?src=\ref[src];SelectedJob=[job.title]'>[job.title] ([job.current_positions])</a><br>"
 			break
 	dat += "</div></div>"
@@ -468,7 +453,7 @@
 
 	var/mob/living/carbon/human/H = new(loc)
 
-	if(CONFIG_GET(flag/force_random_names) || jobban_isbanned(src, "appearance"))
+	if(config.force_random_names || jobban_isbanned(src, "appearance"))
 		client.prefs.random_character()
 		client.prefs.real_name = client.prefs.pref_species.random_name(gender,1)
 	client.prefs.copy_to(H)

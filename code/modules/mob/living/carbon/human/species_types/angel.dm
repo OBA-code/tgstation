@@ -18,9 +18,10 @@
 	if(H.dna && H.dna.species &&((H.dna.features["wings"] != "Angel") && ("wings" in H.dna.species.mutant_bodyparts)))
 		H.dna.features["wings"] = "Angel"
 		H.update_body()
-	if(ishuman(H) && !fly)
+	if(ishuman(H)&& !fly)
 		fly = new
 		fly.Grant(H)
+
 
 /datum/species/angel/on_species_loss(mob/living/carbon/human/H)
 	if(fly)
@@ -65,7 +66,6 @@
 /datum/action/innate/flight
 	name = "Toggle Flight"
 	check_flags = AB_CHECK_CONSCIOUS|AB_CHECK_STUN
-	icon_icon = 'icons/mob/actions/actions_items.dmi'
 	button_icon_state = "flight"
 
 /datum/action/innate/flight/Activate()
@@ -125,15 +125,15 @@
 /datum/species/angel/proc/ToggleFlight(mob/living/carbon/human/H,flight)
 	if(flight && CanFly(H))
 		stunmod = 2
-		speedmod = -0.35
+		speedmod = -1
 		H.movement_type |= FLYING
-		override_float = TRUE
+		override_float = 1
 		H.pass_flags |= PASSTABLE
 		H.OpenWings()
 	else
 		stunmod = 1
 		speedmod = 0
 		H.movement_type &= ~FLYING
-		override_float = FALSE
+		override_float = 0
 		H.pass_flags &= ~PASSTABLE
 		H.CloseWings()

@@ -1,4 +1,4 @@
-//MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE 
+//MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE
 "a" = (
 /turf/closed/mineral/volcanic/lava_land_surface,
 /area/lavaland/surface/outdoors)
@@ -48,22 +48,25 @@
 /area/ruin/unpowered)
 "j" = (
 /obj/machinery/abductor/experiment{
-	team_number = 100
+	team = 100
 	},
 /turf/open/floor/plating/abductor{
+	baseturf = /turf/open/floor/plating/lava/smooth;
 	initial_gas_mix = "o2=16;n2=23;TEMP=300"
 	},
 /area/ruin/unpowered)
 "k" = (
 /turf/open/floor/plating/abductor{
+	baseturf = /turf/open/floor/plating/lava/smooth;
 	initial_gas_mix = "o2=16;n2=23;TEMP=300"
 	},
 /area/ruin/unpowered)
 "l" = (
 /obj/machinery/abductor/pad{
-	team_number = 100
+	team = 100
 	},
 /turf/open/floor/plating/abductor{
+	baseturf = /turf/open/floor/plating/lava/smooth;
 	initial_gas_mix = "o2=16;n2=23;TEMP=300"
 	},
 /area/ruin/unpowered)
@@ -79,20 +82,23 @@
 	},
 /area/lavaland/surface/outdoors)
 "o" = (
-/obj/item/hemostat/alien,
+/obj/item/weapon/hemostat/alien,
 /turf/open/floor/plating/abductor{
+	baseturf = /turf/open/floor/plating/lava/smooth;
 	initial_gas_mix = "o2=16;n2=23;TEMP=300"
 	},
 /area/ruin/unpowered)
 "p" = (
-/obj/effect/mob_spawn/human/abductor,
+obj/effect/mob_spawn/human/abductor,
 /turf/open/floor/plating/abductor{
+	baseturf = /turf/open/floor/plating/lava/smooth;
 	initial_gas_mix = "o2=16;n2=23;TEMP=300"
 	},
 /area/ruin/unpowered)
 "q" = (
 /obj/structure/closet/abductor,
 /turf/open/floor/plating/abductor{
+	baseturf = /turf/open/floor/plating/lava/smooth;
 	initial_gas_mix = "o2=16;n2=23;TEMP=300"
 	},
 /area/ruin/unpowered)
@@ -104,16 +110,17 @@
 /area/ruin/unpowered)
 "s" = (
 /obj/structure/table/optable/abductor,
-/obj/item/cautery/alien,
-/obj/effect/baseturf_helper/lava_land/surface,
+/obj/item/weapon/cautery/alien,
 /turf/open/floor/plating/abductor{
+	baseturf = /turf/open/floor/plating/lava/smooth;
 	initial_gas_mix = "o2=16;n2=23;TEMP=300"
 	},
 /area/ruin/unpowered)
 "t" = (
 /obj/structure/table/abductor,
-/obj/item/storage/box/alienhandcuffs,
+/obj/item/weapon/storage/box/alienhandcuffs,
 /turf/open/floor/plating/abductor{
+	baseturf = /turf/open/floor/plating/lava/smooth;
 	initial_gas_mix = "o2=16;n2=23;TEMP=300"
 	},
 /area/ruin/unpowered)
@@ -124,16 +131,18 @@
 	},
 /area/ruin/unpowered)
 "v" = (
-/obj/item/scalpel/alien,
-/obj/item/surgical_drapes,
+/obj/item/weapon/scalpel/alien,
+/obj/item/weapon/surgical_drapes,
 /turf/open/floor/plating/abductor{
+	baseturf = /turf/open/floor/plating/lava/smooth;
 	initial_gas_mix = "o2=16;n2=23;TEMP=300"
 	},
 /area/ruin/unpowered)
 "w" = (
-/obj/item/retractor/alien,
-/obj/item/paper/guides/antag/abductor,
+/obj/item/weapon/retractor/alien,
+/obj/item/weapon/paper/abductor,
 /turf/open/floor/plating/abductor{
+	baseturf = /turf/open/floor/plating/lava/smooth;
 	initial_gas_mix = "o2=16;n2=23;TEMP=300"
 	},
 /area/ruin/unpowered)
@@ -146,20 +155,23 @@
 "y" = (
 /obj/machinery/abductor/gland_dispenser,
 /turf/open/floor/plating/abductor{
+	baseturf = /turf/open/floor/plating/lava/smooth;
 	initial_gas_mix = "o2=16;n2=23;TEMP=300"
 	},
 /area/ruin/unpowered)
 "z" = (
 /obj/structure/table/abductor,
-/obj/item/surgicaldrill/alien,
-/obj/item/circular_saw/alien,
+/obj/item/weapon/surgicaldrill/alien,
+/obj/item/weapon/circular_saw/alien,
 /turf/open/floor/plating/abductor{
+	baseturf = /turf/open/floor/plating/lava/smooth;
 	initial_gas_mix = "o2=16;n2=23;TEMP=300"
 	},
 /area/ruin/unpowered)
 "A" = (
 /obj/structure/bed/abductor,
 /turf/open/floor/plating/abductor{
+	baseturf = /turf/open/floor/plating/lava/smooth;
 	initial_gas_mix = "o2=16;n2=23;TEMP=300"
 	},
 /area/ruin/unpowered)

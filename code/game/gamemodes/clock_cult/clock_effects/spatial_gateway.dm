@@ -55,7 +55,7 @@
 /obj/effect/clockwork/spatial_gateway/examine(mob/user)
 	..()
 	if(is_servant_of_ratvar(user) || isobserver(user))
-		to_chat(user, "<span class='brass'>It has [uses] use\s remaining.</span>")
+		to_chat(user, "<span class='brass'>It has [uses] uses remaining.</span>")
 
 /obj/effect/clockwork/spatial_gateway/attack_ghost(mob/user)
 	if(linked_gateway)
@@ -80,7 +80,7 @@
 	return TRUE
 
 /obj/effect/clockwork/spatial_gateway/attackby(obj/item/I, mob/living/user, params)
-	if(istype(I, /obj/item/nullrod))
+	if(istype(I, /obj/item/weapon/nullrod))
 		user.visible_message("<span class='warning'>[user] dispels [src] with [I]!</span>", "<span class='danger'>You close [src] with [I]!</span>")
 		qdel(linked_gateway)
 		qdel(src)
@@ -88,7 +88,7 @@
 	if(istype(I, /obj/item/clockwork/slab))
 		to_chat(user, "<span class='heavy_brass'>\"I don't think you want to drop your slab into that.\"\n\"If you really want to, try throwing it.\"</span>")
 		return TRUE
-	if(uses && user.dropItemToGround(I))
+	if(user.drop_item() && uses)
 		user.visible_message("<span class='warning'>[user] drops [I] into [src]!</span>", "<span class='danger'>You drop [I] into [src]!</span>")
 		pass_through_gateway(I, TRUE)
 		return TRUE
@@ -130,19 +130,13 @@
 	playsound(src, 'sound/effects/empulse.ogg', 50, 1)
 	playsound(linked_gateway, 'sound/effects/empulse.ogg', 50, 1)
 	transform = matrix() * 1.5
+	animate(src, transform = matrix() / 1.5, time = 10, flags = ANIMATION_END_NOW)
 	linked_gateway.transform = matrix() * 1.5
+	animate(linked_gateway, transform = matrix() / 1.5, time = 10, flags = ANIMATION_END_NOW)
 	A.forceMove(get_turf(linked_gateway))
 	if(!no_cost)
 		uses = max(0, uses - 1)
 		linked_gateway.uses = max(0, linked_gateway.uses - 1)
-	if(!uses)
-		animate(src, transform = matrix() * 0.1, time = 10, flags = ANIMATION_END_NOW)
-		animate(linked_gateway, transform = matrix() * 0.1, time = 10, flags = ANIMATION_END_NOW)
-		density = FALSE
-		linked_gateway.density = FALSE
-	else
-		animate(src, transform = matrix() / 1.5, time = 10, flags = ANIMATION_END_NOW)
-		animate(linked_gateway, transform = matrix() / 1.5, time = 10, flags = ANIMATION_END_NOW)
 	addtimer(CALLBACK(src, .proc/check_uses), 10)
 	return TRUE
 
@@ -207,7 +201,7 @@
 		time_duration = round(time_duration * (2 * efficiency), 1)
 		CO.active = TRUE //you'd be active in a second but you should update immediately
 	invoker.visible_message("<span class='warning'>The air in front of [invoker] ripples before suddenly tearing open!</span>", \
-	"<span class='brass'>With a word, you rip open a [two_way ? "two-way":"one-way"] rift to [input_target_key]. It will last for [DisplayTimeText(time_duration)] and has [gateway_uses] use[gateway_uses > 1 ? "s" : ""].</span>")
+	"<span class='brass'>With a word, you rip open a [two_way ? "two-way":"one-way"] rift to [input_target_key]. It will last for [time_duration / 10] seconds and has [gateway_uses] use[gateway_uses > 1 ? "s" : ""].</span>")
 	var/obj/effect/clockwork/spatial_gateway/S1 = new(issrcobelisk ? get_turf(src) : get_step(get_turf(invoker), invoker.dir))
 	var/obj/effect/clockwork/spatial_gateway/S2 = new(istargetobelisk ? get_turf(target) : get_step(get_turf(target), target.dir))
 

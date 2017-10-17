@@ -64,7 +64,7 @@
 	range = -1
 	clothes_req = 0
 	var/obj/item/item
-	var/item_type = /obj/item/banhammer
+	var/item_type = /obj/item/weapon/banhammer
 	school = "conjuration"
 	charge_max = 150
 	cooldown_min = 10
@@ -75,8 +75,9 @@
 		item = null
 	else
 		for(var/mob/living/carbon/C in targets)
-			if(C.dropItemToGround(C.get_active_held_item()))
-				C.put_in_hands(make_item(), TRUE)
+			if(C.drop_item())
+				item = make_item()
+				C.put_in_hands(item)
 
 /obj/effect/proc_holder/spell/targeted/conjure_item/Destroy()
 	if(item)

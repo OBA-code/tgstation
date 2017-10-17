@@ -7,13 +7,9 @@
 	desc = "It produces items using metal and glass."
 	icon_state = "autolathe"
 	density = TRUE
-	anchored = TRUE
-	use_power = IDLE_POWER_USE
-	idle_power_usage = 10
-	active_power_usage = 100
-	circuit = /obj/item/circuitboard/machine/autolathe
 
 	var/operating = FALSE
+	anchored = TRUE
 	var/list/L = list()
 	var/list/LL = list()
 	var/hacked = FALSE
@@ -22,7 +18,9 @@
 	var/hack_wire
 	var/disable_wire
 	var/shock_wire
-
+	use_power = IDLE_POWER_USE
+	idle_power_usage = 10
+	active_power_usage = 100
 	var/busy = FALSE
 	var/prod_coeff = 1
 
@@ -31,6 +29,8 @@
 	var/list/datum/design/matching_designs
 	var/selected_category
 	var/screen = 1
+
+	var/datum/material_container/materials
 
 	var/list/categories = list(
 							"Tools",
@@ -45,16 +45,30 @@
 							"Imported"
 							)
 
-/obj/machinery/autolathe/Initialize()
-	AddComponent(/datum/component/material_container, list(MAT_METAL, MAT_GLASS))
-	. = ..()
+/obj/machinery/autolathe/New()
+	..()
+	materials = new /datum/material_container(src, list(MAT_METAL, MAT_GLASS))
+	var/obj/item/weapon/circuitboard/machine/B = new /obj/item/weapon/circuitboard/machine/autolathe(null)
+	B.apply_default_parts(src)
 
 	wires = new /datum/wires/autolathe(src)
 	files = new /datum/research/autolathe(src)
 	matching_designs = list()
 
+/obj/item/weapon/circuitboard/machine/autolathe
+	name = "Autolathe (Machine Board)"
+	build_path = /obj/machinery/autolathe
+	origin_tech = "engineering=2;programming=2"
+	req_components = list(
+							/obj/item/weapon/stock_parts/matter_bin = 3,
+							/obj/item/weapon/stock_parts/manipulator = 1,
+							/obj/item/weapon/stock_parts/console_screen = 1)
+
 /obj/machinery/autolathe/Destroy()
-	QDEL_NULL(wires)
+	qdel(wires)
+	wires = null
+	qdel(materials)
+	materials = null
 	return ..()
 
 /obj/machinery/autolathe/interact(mob/user)
@@ -79,7 +93,6 @@
 	popup.open()
 
 /obj/machinery/autolathe/on_deconstruction()
-	GET_COMPONENT(materials, /datum/component/material_container)
 	materials.retrieve_all()
 
 /obj/machinery/autolathe/attackby(obj/item/O, mob/user, params)
@@ -95,7 +108,7 @@
 		return
 
 	if(panel_open)
-		if(istype(O, /obj/item/crowbar))
+		if(istype(O, /obj/item/weapon/crowbar))
 			default_deconstruction_crowbar(O)
 			return 1
 		else if(is_wire_tool(O))
@@ -108,12 +121,12 @@
 	if(stat)
 		return 1
 
-	if(istype(O, /obj/item/disk/design_disk))
+	if(istype(O, /obj/item/weapon/disk/design_disk))
 		user.visible_message("[user] begins to load \the [O] in \the [src]...",
 			"You begin to load a design from \the [O]...",
 			"You hear the chatter of a floppy drive.")
 		busy = TRUE
-		var/obj/item/disk/design_disk/D = O
+		var/obj/item/weapon/disk/design_disk/D = O
 		if(do_after(user, 14.4, target = src))
 			for(var/B in D.blueprints)
 				if(B)
@@ -122,25 +135,42 @@
 		busy = FALSE
 		return 1
 
-	return ..()
+	if(HAS_SECONDARY_FLAG(O, HOLOGRAM))
+		return 1
 
-/obj/machinery/mecha_part_fabricator/ComponentActivated(datum/component/C)
-	..()
-	if(istype(C, /datum/component/material_container))
-		var/datum/component/material_container/M = C
-		if(!M.last_insert_success)
-			return
-		var/lit = M.last_inserted_type
-		if(ispath(lit, /obj/item/ore/bluespace_crystal))
-			use_power(max(500,M.last_amount_inserted/10))
+	var/material_amount = materials.get_item_material_amount(O)
+	if(!material_amount)
+		to_chat(user, "<span class='warning'>This object does not contain sufficient amounts of metal or glass to be accepted by the autolathe.</span>")
+		return 1
+	if(!materials.has_space(material_amount))
+		to_chat(user, "<span class='warning'>The autolathe is full. Please remove metal or glass from the autolathe in order to insert more.</span>")
+		return 1
+	if(!user.temporarilyRemoveItemFromInventory(O))
+		to_chat(user, "<span class='warning'>\The [O] is stuck to you and cannot be placed into the autolathe.</span>")
+		return 1
+
+	busy = TRUE
+	var/inserted = materials.insert_item(O)
+	if(inserted)
+		if(istype(O, /obj/item/stack))
+			if (O.materials[MAT_METAL])
+				flick("autolathe_o",src)//plays metal insertion animation
+			if (O.materials[MAT_GLASS])
+				flick("autolathe_r",src)//plays glass insertion animation
+			to_chat(user, "<span class='notice'>You insert [inserted] sheet[inserted>1 ? "s" : ""] to the autolathe.</span>")
+			use_power(inserted*100)
+			if(!QDELETED(O))
+				user.put_in_active_hand(O)
 		else
-			switch(M.last_inserted_id)
-				if (MAT_METAL)
-					flick("autolathe_o",src)//plays metal insertion animation
-				if (MAT_GLASS)
-					flick("autolathe_r",src)//plays glass insertion animation
-			use_power(M.last_amount_inserted*100)
-		updateUsrDialog()
+			to_chat(user, "<span class='notice'>You insert a material total of [inserted] to the autolathe.</span>")
+			use_power(max(500,inserted/10))
+			qdel(O)
+	else
+		user.put_in_active_hand(O)
+
+	busy = FALSE
+	updateUsrDialog()
+	return 1
 
 /obj/machinery/autolathe/Topic(href, href_list)
 	if(..())
@@ -175,7 +205,6 @@
 
 			var/power = max(2000, (metal_cost+glass_cost)*multiplier/5)
 
-			GET_COMPONENT(materials, /datum/component/material_container)
 			if((materials.amount(MAT_METAL) >= metal_cost*multiplier*coeff) && (materials.amount(MAT_GLASS) >= glass_cost*multiplier*coeff))
 				busy = TRUE
 				use_power(power)
@@ -227,12 +256,11 @@
 
 /obj/machinery/autolathe/RefreshParts()
 	var/T = 0
-	for(var/obj/item/stock_parts/matter_bin/MB in component_parts)
+	for(var/obj/item/weapon/stock_parts/matter_bin/MB in component_parts)
 		T += MB.rating*75000
-	GET_COMPONENT(materials, /datum/component/material_container)
 	materials.max_amount = T
 	T=1.2
-	for(var/obj/item/stock_parts/manipulator/M in component_parts)
+	for(var/obj/item/weapon/stock_parts/manipulator/M in component_parts)
 		T -= M.rating*0.2
 	prod_coeff = min(1,max(0,T)) // Coeff going 1 -> 0,8 -> 0,6 -> 0,4
 
@@ -278,7 +306,6 @@
 			dat += "<a href='?src=\ref[src];make=[D.id];multiplier=1'>[D.name]</a>"
 
 		if(ispath(D.build_path, /obj/item/stack))
-			GET_COMPONENT(materials, /datum/component/material_container)
 			var/max_multiplier = min(D.maxstack, D.materials[MAT_METAL] ?round(materials.amount(MAT_METAL)/D.materials[MAT_METAL]):INFINITY,D.materials[MAT_GLASS]?round(materials.amount(MAT_GLASS)/D.materials[MAT_GLASS]):INFINITY)
 			if (max_multiplier>10 && !disabled)
 				dat += " <a href='?src=\ref[src];make=[D.id];multiplier=10'>x10</a>"
@@ -310,7 +337,6 @@
 			dat += "<a href='?src=\ref[src];make=[D.id];multiplier=1'>[D.name]</a>"
 
 		if(ispath(D.build_path, /obj/item/stack))
-			GET_COMPONENT(materials, /datum/component/material_container)
 			var/max_multiplier = min(D.maxstack, D.materials[MAT_METAL] ?round(materials.amount(MAT_METAL)/D.materials[MAT_METAL]):INFINITY,D.materials[MAT_GLASS]?round(materials.amount(MAT_GLASS)/D.materials[MAT_GLASS]):INFINITY)
 			if (max_multiplier>10 && !disabled)
 				dat += " <a href='?src=\ref[src];make=[D.id];multiplier=10'>x10</a>"
@@ -325,7 +351,6 @@
 	return dat
 
 /obj/machinery/autolathe/proc/materials_printout()
-	GET_COMPONENT(materials, /datum/component/material_container)
 	var/dat = "<b>Total amount:</b> [materials.total_amount] / [materials.max_amount] cm<sup>3</sup><br>"
 	for(var/mat_id in materials.materials)
 		var/datum/material/M = materials.materials[mat_id]
@@ -338,7 +363,6 @@
 
 	var/coeff = (ispath(D.build_path, /obj/item/stack) ? 1 : prod_coeff)
 
-	GET_COMPONENT(materials, /datum/component/material_container)
 	if(D.materials[MAT_METAL] && (materials.amount(MAT_METAL) < (D.materials[MAT_METAL] * coeff * amount)))
 		return 0
 	if(D.materials[MAT_GLASS] && (materials.amount(MAT_GLASS) < (D.materials[MAT_GLASS] * coeff * amount)))
@@ -387,10 +411,6 @@
 				files.AddDesign2Known(D)
 			else
 				files.known_designs -= D.id
-
-/obj/machinery/autolathe/hacked/Initialize()
-	. = ..()
-	adjust_hacked(TRUE)
 
 //Called when the object is constructed by an autolathe
 //Has a reference to the autolathe so you can do !!FUN!! things with hacked lathes

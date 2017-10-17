@@ -40,7 +40,7 @@
 	if(!GLOB.summon_spots.len)
 		while(GLOB.summon_spots.len < SUMMON_POSSIBILITIES)
 			var/area/summon = pick(GLOB.sortedAreas - GLOB.summon_spots)
-			if(summon && (summon.z in GLOB.station_z_levels) && summon.valid_territory)
+			if(summon && (summon.z == ZLEVEL_STATION) && summon.valid_territory)
 				GLOB.summon_spots += summon
 	SSticker.mode.cult_objectives += "eldergod"
 
@@ -131,7 +131,7 @@
 /datum/antagonist/cult/master/on_gain()
 	. = ..()
 	var/mob/living/current = owner.current
-	set_antag_hud(current, "cultmaster")
+	SSticker.mode.set_antag_hud(current, "cultmaster")
 
 /datum/antagonist/cult/master/greet()
 	to_chat(owner.current, "<span class='cultlarge'>You are the cult's Master</span>. As the cult's Master, you have a unique title and loud voice when communicating, are capable of marking \

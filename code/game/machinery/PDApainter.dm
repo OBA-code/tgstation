@@ -27,16 +27,12 @@
 
 	return
 
-/obj/machinery/pdapainter/Initialize()
-	. = ..()
-	var/list/blocked = list(
-		/obj/item/device/pda/ai/pai,
-		/obj/item/device/pda/ai,
-		/obj/item/device/pda/heads,
-		/obj/item/device/pda/clear,
-		/obj/item/device/pda/syndicate)
+/obj/machinery/pdapainter/New()
+	..()
+	var/blocked = list(/obj/item/device/pda/ai/pai, /obj/item/device/pda/ai, /obj/item/device/pda/heads,
+						/obj/item/device/pda/clear, /obj/item/device/pda/syndicate)
 
-	for(var/P in typesof(/obj/item/device/pda) - blocked)
+	for(var/P in typesof(/obj/item/device/pda)-blocked)
 		var/obj/item/device/pda/D = new P
 
 		//D.name = "PDA Style [colorlist.len+1]" //Gotta set the name, otherwise it all comes up as "PDA"
@@ -45,7 +41,9 @@
 		src.colorlist += D
 
 /obj/machinery/pdapainter/Destroy()
-	QDEL_NULL(storedpda)
+	if(storedpda)
+		qdel(storedpda)
+		storedpda = null
 	return ..()
 
 /obj/machinery/pdapainter/on_deconstruction()
@@ -71,14 +69,18 @@
 		if(storedpda)
 			to_chat(user, "<span class='warning'>There is already a PDA inside!</span>")
 			return
-		else if(!user.transferItemToLoc(O, src))
-			return
-		storedpda = O
-		O.add_fingerprint(user)
-		update_icon()
+		else
+			var/obj/item/device/pda/P = user.get_active_held_item()
+			if(istype(P))
+				if(!user.drop_item())
+					return
+				storedpda = P
+				P.loc = src
+				P.add_fingerprint(user)
+				update_icon()
 
-	else if(istype(O, /obj/item/weldingtool) && user.a_intent != INTENT_HARM)
-		var/obj/item/weldingtool/WT = O
+	else if(istype(O, /obj/item/weapon/weldingtool) && user.a_intent != INTENT_HARM)
+		var/obj/item/weapon/weldingtool/WT = O
 		if(stat & BROKEN)
 			if(WT.remove_fuel(0,user))
 				user.visible_message("[user] is repairing [src].", \
@@ -99,7 +101,7 @@
 		return ..()
 
 /obj/machinery/pdapainter/deconstruct(disassembled = TRUE)
-	if(!(flags_1 & NODECONSTRUCT_1))
+	if(!(flags & NODECONSTRUCT))
 		if(!(stat & BROKEN))
 			stat |= BROKEN
 			update_icon()
@@ -122,7 +124,7 @@
 			ejectpda()
 
 		else
-			to_chat(user, "<span class='notice'>[src] is empty.</span>")
+			to_chat(user, "<span class='notice'>\The [src] is empty.</span>")
 
 
 /obj/machinery/pdapainter/verb/ejectpda()
@@ -138,7 +140,7 @@
 		storedpda = null
 		update_icon()
 	else
-		to_chat(usr, "<span class='notice'>[src] is empty.</span>")
+		to_chat(usr, "<span class='notice'>The [src] is empty.</span>")
 
 
 /obj/machinery/pdapainter/power_change()

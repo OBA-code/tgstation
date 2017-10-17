@@ -8,7 +8,6 @@
 	use_power = TRUE
 	idle_power_usage = 200
 	active_power_usage = 2500
-	circuit = /obj/item/circuitboard/machine/launchpad
 	var/stationary = TRUE //to prevent briefcase pad deconstruction and such
 	var/display_name = "Launchpad"
 	var/teleport_speed = 35
@@ -18,9 +17,23 @@
 	var/x_offset = 0
 	var/y_offset = 0
 
+/obj/machinery/launchpad/Initialize()
+	. = ..()
+	var/obj/item/weapon/circuitboard/machine/launchpad/B = new
+	B.apply_default_parts(src)
+
+/obj/item/weapon/circuitboard/machine/launchpad
+	name = "Bluespace Launchpad (Machine Board)"
+	build_path = /obj/machinery/launchpad
+	origin_tech = "programming=3;engineering=3;plasmatech=2;bluespace=3"
+	req_components = list(
+							/obj/item/weapon/ore/bluespace_crystal = 1,
+							/obj/item/weapon/stock_parts/manipulator = 1)
+	def_components = list(/obj/item/weapon/ore/bluespace_crystal = /obj/item/weapon/ore/bluespace_crystal/artificial)
+
 /obj/machinery/launchpad/RefreshParts()
 	var/E = -1 //to make default parts have the base value
-	for(var/obj/item/stock_parts/manipulator/M in component_parts)
+	for(var/obj/item/weapon/stock_parts/manipulator/M in component_parts)
 		E += M.rating
 	range = initial(range)
 	range += E
@@ -158,7 +171,9 @@
 		qdel(src)
 
 /obj/machinery/launchpad/briefcase/Destroy()
-	QDEL_NULL(briefcase)
+	if(!QDELETED(briefcase))
+		qdel(briefcase)
+	briefcase = null
 	return ..()
 
 /obj/machinery/launchpad/briefcase/isAvailable()
@@ -194,9 +209,7 @@
 	desc = "It's made of AUTHENTIC faux-leather and has a price-tag still attached. Its owner must be a real professional."
 	icon = 'icons/obj/storage.dmi'
 	icon_state = "briefcase"
-	lefthand_file = 'icons/mob/inhands/equipment/briefcase_lefthand.dmi'
-	righthand_file = 'icons/mob/inhands/equipment/briefcase_righthand.dmi'
-	flags_1 = CONDUCT_1
+	flags = CONDUCT
 	force = 8
 	hitsound = "swing_hit"
 	throw_speed = 2
@@ -221,7 +234,7 @@
 	if(!isturf(user.loc)) //no setting up in a locker
 		return
 	add_fingerprint(user)
-	user.visible_message("<span class='notice'>[user] starts setting down [src]...", "You start setting up [pad]...</span>")
+	user.visible_message("<span class='notice'>[user] starts setting down [src]...", "You start setting up [pad]...")
 	if(do_after(user, 30, target = user))
 		pad.forceMove(get_turf(src))
 		pad.closed = FALSE

@@ -37,7 +37,7 @@
 	icon_state = "shadow_mend"
 
 /datum/status_effect/void_price/tick()
-	SEND_SOUND(owner, sound('sound/magic/summon_karp.ogg', volume = 25))
+	owner << sound('sound/magic/summon_karp.ogg', volume = 25)
 	owner.adjustBruteLoss(3)
 
 
@@ -71,7 +71,7 @@
 
 /datum/status_effect/vanguard_shield/on_apply()
 	owner.log_message("gained Vanguard stun immunity", INDIVIDUAL_ATTACK_LOG)
-	owner.add_stun_absorption("vanguard", INFINITY, 1, "'s yellow aura momentarily intensifies!", "Your ward absorbs the stun!", " radiating with a soft yellow light!")
+	owner.add_stun_absorption("vanguard", 200, 1, "'s yellow aura momentarily intensifies!", "Your ward absorbs the stun!", " radiating with a soft yellow light!")
 	owner.visible_message("<span class='warning'>[owner] begins to faintly glow!</span>", "<span class='brass'>You will absorb all stuns for the next twenty seconds.</span>")
 	owner.SetStun(0, FALSE)
 	owner.SetKnockdown(0)
@@ -87,8 +87,7 @@
 	var/vanguard = owner.stun_absorption["vanguard"]
 	var/stuns_blocked = 0
 	if(vanguard)
-		stuns_blocked = Floor(min(vanguard["stuns_absorbed"] * 0.25, 400))
-		vanguard["end_time"] = 0 //so it doesn't absorb the stuns we're about to apply
+		stuns_blocked = round(min(vanguard["stuns_absorbed"] * 0.25, 20))
 	if(owner.stat != DEAD)
 		var/message_to_owner = "<span class='warning'>You feel your Vanguard quietly fade...</span>"
 		var/otheractiveabsorptions = FALSE
@@ -96,6 +95,7 @@
 			if(owner.stun_absorption[i]["end_time"] > world.time && owner.stun_absorption[i]["priority"] > vanguard["priority"])
 				otheractiveabsorptions = TRUE
 		if(!GLOB.ratvar_awakens && stuns_blocked && !otheractiveabsorptions)
+			vanguard["end_time"] = 0 //so it doesn't absorb the stuns we're about to apply
 			owner.Knockdown(stuns_blocked)
 			message_to_owner = "<span class='boldwarning'>The weight of the Vanguard's protection crashes down upon you!</span>"
 			if(stuns_blocked >= 300)
@@ -192,7 +192,7 @@
 /datum/status_effect/his_grace/tick()
 	bloodlust = 0
 	var/graces = 0
-	for(var/obj/item/his_grace/HG in owner.held_items)
+	for(var/obj/item/weapon/his_grace/HG in owner.held_items)
 		if(HG.bloodthirst > bloodlust)
 			bloodlust = HG.bloodthirst
 		if(HG.awakened)
@@ -247,7 +247,7 @@
 	for(var/datum/mind/B in SSticker.mode.cult)
 		if(isliving(B.current))
 			var/mob/living/M = B.current
-			SEND_SOUND(M, sound('sound/hallucinations/veryfar_noise.ogg'))
+			M << 'sound/hallucinations/veryfar_noise.ogg'
 			to_chat(M, "<span class='cultlarge'>The Cult's Master, [owner], has fallen in \the [A]!</span>")
 
 /datum/status_effect/cult_master/tick()
@@ -384,31 +384,3 @@
 	if(islist(owner.stun_absorption) && owner.stun_absorption["blooddrunk"])
 		owner.stun_absorption -= "blooddrunk"
 
-/datum/status_effect/sword_spin
-	id = "Bastard Sword Spin"
-	duration = 50
-	tick_interval = 8
-	alert_type = null
-
-
-/datum/status_effect/sword_spin/on_apply()
-	owner.visible_message("<span class='danger'>[owner] begins swinging the sword with inhuman strength!</span>")
-	var/oldcolor = owner.color
-	owner.color = "#ff0000"
-	owner.add_stun_absorption("bloody bastard sword", duration, 2, "doesn't even flinch as the sword's power courses through them!", "You shrug off the stun!", " glowing with a blazing red aura!")
-	owner.spin(duration,1)
-	animate(owner, color = oldcolor, time = duration, easing = EASE_IN)
-	addtimer(CALLBACK(owner, /atom/proc/update_atom_colour), duration)
-	playsound(owner, 'sound/weapons/fwoosh.wav', 75, 0)
-	return ..()
-
-
-/datum/status_effect/sword_spin/tick()
-	playsound(owner, 'sound/weapons/fwoosh.wav', 75, 0)
-	var/obj/item/slashy
-	slashy = owner.get_active_held_item()
-	for(var/mob/living/M in orange(1,owner))
-		slashy.attack(M, owner)
-
-/datum/status_effect/sword_spin/on_remove()
-	owner.visible_message("<span class='warning'>[owner]'s inhuman strength dissipates and the sword's runes grow cold!</span>")

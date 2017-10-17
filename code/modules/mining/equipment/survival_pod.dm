@@ -5,10 +5,9 @@
 	dynamic_lighting = DYNAMIC_LIGHTING_FORCED
 	requires_power = FALSE
 	has_gravity = TRUE
-	valid_territory = FALSE
 
 //Survival Capsule
-/obj/item/survivalcapsule
+/obj/item/weapon/survivalcapsule
 	name = "bluespace shelter capsule"
 	desc = "An emergency shelter stored within a pocket of bluespace."
 	icon_state = "capsule"
@@ -19,7 +18,7 @@
 	var/datum/map_template/shelter/template
 	var/used = FALSE
 
-/obj/item/survivalcapsule/proc/get_template()
+/obj/item/weapon/survivalcapsule/proc/get_template()
 	if(template)
 		return
 	template = SSmapping.shelter_templates[template_id]
@@ -27,17 +26,17 @@
 		throw EXCEPTION("Shelter template ([template_id]) not found!")
 		qdel(src)
 
-/obj/item/survivalcapsule/Destroy()
+/obj/item/weapon/survivalcapsule/Destroy()
 	template = null // without this, capsules would be one use. per round.
 	. = ..()
 
-/obj/item/survivalcapsule/examine(mob/user)
+/obj/item/weapon/survivalcapsule/examine(mob/user)
 	. = ..()
 	get_template()
 	to_chat(user, "This capsule has the [template.name] stored.")
 	to_chat(user, template.description)
 
-/obj/item/survivalcapsule/attack_self()
+/obj/item/weapon/survivalcapsule/attack_self()
 	//Can't grab when capsule is New() because templates aren't loaded then
 	get_template()
 	if(!used)
@@ -68,7 +67,7 @@
 		new /obj/effect/particle_effect/smoke(get_turf(src))
 		qdel(src)
 
-/obj/item/survivalcapsule/luxury
+/obj/item/weapon/survivalcapsule/luxury
 	name = "luxury bluespace shelter capsule"
 	desc = "An exorbitantly expensive luxury suite stored within a pocket of bluespace."
 	origin_tech = "engineering=3;bluespace=4"
@@ -104,6 +103,10 @@
 	direction = expected_dir
 	..()
 
+/obj/machinery/door/airlock/survival_pod/shuttleRotate(rotation)
+	expected_dir = angle2dir(rotation+dir2angle(dir))
+	..()
+
 /obj/machinery/door/airlock/survival_pod/vertical
 	dir = EAST
 	expected_dir = EAST
@@ -121,6 +124,10 @@
 
 /obj/structure/door_assembly/door_assembly_pod/setDir(direction)
 	direction = expected_dir
+	..()
+
+/obj/structure/door_assembly/door_assembly_pod/shuttleRotate(rotation)
+	expected_dir = angle2dir(rotation+dir2angle(dir))
 	..()
 
 /obj/structure/door_assembly/door_assembly_pod/vertical
@@ -159,8 +166,8 @@
 	density = TRUE
 	pixel_y = -32
 
-/obj/item/device/gps/computer/attackby(obj/item/W, mob/user, params)
-	if(istype(W, /obj/item/wrench) && !(flags_1&NODECONSTRUCT_1))
+/obj/item/device/gps/computer/attackby(obj/item/weapon/W, mob/user, params)
+	if(istype(W, /obj/item/weapon/wrench) && !(flags&NODECONSTRUCT))
 		playsound(src.loc, W.usesound, 50, 1)
 		user.visible_message("<span class='warning'>[user] disassembles the gps.</span>", \
 						"<span class='notice'>You start to disassemble the gps...</span>", "You hear clanking and banging noises.")
@@ -191,30 +198,31 @@
 	light_color = "#DDFFD3"
 	max_n_of_items = 10
 	pixel_y = -4
-	flags_1 = NODECONSTRUCT_1
-	var/empty = FALSE
-
-/obj/machinery/smartfridge/survival_pod/Initialize(mapload)
-	. = ..()
-	if(empty)
-		return
-	for(var/i in 1 to 5)
-		var/obj/item/reagent_containers/food/snacks/donkpocket/warm/W = new(src)
-		load(W)
-	if(prob(50))
-		var/obj/item/storage/pill_bottle/dice/D = new(src)
-		load(D)
-	else
-		var/obj/item/device/instrument/guitar/G = new(src)
-		load(G)
-
-/obj/machinery/smartfridge/survival_pod/accept_check(obj/item/O)
-	return isitem(O)
+	flags = NODECONSTRUCT
 
 /obj/machinery/smartfridge/survival_pod/empty
 	name = "dusty survival pod storage"
 	desc = "A heated storage unit. This one's seen better days."
-	empty = TRUE
+
+/obj/machinery/smartfridge/survival_pod/empty/Initialize(mapload)
+	..(mapload, TRUE)
+
+/obj/machinery/smartfridge/survival_pod/accept_check(obj/item/O)
+	return isitem(O)
+
+/obj/machinery/smartfridge/survival_pod/Initialize(mapload, empty)
+	. = ..()
+	if(empty)
+		return
+	for(var/i in 1 to 5)
+		var/obj/item/weapon/reagent_containers/food/snacks/donkpocket/warm/W = new(src)
+		load(W)
+	if(prob(50))
+		var/obj/item/weapon/storage/pill_bottle/dice/D = new(src)
+		load(D)
+	else
+		var/obj/item/device/instrument/guitar/G = new(src)
+		load(G)
 
 //Fans
 /obj/structure/fans
@@ -230,13 +238,13 @@
 	CanAtmosPass = ATMOS_PASS_NO
 
 /obj/structure/fans/deconstruct()
-	if(!(flags_1 & NODECONSTRUCT_1))
+	if(!(flags & NODECONSTRUCT))
 		if(buildstacktype)
 			new buildstacktype(loc,buildstackamount)
 	qdel(src)
 
-/obj/structure/fans/attackby(obj/item/W, mob/user, params)
-	if(istype(W, /obj/item/wrench) && !(flags_1&NODECONSTRUCT_1))
+/obj/structure/fans/attackby(obj/item/weapon/W, mob/user, params)
+	if(istype(W, /obj/item/weapon/wrench) && !(flags&NODECONSTRUCT))
 		playsound(src.loc, W.usesound, 50, 1)
 		user.visible_message("<span class='warning'>[user] disassembles the fan.</span>", \
 						"<span class='notice'>You start to disassemble the fan...</span>", "You hear clanking and banging noises.")
@@ -294,24 +302,24 @@
 	icon = 'icons/mob/screen_gen.dmi'
 	icon_state = "x2"
 	var/possible = list(/obj/item/ship_in_a_bottle,
-						/obj/item/gun/energy/pulse,
-						/obj/item/sleeping_carp_scroll,
-						/obj/item/melee/supermatter_sword,
-						/obj/item/shield/changeling,
-						/obj/item/lava_staff,
-						/obj/item/energy_katana,
-						/obj/item/hierophant_club,
-						/obj/item/his_grace,
-						/obj/item/gun/ballistic/minigun,
-						/obj/item/gun/ballistic/automatic/l6_saw,
-						/obj/item/gun/magic/staff/chaos,
-						/obj/item/gun/magic/staff/spellblade,
-						/obj/item/gun/magic/wand/death,
-						/obj/item/gun/magic/wand/fireball,
+						/obj/item/weapon/gun/energy/pulse,
+						/obj/item/weapon/sleeping_carp_scroll,
+						/obj/item/weapon/melee/supermatter_sword,
+						/obj/item/weapon/shield/changeling,
+						/obj/item/weapon/lava_staff,
+						/obj/item/weapon/dash/energy_katana,
+						/obj/item/weapon/hierophant_club,
+						/obj/item/weapon/his_grace,
+						/obj/item/weapon/gun/ballistic/minigun,
+						/obj/item/weapon/gun/ballistic/automatic/l6_saw,
+						/obj/item/weapon/gun/magic/staff/chaos,
+						/obj/item/weapon/gun/magic/staff/spellblade,
+						/obj/item/weapon/gun/magic/wand/death,
+						/obj/item/weapon/gun/magic/wand/fireball,
 						/obj/item/stack/telecrystal/twenty,
 						/obj/item/nuke_core,
 						/obj/item/phylactery,
-						/obj/item/banhammer)
+						/obj/item/weapon/banhammer)
 
 /obj/item/fakeartefact/Initialize()
 	. = ..()

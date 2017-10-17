@@ -2,7 +2,7 @@
 	name = "Space Retrovirus"
 	max_stages = 4
 	spread_text = "On contact"
-	spread_flags = VIRUS_SPREAD_BLOOD | VIRUS_SPREAD_CONTACT_SKIN | VIRUS_SPREAD_CONTACT_FLUIDS
+	spread_flags = CONTACT_GENERAL
 	cure_text = "Mutadone"
 	cures = list("mutadone")
 	disease_flags = CAN_CARRY|CAN_RESIST|CURABLE
@@ -11,14 +11,14 @@
 	var/datum/dna/original_dna = null
 	var/transformed = 0
 	desc = "This disease transplants the genetic code of the initial vector into new hosts."
-	severity = VIRUS_SEVERITY_MEDIUM
+	severity = MEDIUM
 
 
 /datum/disease/dnaspread/stage_act()
 	..()
 	if(!affected_mob.dna)
 		cure()
-	if((NOTRANSSTING in affected_mob.dna.species.species_traits) || (NO_DNA_COPY in affected_mob.dna.species.species_traits)) //Only species that can be spread by transformation sting can be spread by the retrovirus
+	if(NOTRANSSTING in affected_mob.dna.species.species_traits) //Only species that can be spread by transformation sting can be spread by the retrovirus
 		cure()
 
 	if(!strain_data["dna"])

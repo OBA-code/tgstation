@@ -12,7 +12,7 @@
 	throw_speed = 3
 	throw_range = 6
 	origin_tech = "biotech=3"
-	container_type = INJECTABLE_1
+	container_type = INJECTABLE
 	var/Uses = 1 // uses before it goes inert
 	var/qdel_timer = null // deletion timer, for delayed reactions
 
@@ -126,7 +126,7 @@
 	w_class = WEIGHT_CLASS_TINY
 	origin_tech = "biotech=4"
 
-/obj/item/slimepotion/afterattack(obj/item/reagent_containers/target, mob/user , proximity)
+/obj/item/slimepotion/afterattack(obj/item/weapon/reagent_containers/target, mob/user , proximity)
 	if (istype(target))
 		to_chat(user, "<span class='notice'>You cannot transfer [src] to [target]! It appears the potion must be given directly to a slime to absorb.</span>" )
 		return
@@ -168,7 +168,7 @@
 	var/sentience_type = SENTIENCE_ORGANIC
 
 /obj/item/slimepotion/sentience/afterattack(mob/living/M, mob/user)
-	if(being_used || !ismob(M) || !user.Adjacent(M))
+	if(being_used || !ismob(M))
 		return
 	if(!isanimal(M) || M.ckey) //only works on animals that aren't player controlled
 		to_chat(user, "<span class='warning'>[M] is already too intelligent for this to work!</span>")
@@ -415,53 +415,53 @@
 
 /obj/item/clothing/under/golem
 	name = "adamantine skin"
-	desc = "A golem's skin."
+	desc = "a golem's skin"
 	icon_state = "golem"
 	item_state = "golem"
 	item_color = "golem"
-	flags_1 = ABSTRACT_1 | NODROP_1
+	flags = ABSTRACT | NODROP
 	resistance_flags = LAVA_PROOF | FIRE_PROOF | UNACIDABLE | ACID_PROOF
 	has_sensor = NO_SENSORS
 
 /obj/item/clothing/suit/golem
 	name = "adamantine shell"
-	desc = "A golem's thick outer shell."
+	desc = "a golem's thick outter shell"
 	icon_state = "golem"
 	item_state = "golem"
 	w_class = WEIGHT_CLASS_BULKY
-	gas_transfer_coefficient = 0.9
-	permeability_coefficient = 0.5
+	gas_transfer_coefficient = 0.90
+	permeability_coefficient = 0.50
 	body_parts_covered = FULL_BODY
 	flags_inv = HIDEGLOVES | HIDESHOES | HIDEJUMPSUIT
 	resistance_flags = LAVA_PROOF | FIRE_PROOF | UNACIDABLE | ACID_PROOF
-	flags_1 = ABSTRACT_1 | NODROP_1
+	flags = ABSTRACT | NODROP
 
 /obj/item/clothing/shoes/golem
 	name = "golem's feet"
-	desc = "Sturdy adamantine feet."
+	desc = "sturdy adamantine feet"
 	icon_state = "golem"
 	item_state = null
 	resistance_flags = LAVA_PROOF | FIRE_PROOF | UNACIDABLE | ACID_PROOF
-	flags_1 = NOSLIP_1 | ABSTRACT_1 | NODROP_1
+	flags = NOSLIP | ABSTRACT | NODROP
 
 
 /obj/item/clothing/mask/breath/golem
 	name = "golem's face"
-	desc = "The imposing face of an adamantine golem."
+	desc = "the imposing face of an adamantine golem"
 	icon_state = "golem"
 	item_state = "golem"
 	siemens_coefficient = 0
 	resistance_flags = LAVA_PROOF | FIRE_PROOF | UNACIDABLE | ACID_PROOF
-	flags_1 = ABSTRACT_1 | NODROP_1
+	flags = ABSTRACT | NODROP
 
 
 /obj/item/clothing/gloves/golem
 	name = "golem's hands"
-	desc = "Strong adamantine hands."
+	desc = "strong adamantine hands"
 	icon_state = "golem"
 	item_state = null
 	siemens_coefficient = 0
-	flags_1 = ABSTRACT_1 | NODROP_1
+	flags = ABSTRACT | NODROP
 	resistance_flags = LAVA_PROOF | FIRE_PROOF | UNACIDABLE | ACID_PROOF
 
 
@@ -470,13 +470,13 @@
 	item_state = "dermal"
 	item_color = "dermal"
 	name = "golem's head"
-	desc = "A golem's head."
+	desc = "a golem's head"
 	resistance_flags = LAVA_PROOF | FIRE_PROOF | UNACIDABLE | ACID_PROOF
-	flags_1 = ABSTRACT_1 | NODROP_1
+	flags = ABSTRACT | NODROP
 
 /obj/effect/golemrune
 	anchored = TRUE
-	desc = "A strange rune used to create golems. It glows when spirits are nearby."
+	desc = "a strange rune used to create golems. It glows when spirits are nearby."
 	name = "rune"
 	icon = 'icons/obj/rune.dmi'
 	icon_state = "golem"
@@ -542,10 +542,89 @@
 	log_admin("[key_name(G)] was made a golem by [key_name(user)].")
 	qdel(src)
 
+
+
+
+/obj/effect/timestop
+	anchored = TRUE
+	name = "chronofield"
+	desc = "ZA WARUDO"
+	icon = 'icons/effects/160x160.dmi'
+	icon_state = "time"
+	layer = FLY_LAYER
+	pixel_x = -64
+	pixel_y = -64
+	mouse_opacity = 0
+	var/mob/living/immune = list() // the one who creates the timestop is immune
+	var/list/stopped_atoms = list()
+	var/freezerange = 2
+	var/duration = 140
+	alpha = 125
+
+/obj/effect/timestop/Initialize()
+	. = ..()
+	for(var/M in GLOB.player_list)
+		var/mob/living/L = M
+		if(locate(/obj/effect/proc_holder/spell/aoe_turf/conjure/timestop) in L.mind.spell_list) //People who can stop time are immune to its effects
+			immune += L
+	timestop()
+
+
+/obj/effect/timestop/proc/timestop()
+	set waitfor = FALSE
+	playsound(src, 'sound/magic/timeparadox2.ogg', 75, 1, -1)
+	for(var/i in 1 to duration-1)
+		for(var/atom/A in orange (freezerange, src.loc))
+			if(isliving(A))
+				var/mob/living/M = A
+				if(M in immune)
+					continue
+				M.Stun(200, 1, 1)
+				M.anchored = TRUE
+				if(ishostile(M))
+					var/mob/living/simple_animal/hostile/H = M
+					H.AIStatus = AI_OFF
+					H.LoseTarget()
+				stopped_atoms |= M
+			else if(istype(A, /obj/item/projectile))
+				var/obj/item/projectile/P = A
+				P.paused = TRUE
+				stopped_atoms |= P
+
+		for(var/mob/living/M in stopped_atoms)
+			if(get_dist(get_turf(M),get_turf(src)) > freezerange) //If they lagged/ran past the timestop somehow, just ignore them
+				unfreeze_mob(M)
+				stopped_atoms -= M
+		stoplag()
+
+	//End
+	playsound(src, 'sound/magic/timeparadox2.ogg', 75, TRUE, frequency = -1) //reverse!
+	for(var/mob/living/M in stopped_atoms)
+		unfreeze_mob(M)
+
+	for(var/obj/item/projectile/P in stopped_atoms)
+		P.paused = FALSE
+	qdel(src)
+	return
+
+
+
+/obj/effect/timestop/proc/unfreeze_mob(mob/living/M)
+	M.AdjustStun(-200, 1, 1)
+	M.anchored = FALSE
+	if(ishostile(M))
+		var/mob/living/simple_animal/hostile/H = M
+		H.AIStatus = initial(H.AIStatus)
+
+
+/obj/effect/timestop/wizard
+	duration = 100
+
+
 /obj/item/stack/tile/bluespace
 	name = "bluespace floor tile"
 	singular_name = "floor tile"
-	desc = "Through a series of micro-teleports these tiles let people move at incredible speeds."
+	desc = "Through a series of micro-teleports these tiles let people move at incredible speeds"
 	icon_state = "tile-bluespace"
 	w_class = WEIGHT_CLASS_NORMAL
 	force = 6
@@ -553,7 +632,7 @@
 	throwforce = 10
 	throw_speed = 3
 	throw_range = 7
-	flags_1 = CONDUCT_1
+	flags = CONDUCT
 	max_amount = 60
 	turf_type = /turf/open/floor/bluespace
 
@@ -561,7 +640,7 @@
 /obj/item/stack/tile/sepia
 	name = "sepia floor tile"
 	singular_name = "floor tile"
-	desc = "Time seems to flow very slowly around these tiles."
+	desc = "Time seems to flow very slowly around these tiles"
 	icon_state = "tile-sepia"
 	w_class = WEIGHT_CLASS_NORMAL
 	force = 6
@@ -569,7 +648,7 @@
 	throwforce = 10
 	throw_speed = 3
 	throw_range = 7
-	flags_1 = CONDUCT_1
+	flags = CONDUCT
 	max_amount = 60
 	turf_type = /turf/open/floor/sepia
 

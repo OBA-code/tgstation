@@ -1,6 +1,5 @@
 #define BUCKET_LEN (world.fps*1*60) //how many ticks should we keep in the bucket. (1 minutes worth)
 #define BUCKET_POS(timer) (round((timer.timeToRun - SStimer.head_offset) / world.tick_lag) + 1)
-#define TIMER_ID_MAX (2**24) //max float with integer precision
 
 SUBSYSTEM_DEF(timer)
 	name = "Timer"
@@ -69,7 +68,7 @@ SUBSYSTEM_DEF(timer)
 		if (ctime_timer.timeToRun <= REALTIMEOFDAY)
 			--clienttime_timers.len
 			var/datum/callback/callBack = ctime_timer.callBack
-			ctime_timer.spent = REALTIMEOFDAY
+			ctime_timer.spent = TRUE
 			callBack.InvokeAsync()
 			qdel(ctime_timer)
 		else
@@ -105,11 +104,11 @@ SUBSYSTEM_DEF(timer)
 			if (!callBack)
 				qdel(timer)
 				bucket_resolution = null //force bucket recreation
-				CRASH("Invalid timer: [get_timer_debug_string(timer)] world.time: [world.time], head_offset: [head_offset], practical_offset: [practical_offset]")
+				CRASH("Invalid timer: [timer] timer.timeToRun=[timer.timeToRun]||QDELETED(timer)=[QDELETED(timer)]||world.time=[world.time]||head_offset=[head_offset]||practical_offset=[practical_offset]||timer.spent=[timer.spent]")
 
 			if (!timer.spent)
 				spent += timer
-				timer.spent = world.time
+				timer.spent = TRUE
 				callBack.InvokeAsync()
 				last_invoke_tick = world.time
 
@@ -135,11 +134,9 @@ SUBSYSTEM_DEF(timer)
 	. = "Timer: [TE]"
 	. += "Prev: [TE.prev ? TE.prev : "NULL"], Next: [TE.next ? TE.next : "NULL"]"
 	if(TE.spent)
-		. += ", SPENT([TE.spent])"
+		. += ", SPENT"
 	if(QDELETED(TE))
 		. += ", QDELETED"
-	if(!TE.callBack)
-		. += ", NO CALLBACK"
 
 /datum/controller/subsystem/timer/proc/shift_buckets()
 	var/list/bucket_list = src.bucket_list
@@ -212,13 +209,14 @@ SUBSYSTEM_DEF(timer)
 	timer_id_dict |= SStimer.timer_id_dict
 	bucket_list |= SStimer.bucket_list
 
+/datum/var/list/active_timers
 /datum/timedevent
 	var/id
 	var/datum/callback/callBack
 	var/timeToRun
 	var/hash
 	var/list/flags
-	var/spent = 0 //time we ran the timer.
+	var/spent = FALSE //set to true right before running.
 	var/name //for easy debugging.
 	//cicular doublely linked list
 	var/datum/timedevent/next
@@ -227,26 +225,18 @@ SUBSYSTEM_DEF(timer)
 	var/static/nextid = 1
 
 /datum/timedevent/New(datum/callback/callBack, timeToRun, flags, hash)
-	id = TIMER_ID_NULL
+	id = nextid++
 	src.callBack = callBack
 	src.timeToRun = timeToRun
 	src.flags = flags
 	src.hash = hash
 	
+	name = "Timer: [id]: TTR: [timeToRun], Flags: [jointext(bitfield2list(flags, list("TIMER_UNIQUE", "TIMER_OVERRIDE", "TIMER_CLIENT_TIME", "TIMER_STOPPABLE", "TIMER_NO_HASH_WAIT")), ", ")], callBack: \ref[callBack], callBack.object: [callBack.object]\ref[callBack.object]([getcallingtype()]), callBack.delegate:[callBack.delegate]([callBack.arguments ? callBack.arguments.Join(", ") : ""])"
+	
 	if (flags & TIMER_UNIQUE)
 		SStimer.hashes[hash] = src
 	if (flags & TIMER_STOPPABLE)
-		do
-			if (nextid >= TIMER_ID_MAX)
-				nextid = 1
-			id = nextid++
-		while(SStimer.timer_id_dict["timerid" + num2text(id, 8)])
-		SStimer.timer_id_dict["timerid" + num2text(id, 8)] = src
-
-	name = "Timer: " + num2text(id, 8) + ", TTR: [timeToRun], Flags: [jointext(bitfield2list(flags, list("TIMER_UNIQUE", "TIMER_OVERRIDE", "TIMER_CLIENT_TIME", "TIMER_STOPPABLE", "TIMER_NO_HASH_WAIT")), ", ")], callBack: \ref[callBack], callBack.object: [callBack.object]\ref[callBack.object]([getcallingtype()]), callBack.delegate:[callBack.delegate]([callBack.arguments ? callBack.arguments.Join(", ") : ""])"
-
-	if (spent)
-		CRASH("HOLY JESUS. WHAT IS THAT? WHAT THE FUCK IS THAT?")
+		SStimer.timer_id_dict["timerid[id]"] = src
 
 	if (callBack.object != GLOBAL_PROC)
 		LAZYADD(callBack.object.active_timers, src)
@@ -307,7 +297,7 @@ SUBSYSTEM_DEF(timer)
 	callBack = null
 
 	if (flags & TIMER_STOPPABLE)
-		SStimer.timer_id_dict -= "timerid" + num2text(id, 8)
+		SStimer.timer_id_dict -= "timerid[id]"
 
 	if (flags & TIMER_CLIENT_TIME)
 		SStimer.clienttime_timers -= src
@@ -388,7 +378,9 @@ SUBSYSTEM_DEF(timer)
 		timeToRun = REALTIMEOFDAY + wait
 
 	var/datum/timedevent/timer = new(callback, timeToRun, flags, hash)
-	return timer.id 
+	if (flags & TIMER_STOPPABLE)
+		return timer.id
+	return TIMER_ID_NULL
 
 /proc/deltimer(id)
 	if (!id)
@@ -399,7 +391,6 @@ SUBSYSTEM_DEF(timer)
 		if (istype(id, /datum/timedevent))
 			qdel(id)
 			return TRUE
-	//id is string
 	var/datum/timedevent/timer = SStimer.timer_id_dict["timerid[id]"]
 	if (timer && !timer.spent)
 		qdel(timer)

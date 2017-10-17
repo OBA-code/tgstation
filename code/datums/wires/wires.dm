@@ -3,7 +3,7 @@
 /proc/is_wire_tool(obj/item/I)
 	if(istype(I, /obj/item/device/multitool))
 		return TRUE
-	if(istype(I, /obj/item/wirecutters))
+	if(istype(I, /obj/item/weapon/wirecutters))
 		return TRUE
 	if(istype(I, /obj/item/device/assembly))
 		var/obj/item/device/assembly/A = I
@@ -144,7 +144,7 @@
 /datum/wires/proc/attach_assembly(color, obj/item/device/assembly/S)
 	if(S && istype(S) && S.attachable && !is_attached(color))
 		assemblies[color] = S
-		S.forceMove(holder)
+		S.loc = holder
 		S.connected = src
 		return S
 
@@ -153,7 +153,7 @@
 	if(S && istype(S))
 		assemblies -= color
 		S.connected = null
-		S.forceMove(holder.drop_location())
+		S.loc = holder.loc
 		return S
 
 /datum/wires/proc/emp_pulse()
@@ -227,7 +227,7 @@
 	var/obj/item/I = L.get_active_held_item()
 	switch(action)
 		if("cut")
-			if(istype(I, /obj/item/wirecutters) || IsAdminGhost(usr))
+			if(istype(I, /obj/item/weapon/wirecutters) || IsAdminGhost(usr))
 				playsound(holder, I.usesound, 20, 1)
 				cut_color(target_wire)
 				. = TRUE
@@ -250,10 +250,9 @@
 				if(istype(I, /obj/item/device/assembly))
 					var/obj/item/device/assembly/A = I
 					if(A.attachable)
-						if(!L.temporarilyRemoveItemFromInventory(A))
+						if(!L.drop_item())
 							return
-						if(!attach_assembly(target_wire, A))
-							A.forceMove(L.drop_location())
+						attach_assembly(target_wire, A)
 						. = TRUE
 					else
 						to_chat(L, "<span class='warning'>You need an attachable assembly!</span>")

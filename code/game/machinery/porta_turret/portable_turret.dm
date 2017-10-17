@@ -12,7 +12,6 @@
 	layer = OBJ_LAYER
 	invisibility = INVISIBILITY_OBSERVER	//the turret is invisible if it's inside its cover
 	density = TRUE
-	desc = "A covered turret that shoots at its enemies."
 	use_power = IDLE_POWER_USE				//this turret uses and requires power
 	idle_power_usage = 50		//when inactive, this turret takes up constant 50 Equipment power
 	active_power_usage = 300	//when active, this turret takes up constant 300 Equipment power
@@ -36,8 +35,8 @@
 	var/locked = TRUE			//if the turret's behaviour control access is locked
 	var/controllock = 0		//if the turret responds to control panels
 
-	var/installation = /obj/item/gun/energy/e_gun/turret		//the type of weapon installed by default
-	var/obj/item/gun/stored_gun = null
+	var/installation = /obj/item/weapon/gun/energy/e_gun/turret		//the type of weapon installed by default
+	var/obj/item/weapon/gun/stored_gun = null
 	var/gun_charge = 0		//the charge of the gun when retrieved from wreckage
 
 	var/mode = TURRET_STUN
@@ -73,8 +72,8 @@
 
 	var/obj/machinery/turretid/cp = null
 
-/obj/machinery/porta_turret/Initialize()
-	. = ..()
+/obj/machinery/porta_turret/New(loc)
+	..()
 	if(!base)
 		base = src
 	update_icon()
@@ -114,7 +113,7 @@
 			icon_state = "[base_icon_state]_unpowered"
 
 
-/obj/machinery/porta_turret/proc/setup(obj/item/gun/turret_gun)
+/obj/machinery/porta_turret/proc/setup(obj/item/weapon/gun/turret_gun)
 	if(stored_gun)
 		qdel(stored_gun)
 		stored_gun = null
@@ -144,13 +143,18 @@
 
 /obj/machinery/porta_turret/Destroy()
 	//deletes its own cover with it
-	QDEL_NULL(cover)
+	if(cover)
+		qdel(cover)
+		cover = null
 	base = null
 	if(cp)
 		cp.turrets -= src
 		cp = null
-	QDEL_NULL(stored_gun)
-	QDEL_NULL(spark_system)
+	if(stored_gun)
+		qdel(stored_gun)
+		stored_gun = null
+	qdel(spark_system)
+	spark_system = null
 	return ..()
 
 
@@ -226,7 +230,7 @@
 
 /obj/machinery/porta_turret/attackby(obj/item/I, mob/user, params)
 	if(stat & BROKEN)
-		if(istype(I, /obj/item/crowbar))
+		if(istype(I, /obj/item/weapon/crowbar))
 			//If the turret is destroyed, you can remove it with a crowbar to
 			//try and salvage its components
 			to_chat(user, "<span class='notice'>You begin prying the metal coverings off...</span>")
@@ -243,7 +247,7 @@
 					to_chat(user, "<span class='notice'>You remove the turret but did not manage to salvage anything.</span>")
 				qdel(src)
 
-	else if((istype(I, /obj/item/wrench)) && (!on))
+	else if((istype(I, /obj/item/weapon/wrench)) && (!on))
 		if(raised)
 			return
 
@@ -322,7 +326,7 @@
 	qdel(src)
 
 /obj/machinery/porta_turret/obj_break(damage_flag)
-	if(!(flags_1 & NODECONSTRUCT_1) && !(stat & BROKEN))
+	if(!(flags & NODECONSTRUCT) && !(stat & BROKEN))
 		stat |= BROKEN	//enables the BROKEN bit
 		update_icon()
 		invisibility = 0
@@ -355,23 +359,28 @@
 			popDown()
 		return
 
+	var/list/targets = calculate_targets()
+
+	if(!tryToShootAt(targets))
+		if(!always_up)
+			popDown() // no valid targets, close the cover
+
+/obj/machinery/porta_turret/proc/calculate_targets()
 	var/list/targets = list()
-	var/static/things_to_scan = typecacheof(list(/mob/living, /obj/mecha))
-
-	for(var/A in typecache_filter_list(view(scan_range, base), things_to_scan))
+	var/turretview = view(scan_range, base)
+	for(var/A in turretview)
 		var/atom/AA = A
-
-		if(AA.invisibility > SEE_INVISIBLE_LIVING)
+		if(AA.invisibility>SEE_INVISIBLE_LIVING)
 			continue
 
 		if(check_anomalies)//if it's set to check for simple animals
-			if(isanimal(A))
+			if(istype(A, /mob/living/simple_animal))
 				var/mob/living/simple_animal/SA = A
 				if(SA.stat || in_faction(SA)) //don't target if dead or in faction
 					continue
 				targets += SA
 
-		if(iscarbon(A))
+		if(istype(A, /mob/living/carbon))
 			var/mob/living/carbon/C = A
 			//If not emagged, only target non downed carbons
 			if(mode != TURRET_LETHAL && (C.stat || C.handcuffed || C.lying))
@@ -390,16 +399,14 @@
 				if(!in_faction(C))
 					targets += C
 
-		if(ismecha(A))
+		if(istype(A, /obj/mecha/))
 			var/obj/mecha/M = A
 			//If there is a user and they're not in our faction
 			if(M.occupant && !in_faction(M.occupant))
 				if(assess_perp(M.occupant) >= 4)
 					targets += M
 
-	if(!tryToShootAt(targets))
-		if(!always_up)
-			popDown() // no valid targets, close the cover
+	return targets
 
 /obj/machinery/porta_turret/proc/tryToShootAt(list/atom/movable/targets)
 	while(targets.len > 0)
@@ -456,15 +463,15 @@
 			return 10
 
 	if(auth_weapons)	//check for weapon authorization
-		if(isnull(perp.wear_id) || istype(perp.wear_id.GetID(), /obj/item/card/id/syndicate))
+		if(isnull(perp.wear_id) || istype(perp.wear_id.GetID(), /obj/item/weapon/card/id/syndicate))
 
 			if(allowed(perp)) //if the perp has security access, return 0
 				return 0
 
-			if(perp.is_holding_item_of_type(/obj/item/gun) ||  perp.is_holding_item_of_type(/obj/item/melee/baton))
+			if(perp.is_holding_item_of_type(/obj/item/weapon/gun) ||  perp.is_holding_item_of_type(/obj/item/weapon/melee/baton))
 				threatcount += 4
 
-			if(istype(perp.belt, /obj/item/gun) || istype(perp.belt, /obj/item/melee/baton))
+			if(istype(perp.belt, /obj/item/weapon/gun) || istype(perp.belt, /obj/item/weapon/melee/baton))
 				threatcount += 2
 
 	if(check_records)	//if the turret can check the records, check if they are set to *Arrest* on records
@@ -483,9 +490,11 @@
 
 /obj/machinery/porta_turret/proc/target(atom/movable/target)
 	if(target)
-		popUp()				//pop the turret up if it's not already up.
+		spawn()
+			popUp()				//pop the turret up if it's not already up.
 		setDir(get_dir(base, target))//even if you can't shoot, follow the target
-		shootAt(target)
+		spawn()
+			shootAt(target)
 		return 1
 	return
 
@@ -517,7 +526,11 @@
 
 
 	//Shooting Code:
-	A.preparePixelProjectile(target, src)
+	A.original = target
+	A.starting = T
+	A.current = T
+	A.yo = U.y - T.y
+	A.xo = U.x - T.x
 	A.fire()
 	return A
 
@@ -532,7 +545,7 @@
 /obj/machinery/porta_turret/stationary //is this even used anywhere
 	mode = TURRET_LETHAL
 	emagged = TRUE
-	installation = /obj/item/gun/energy/laser
+	installation = /obj/item/weapon/gun/energy/laser
 
 /obj/machinery/porta_turret/syndicate
 	installation = null
@@ -549,7 +562,6 @@
 	base_icon_state = "syndie"
 	faction = "syndicate"
 	emp_vunerable = 0
-	desc = "A ballistic machine gun auto-turret."
 
 /obj/machinery/porta_turret/syndicate/energy
 	icon_state = "standard_stun"
@@ -558,7 +570,6 @@
 	stun_projectile_sound = 'sound/weapons/taser.ogg'
 	lethal_projectile = /obj/item/projectile/beam/laser/heavylaser
 	lethal_projectile_sound = 'sound/weapons/lasercannonfire.ogg'
-	desc = "An energy blaster auto-turret."
 
 /obj/machinery/porta_turret/syndicate/setup()
 	return
@@ -569,8 +580,8 @@
 /obj/machinery/porta_turret/syndicate/pod
 	integrity_failure = 20
 	max_integrity = 40
-	stun_projectile = /obj/item/projectile/bullet/syndicate_turret
-	lethal_projectile = /obj/item/projectile/bullet/syndicate_turret
+	stun_projectile = /obj/item/projectile/bullet/weakbullet3
+	lethal_projectile = /obj/item/projectile/bullet/weakbullet3
 
 /obj/machinery/porta_turret/ai
 	faction = "silicon"
@@ -596,12 +607,12 @@
 /obj/machinery/porta_turret/aux_base/interact(mob/user) //Controlled solely from the base console.
 	return
 
-/obj/machinery/porta_turret/aux_base/Initialize()
-	. = ..()
+/obj/machinery/porta_turret/aux_base/New()
+	..()
 	cover.name = name
 	cover.desc = desc
 
-/obj/machinery/porta_turret/centcom_shuttle
+/obj/machinery/porta_turret/centcomm_shuttle
 	installation = null
 	max_integrity = 260
 	always_up = 1
@@ -618,20 +629,11 @@
 	emp_vunerable = 0
 	mode = TURRET_LETHAL
 
-/obj/machinery/porta_turret/centcom_shuttle/assess_perp(mob/living/carbon/human/perp)
+/obj/machinery/porta_turret/centcomm_shuttle/assess_perp(mob/living/carbon/human/perp)
 	return 0
 
-/obj/machinery/porta_turret/centcom_shuttle/setup()
+/obj/machinery/porta_turret/centcomm_shuttle/setup()
 	return
-
-/obj/machinery/porta_turret/centcom_shuttle/weak
-	max_integrity = 120
-	integrity_failure = 60
-	name = "Old Laser Turret"
-	desc = "A turret built with substandard parts and run down further with age. Still capable of delivering lethal lasers to the odd space carp, but not much else."
-	stun_projectile = /obj/item/projectile/beam/weak
-	lethal_projectile = /obj/item/projectile/beam/weak
-	faction = "neutral"
 
 ////////////////////////
 //Turret Control Panel//
@@ -653,8 +655,8 @@
 	var/list/obj/machinery/porta_turret/turrets = list()
 	resistance_flags = INDESTRUCTIBLE | LAVA_PROOF | FIRE_PROOF | UNACIDABLE | ACID_PROOF
 
-/obj/machinery/turretid/Initialize(mapload, ndir = 0, built = 0)
-	. = ..()
+/obj/machinery/turretid/New(loc, ndir = 0, built = 0)
+	..()
 	if(built)
 		setDir(ndir)
 		locked = FALSE
@@ -667,16 +669,17 @@
 	return ..()
 
 /obj/machinery/turretid/Initialize(mapload) //map-placed turrets autolink turrets
-	. = ..()
+	..()
 	if(!mapload)
 		return
+	if(control_area && istext(control_area))
+		for(var/V in GLOB.sortedAreas)
+			var/area/A = V
+			if(A.name == control_area)
+				control_area = A
+				break
 
-	if(control_area)
-		control_area = get_area_instance_from_text(control_area)
-		if(control_area == null)
-			control_area = get_area(src)
-			stack_trace("Bad control_area path for [src], [src.control_area]")
-	else if(!control_area)
+	if(!control_area)
 		control_area = get_area(src)
 
 	for(var/obj/machinery/porta_turret/T in control_area)
@@ -684,8 +687,7 @@
 		T.cp = src
 
 /obj/machinery/turretid/attackby(obj/item/I, mob/user, params)
-	if(stat & BROKEN)
-		return
+	if(stat & BROKEN) return
 
 	if (istype(I, /obj/item/device/multitool))
 		var/obj/item/device/multitool/M = I
@@ -799,12 +801,12 @@
 
 /obj/item/wallframe/turret_control
 	name = "turret control frame"
-	desc = "Used for building turret control panels."
+	desc = "Used for building turret control panels"
 	icon_state = "apc"
 	result_path = /obj/machinery/turretid
 	materials = list(MAT_METAL=MINERAL_MATERIAL_AMOUNT)
 
-/obj/item/gun/proc/get_turret_properties()
+/obj/item/weapon/gun/proc/get_turret_properties()
 	. = list()
 	.["lethal_projectile"] = null
 	.["lethal_projectile_sound"] = null
@@ -812,7 +814,7 @@
 	.["stun_projectile_sound"] = null
 	.["base_icon_state"] = "standard"
 
-/obj/item/gun/energy/get_turret_properties()
+/obj/item/weapon/gun/energy/get_turret_properties()
 	. = ..()
 
 	var/obj/item/ammo_casing/primary_ammo = ammo_type[1]
@@ -828,7 +830,7 @@
 		.["lethal_projectile"] = .["stun_projectile"]
 		.["lethal_projectile_sound"] = .["stun_projectile_sound"]
 
-/obj/item/gun/ballistic/get_turret_properties()
+/obj/item/weapon/gun/ballistic/get_turret_properties()
 	. = ..()
 	var/obj/item/ammo_box/mag = mag_type
 	var/obj/item/ammo_casing/primary_ammo = initial(mag.ammo_type)
@@ -840,7 +842,7 @@
 	.["lethal_projectile_sound"] = .["stun_projectile_sound"]
 
 
-/obj/item/gun/energy/laser/bluetag/get_turret_properties()
+/obj/item/weapon/gun/energy/laser/bluetag/get_turret_properties()
 	. = ..()
 	.["stun_projectile"] = /obj/item/projectile/beam/lasertag/bluetag
 	.["lethal_projectile"] = /obj/item/projectile/beam/lasertag/bluetag
@@ -848,7 +850,7 @@
 	.["shot_delay"] = 30
 	.["team_color"] = "blue"
 
-/obj/item/gun/energy/laser/redtag/get_turret_properties()
+/obj/item/weapon/gun/energy/laser/redtag/get_turret_properties()
 	. = ..()
 	.["stun_projectile"] = /obj/item/projectile/beam/lasertag/redtag
 	.["lethal_projectile"] = /obj/item/projectile/beam/lasertag/redtag
@@ -856,7 +858,7 @@
 	.["shot_delay"] = 30
 	.["team_color"] = "red"
 
-/obj/item/gun/energy/e_gun/turret/get_turret_properties()
+/obj/item/weapon/gun/energy/e_gun/turret/get_turret_properties()
 	. = ..()
 
 /obj/machinery/porta_turret/lasertag
@@ -874,21 +876,21 @@
 		. = 0		//But does not target anyone else
 		if(istype(perp.wear_suit, /obj/item/clothing/suit/redtag))
 			. += 4
-		if(perp.is_holding_item_of_type(/obj/item/gun/energy/laser/redtag))
+		if(perp.is_holding_item_of_type(/obj/item/weapon/gun/energy/laser/redtag))
 			. += 4
-		if(istype(perp.belt, /obj/item/gun/energy/laser/redtag))
+		if(istype(perp.belt, /obj/item/weapon/gun/energy/laser/redtag))
 			. += 2
 
 	if(team_color == "red")
 		. = 0
 		if(istype(perp.wear_suit, /obj/item/clothing/suit/bluetag))
 			. += 4
-		if(perp.is_holding_item_of_type(/obj/item/gun/energy/laser/bluetag))
+		if(perp.is_holding_item_of_type(/obj/item/weapon/gun/energy/laser/bluetag))
 			. += 4
-		if(istype(perp.belt, /obj/item/gun/energy/laser/bluetag))
+		if(istype(perp.belt, /obj/item/weapon/gun/energy/laser/bluetag))
 			. += 2
 
-/obj/machinery/porta_turret/lasertag/setup(obj/item/gun/gun)
+/obj/machinery/porta_turret/lasertag/setup(obj/item/weapon/gun/gun)
 	var/list/properties = ..()
 	if(properties["team_color"])
 		team_color = properties["team_color"]
@@ -909,11 +911,11 @@
 
 //lasertag presets
 /obj/machinery/porta_turret/lasertag/red
-	installation = /obj/item/gun/energy/laser/redtag
+	installation = /obj/item/weapon/gun/energy/laser/redtag
 	team_color = "red"
 
 /obj/machinery/porta_turret/lasertag/blue
-	installation = /obj/item/gun/energy/laser/bluetag
+	installation = /obj/item/weapon/gun/energy/laser/bluetag
 	team_color = "blue"
 
 /obj/machinery/porta_turret/lasertag/bullet_act(obj/item/projectile/P)

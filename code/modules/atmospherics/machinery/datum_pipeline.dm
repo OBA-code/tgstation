@@ -5,7 +5,7 @@
 	var/list/obj/machinery/atmospherics/pipe/members
 	var/list/obj/machinery/atmospherics/components/other_atmosmch
 
-	var/update = TRUE
+	var/update = 1
 
 /datum/pipeline/New()
 	other_airs = list()
@@ -25,7 +25,7 @@
 
 /datum/pipeline/process()
 	if(update)
-		update = FALSE
+		update = 0
 		reconcile_air()
 	update = air.react()
 
@@ -114,7 +114,6 @@
 	other_airs.Add(E.other_airs)
 	E.members.Cut()
 	E.other_atmosmch.Cut()
-	update = TRUE
 	qdel(E)
 
 /obj/machinery/atmospherics/proc/addMember(obj/machinery/atmospherics/A)
@@ -196,7 +195,7 @@
 				(partial_heat_capacity*target.heat_capacity/(partial_heat_capacity+target.heat_capacity))
 
 			air.temperature -= heat/total_heat_capacity
-	update = TRUE
+	update = 1
 
 /datum/pipeline/proc/return_air()
 	. = other_airs + air
@@ -232,7 +231,7 @@
 
 		total_gas_mixture.merge(G)
 
-		total_thermal_energy += THERMAL_ENERGY(G)
+		total_thermal_energy += G.thermal_energy()
 		total_heat_capacity += G.heat_capacity()
 
 	total_gas_mixture.temperature = total_heat_capacity ? total_thermal_energy/total_heat_capacity : 0

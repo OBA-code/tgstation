@@ -5,9 +5,6 @@
 	if(digitalinvis)
 		handle_diginvis() //AI becomes unable to see mob
 
-	if((movement_type & FLYING) && !floating)	//TODO: Better floating
-		float(on = TRUE)
-
 	if (notransform)
 		return
 	if(!loc)
@@ -92,7 +89,7 @@
 		ExtinguishMob()
 		return
 	var/datum/gas_mixture/G = loc.return_air() // Check if we're standing in an oxygenless environment
-	if(!G.gases[/datum/gas/oxygen] || G.gases[/datum/gas/oxygen][MOLES] < 1)
+	if(!G.gases["o2"] || G.gases["o2"][MOLES] < 1)
 		ExtinguishMob() //If there's no oxygen in the tile we're on, put out the fire
 		return
 	var/turf/location = get_turf(src)
@@ -123,3 +120,5 @@
 
 /mob/living/proc/update_damage_hud()
 	return
+
+

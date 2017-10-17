@@ -42,8 +42,8 @@
 			var/heart_strength = "<span class='danger'>no</span>"
 			var/lung_strength = "<span class='danger'>no</span>"
 
-			var/obj/item/organ/heart/heart = M.getorganslot(ORGAN_SLOT_HEART)
-			var/obj/item/organ/lungs/lungs = M.getorganslot(ORGAN_SLOT_LUNGS)
+			var/obj/item/organ/heart/heart = M.getorganslot("heart")
+			var/obj/item/organ/lungs/lungs = M.getorganslot("lungs")
 
 			if(!(M.stat == DEAD || (M.status_flags&FAKEDEATH)))
 				if(heart && istype(heart))
@@ -163,3 +163,6 @@
 	icon = 'icons/obj/clothing/neck.dmi'
 	icon_state = "bling"
 	item_color = "bling"
+
+/obj/item/clothing/neck/necklace/dope/gang_contraband_value()
+	return 2

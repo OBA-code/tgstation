@@ -61,7 +61,7 @@ You can set verify to TRUE if you want send() to sleep until the client has the 
 	var/t = 0
 	var/timeout_time = (ASSET_CACHE_SEND_TIMEOUT * client.sending.len) + ASSET_CACHE_SEND_TIMEOUT
 	while(client && !client.completed_asset_jobs.Find(job) && t < timeout_time) // Reception is handled in Topic()
-		stoplag(1) // Lock up the caller until this is received.
+		sleep(1) // Lock up the caller until this is received.
 		t++
 
 	if(client)
@@ -112,7 +112,7 @@ You can set verify to TRUE if you want send() to sleep until the client has the 
 	var/t = 0
 	var/timeout_time = ASSET_CACHE_SEND_TIMEOUT * client.sending.len
 	while(client && !client.completed_asset_jobs.Find(job) && t < timeout_time) // Reception is handled in Topic()
-		stoplag(1) // Lock up the caller until this is received.
+		sleep(1) // Lock up the caller until this is received.
 		t++
 
 	if(client)
@@ -131,26 +131,19 @@ You can set verify to TRUE if you want send() to sleep until the client has the 
 		if (register_asset)
 			register_asset(file,files[file])
 		send_asset(client,file)
-		stoplag(0) //queuing calls like this too quickly can cause issues in some client versions
+		sleep(0) //queuing calls like this too quickly can cause issues in some client versions
 
 //This proc "registers" an asset, it adds it to the cache for further use, you cannot touch it from this point on or you'll fuck things up.
 //if it's an icon or something be careful, you'll have to copy it before further use.
 /proc/register_asset(var/asset_name, var/asset)
 	SSassets.cache[asset_name] = asset
 
-//Generated names do not include file extention.
-//Used mainly for code that deals with assets in a generic way
-//The same asset will always lead to the same asset name
-/proc/generate_asset_name(var/file)
-	return "asset.[md5(fcopy_rsc(file))]"
-
-
 //These datums are used to populate the asset cache, the proc "register()" does this.
 
 //all of our asset datums, used for referring to these later
 GLOBAL_LIST_EMPTY(asset_datums)
 
-//get an assetdatum or make a new one
+//get a assetdatum or make a new one
 /proc/get_asset_datum(var/type)
 	if (!(type in GLOB.asset_datums))
 		return new type()
@@ -175,33 +168,6 @@ GLOBAL_LIST_EMPTY(asset_datums)
 		register_asset(asset_name, assets[asset_name])
 /datum/asset/simple/send(client)
 	send_asset_list(client,assets,verify)
-
-
-//Generates assets based on iconstates of a single icon
-/datum/asset/simple/icon_states
-	var/icon
-	var/direction = SOUTH
-	var/frame = 1
-	var/movement_states = FALSE
-
-	var/prefix = "default" //asset_name = "[prefix].[icon_state_name].png"
-	var/generic_icon_names = FALSE //generate icon filenames using generate_asset_name() instead the above format
-
-	verify = FALSE
-
-/datum/asset/simple/icon_states/register()
-	for(var/icon_state_name in icon_states(icon))
-		var/asset = icon(icon, icon_state_name, direction, frame, movement_states)
-		if (!asset)
-			continue
-		asset = fcopy_rsc(asset) //dedupe
-		var/asset_name = sanitize_filename("[prefix].[icon_state_name].png")
-		if (generic_icon_names)
-			asset_name = "[generate_asset_name(asset)].png"
-
-		assets[asset_name] = asset
-
-	..()
 
 
 //DEFINITIONS FOR ASSET DATUMS START HERE.
@@ -317,9 +283,6 @@ GLOBAL_LIST_EMPTY(asset_datums)
 		"chevron.png" = 'html/chevron.png',
 		"chevron-expand.png" = 'html/chevron-expand.png',
 		"scales.png" = 'html/scales.png',
-		"coding.png" = 'html/coding.png',
-		"ban.png" = 'html/ban.png',
-		"chrome-wrench.png" = 'html/chrome-wrench.png',
 		"changelog.css" = 'html/changelog.css'
 	)
 
@@ -343,14 +306,3 @@ GLOBAL_LIST_EMPTY(asset_datums)
 	for(var/path in typesof(/datum/html_interface))
 		var/datum/html_interface/hi = new path()
 		hi.registerResources()
-
-//this exists purely to avoid meta by pre-loading all language icons.
-/datum/asset/language/register()
-	for(var/path in typesof(/datum/language))
-		set waitfor = FALSE
-		var/datum/language/L = new path ()
-		L.get_icon()
-
-/datum/asset/simple/icon_states/emojis
-	icon = 'icons/emoji.dmi'
-	generic_icon_names = TRUE

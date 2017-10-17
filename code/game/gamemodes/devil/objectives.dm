@@ -1,4 +1,5 @@
 /datum/objective/devil
+	dangerrating = 5
 
 /datum/objective/devil/soulquantity
 	explanation_text = "You shouldn't see this text.  Error:DEVIL1"

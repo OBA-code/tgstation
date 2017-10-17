@@ -48,7 +48,8 @@
 
 	preload_rsc = PRELOAD_RSC
 
-	var/obj/screen/click_catcher/void
+	var/global/obj/screen/click_catcher/void
+	var/list/obj/screen/click_catcher/click_catcher_tiles
 
 	// Used by html_interface module.
 	var/hi_last_pos
@@ -69,4 +70,3 @@
 
 	var/datum/chatOutput/chatOutput
 
-	var/list/credits //lazy list of all credit object bound to this client

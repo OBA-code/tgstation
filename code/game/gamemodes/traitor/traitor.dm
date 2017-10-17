@@ -9,7 +9,6 @@
 	name = "traitor"
 	config_tag = "traitor"
 	antag_flag = ROLE_TRAITOR
-	false_report_weight = 20 //Reports of traitors are pretty common.
 	restricted_jobs = list("Cyborg")//They are part of the AI if he is traitor so are they, they use to get double chances
 	protected_jobs = list("Security Officer", "Warden", "Detective", "Head of Security", "Captain")
 	required_players = 0
@@ -31,17 +30,16 @@
 
 /datum/game_mode/traitor/pre_setup()
 
-	if(CONFIG_GET(flag/protect_roles_from_antagonist))
+	if(config.protect_roles_from_antagonist)
 		restricted_jobs += protected_jobs
 
-	if(CONFIG_GET(flag/protect_assistant_from_antagonist))
+	if(config.protect_assistant_from_antagonist)
 		restricted_jobs += "Assistant"
 
 	var/num_traitors = 1
 
-	var/tsc = CONFIG_GET(number/traitor_scaling_coeff)
-	if(tsc)
-		num_traitors = max(1, min(round(num_players() / (tsc * 2)) + 2 + num_modifier, round(num_players() / tsc) + num_modifier))
+	if(config.traitor_scaling_coeff)
+		num_traitors = max(1, min( round(num_players()/(config.traitor_scaling_coeff*2))+ 2 + num_modifier, round(num_players()/(config.traitor_scaling_coeff)) + num_modifier ))
 	else
 		num_traitors = max(1, min(num_players(), traitors_possible))
 
@@ -55,23 +53,27 @@
 		log_game("[traitor.key] (ckey) has been selected as a [traitor_name]")
 		antag_candidates.Remove(traitor)
 
-	return pre_traitors.len > 0
+
+	if(pre_traitors.len < required_enemies)
+		return 0
+	return 1
 
 
 /datum/game_mode/traitor/post_setup()
 	for(var/datum/mind/traitor in pre_traitors)
-		addtimer(CALLBACK(traitor, /datum/mind.proc/add_antag_datum, antag_datum), rand(10,100))
+		spawn(rand(10,100))
+			traitor.add_antag_datum(antag_datum)
 	if(!exchange_blue)
 		exchange_blue = -1 //Block latejoiners from getting exchange objectives
+	modePlayer += traitors
 	..()
-	return TRUE
+	return 1
 
 /datum/game_mode/traitor/make_antag_chance(mob/living/carbon/human/character) //Assigns traitor to latejoiners
-	var/tsc = CONFIG_GET(number/traitor_scaling_coeff)
-	var/traitorcap = min(round(GLOB.joined_player_list.len / (tsc * 2)) + 2 + num_modifier, round(GLOB.joined_player_list.len / tsc) + num_modifier)
-	if((SSticker.mode.traitors.len + pre_traitors.len) >= traitorcap) //Upper cap for number of latejoin antagonists
+	var/traitorcap = min(round(GLOB.joined_player_list.len / (config.traitor_scaling_coeff * 2)) + 2 + num_modifier, round(GLOB.joined_player_list.len/config.traitor_scaling_coeff) + num_modifier )
+	if(SSticker.mode.traitors.len >= traitorcap) //Upper cap for number of latejoin antagonists
 		return
-	if((SSticker.mode.traitors.len + pre_traitors.len) <= (traitorcap - 2) || prob(100 / (tsc * 2)))
+	if(SSticker.mode.traitors.len <= (traitorcap - 2) || prob(100 / (config.traitor_scaling_coeff * 2)))
 		if(ROLE_TRAITOR in character.client.prefs.be_special)
 			if(!jobban_isbanned(character, ROLE_TRAITOR) && !jobban_isbanned(character, "Syndicate"))
 				if(age_check(character.client))
@@ -92,17 +94,17 @@
 	if(traitors.len)
 		var/text = "<br><font size=3><b>The [traitor_name]s were:</b></font>"
 		for(var/datum/mind/traitor in traitors)
-			var/traitorwin = TRUE
+			var/traitorwin = 1
 
 			text += printplayer(traitor)
 
 			var/TC_uses = 0
-			var/uplink_true = FALSE
+			var/uplink_true = 0
 			var/purchases = ""
 			for(var/obj/item/device/uplink/H in GLOB.uplinks)
 				if(H && H.owner && H.owner == traitor.key)
 					TC_uses += H.spent_telecrystals
-					uplink_true = TRUE
+					uplink_true = 1
 					purchases += H.purchase_log
 
 			var/objectives = ""
@@ -115,14 +117,14 @@
 					else
 						objectives += "<br><B>Objective #[count]</B>: [objective.explanation_text] <font color='red'>Fail.</font>"
 						SSblackbox.add_details("traitor_objective","[objective.type]|FAIL")
-						traitorwin = FALSE
+						traitorwin = 0
 					count++
 
 			if(uplink_true)
 				text += " (used [TC_uses] TC) [purchases]"
 				if(TC_uses==0 && traitorwin)
 					var/static/icon/badass = icon('icons/badass.dmi', "badass")
-					text += "<BIG>[icon2html(badass, world)]</BIG>"
+					text += "<BIG>[bicon(badass)]</BIG>"
 
 			text += objectives
 
@@ -146,11 +148,9 @@
 		<b>The code responses were:</b> <font color='red'>[GLOB.syndicate_code_response]</font><br>"
 		to_chat(world, text)
 
-	return TRUE
+	return 1
 
-/datum/game_mode/traitor/generate_report()
-	return "Although more specific threats are commonplace, you should always remain vigilant for Syndicate agents aboard your station. Syndicate communications have implied that many \
-		Nanotrasen employees are Syndicate agents with hidden memories that may be activated at a moment's notice, so it's possible that these agents might not even know their positions."
+
 
 
 /datum/game_mode/proc/update_traitor_icons_added(datum/mind/traitor_mind)

@@ -88,7 +88,7 @@ GLOBAL_LIST_EMPTY(allConsoles)
 			icon_state = "req_comp0"
 
 /obj/machinery/requests_console/Initialize()
-	. = ..()
+	..()
 	name = "\improper [department] requests console"
 	GLOB.allConsoles += src
 	switch(departmentType)
@@ -343,8 +343,7 @@ GLOBAL_LIST_EMPTY(allConsoles)
 		if (sending)
 			var/pass = 0
 			for (var/obj/machinery/message_server/MS in GLOB.machines)
-				if(!MS.active)
-					continue
+				if(!MS.active) continue
 				MS.send_rc_message(href_list["department"],department,log_msg,msgStamped,msgVerified,priority)
 				pass = 1
 
@@ -487,8 +486,8 @@ GLOBAL_LIST_EMPTY(allConsoles)
 				say(title)
 			src.messages += "<b>From:</b> [linkedsender]<BR>[message]"
 
-/obj/machinery/requests_console/attackby(obj/item/O, mob/user, params)
-	if(istype(O, /obj/item/crowbar))
+/obj/machinery/requests_console/attackby(obj/item/weapon/O, mob/user, params)
+	if(istype(O, /obj/item/weapon/crowbar))
 		if(open)
 			to_chat(user, "<span class='notice'>You close the maintenance panel.</span>")
 			open = FALSE
@@ -497,7 +496,7 @@ GLOBAL_LIST_EMPTY(allConsoles)
 			open = TRUE
 		update_icon()
 		return
-	if(istype(O, /obj/item/screwdriver))
+	if(istype(O, /obj/item/weapon/screwdriver))
 		if(open)
 			hackState = !hackState
 			if(hackState)
@@ -509,7 +508,7 @@ GLOBAL_LIST_EMPTY(allConsoles)
 			to_chat(user, "<span class='warning'>You must open the maintenance panel first!</span>")
 		return
 
-	var/obj/item/card/id/ID = O.GetID()
+	var/obj/item/weapon/card/id/ID = O.GetID()
 	if(ID)
 		if(screen == 9)
 			msgVerified = "<font color='green'><b>Verified by [ID.registered_name] ([ID.assignment])</b></font>"
@@ -522,9 +521,9 @@ GLOBAL_LIST_EMPTY(allConsoles)
 				to_chat(user, "<span class='warning'>You are not authorized to send announcements!</span>")
 			updateUsrDialog()
 		return
-	if (istype(O, /obj/item/stamp))
+	if (istype(O, /obj/item/weapon/stamp))
 		if(screen == 9)
-			var/obj/item/stamp/T = O
+			var/obj/item/weapon/stamp/T = O
 			msgStamped = "<span class='boldnotice'>Stamped with the [T.name]</span>"
 			updateUsrDialog()
 		return

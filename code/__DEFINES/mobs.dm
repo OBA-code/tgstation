@@ -65,12 +65,6 @@
 #define NUTRITION_LEVEL_HUNGRY 250
 #define NUTRITION_LEVEL_STARVING 150
 
-//Disgust levels for humans
-#define DISGUST_LEVEL_MAXEDOUT 150
-#define DISGUST_LEVEL_DISGUSTED 75
-#define DISGUST_LEVEL_VERYGROSS 50
-#define DISGUST_LEVEL_GROSS 25
-
 //Slime evolution threshold. Controls how fast slimes can split/grow
 #define SLIME_EVOLUTION_THRESHOLD 10
 
@@ -97,11 +91,13 @@
 #define AI_IDLE		2
 #define AI_OFF		3
 
-//determines if a mob can smash through it
 #define ENVIRONMENT_SMASH_NONE 0
-#define ENVIRONMENT_SMASH_STRUCTURES 1 //crates, lockers, ect
-#define ENVIRONMENT_SMASH_WALLS 2   //walls
-#define ENVIRONMENT_SMASH_RWALLS 4  //rwalls
+
+#define ENVIRONMENT_SMASH_STRUCTURES 1
+
+#define ENVIRONMENT_SMASH_WALLS 2
+
+#define ENVIRONMENT_SMASH_RWALLS 3
 
 
 //SNPCs
@@ -154,22 +150,3 @@
 #define JUDGE_IGNOREMONKEYS 16
 
 #define MEGAFAUNA_DEFAULT_RECOVERY_TIME 5
-
-#define SHADOW_SPECIES_LIGHT_THRESHOLD 0.2
-
-// Offsets defines
-
-#define OFFSET_UNIFORM "uniform"
-#define OFFSET_ID "id"
-#define OFFSET_GLOVES "gloves"
-#define OFFSET_GLASSES "glasses"
-#define OFFSET_EARS "ears"
-#define OFFSET_SHOES "shoes"
-#define OFFSET_S_STORE "s_store"
-#define OFFSET_FACEMASK "mask"
-#define OFFSET_HEAD "head"
-#define OFFSET_FACE "face"
-#define OFFSET_BELT "belt"
-#define OFFSET_BACK "back"
-#define OFFSET_SUIT "suit"
-#define OFFSET_NECK "neck"

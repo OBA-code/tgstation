@@ -58,7 +58,8 @@
 	if(isliving(mover))
 		shock(mover)
 
-	if(ismachinery(mover) || isstructure(mover) || ismecha(mover))
+/obj/machinery/field/containment/Crossed(obj/mover)
+	if(istype(mover, /obj/machinery) || istype(mover, /obj/structure) || istype(mover, /obj/mecha))
 		bump_field(mover)
 
 /obj/machinery/field/containment/proc/set_master(master1,master2)
@@ -78,25 +79,21 @@
 	qdel(src)
 
 
+
 // Abstract Field Class
 // Used for overriding certain procs
 
 /obj/machinery/field
 	var/hasShocked = FALSE //Used to add a delay between shocks. In some cases this used to crash servers by spawning hundreds of sparks every second.
 
-/obj/machinery/field/CollidedWith(atom/movable/mover)
-	if(hasShocked)
-		return
-	if(isliving(mover))
-		shock(mover)
-		return
-	if(ismachinery(mover) || isstructure(mover) || ismecha(mover))
-		bump_field(mover)
-		return
-
-
 /obj/machinery/field/CanPass(atom/movable/mover, turf/target)
-	if(hasShocked || isliving(mover) || ismachinery(mover) || isstructure(mover) || ismecha(mover))
+	if(hasShocked)
+		return FALSE
+	if(isliving(mover)) // Don't let mobs through
+		shock(mover)
+		return FALSE
+	if(istype(mover, /obj/machinery) || istype(mover, /obj/structure) || istype(mover, /obj/mecha))
+		bump_field(mover)
 		return FALSE
 	return ..()
 

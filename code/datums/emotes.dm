@@ -38,11 +38,11 @@
 	msg = replace_pronoun(user, msg)
 
 	var/mob/living/L = user
-	for(var/obj/item/implant/I in L.implants)
+	for(var/obj/item/weapon/implant/I in L.implants)
 		I.trigger(key, L)
 
 	if(!msg)
-		return
+		return FALSE
 
 	user.log_message(msg, INDIVIDUAL_EMOTE_LOG)
 	msg = "<b>[user]</b> " + msg
@@ -50,7 +50,7 @@
 	for(var/mob/M in GLOB.dead_mob_list)
 		if(!M.client || isnewplayer(M))
 			continue
-		var/T = get_turf(user)
+		var/T = get_turf(src)
 		if(M.stat == DEAD && M.client && (M.client.prefs.chat_toggles & CHAT_GHOSTSIGHT) && !(M in viewers(T, null)))
 			M.show_message(msg)
 
@@ -91,21 +91,20 @@
 /datum/emote/proc/select_param(mob/user, params)
 	return replacetext(message_param, "%t", params)
 
-/datum/emote/proc/can_run_emote(mob/user, status_check = TRUE)
+/datum/emote/proc/can_run_emote(mob/user, help_check)
 	. = TRUE
 	if(!is_type_in_typecache(user, mob_type_allowed_typecache))
 		return FALSE
 	if(is_type_in_typecache(user, mob_type_blacklist_typecache))
 		return FALSE
-	if(status_check)
+	if(!help_check)
 		if(user.stat > stat_allowed  || (user.status_flags & FAKEDEATH))
-			to_chat(user, "<span class='notice'>You cannot [key] while unconscious.</span>")
 			return FALSE
-		if(restraint_check && (user.restrained() || user.buckled))
-			to_chat(user, "<span class='notice'>You cannot [key] while restrained.</span>")
+		if(restraint_check && user.restrained())
 			return FALSE
 		if(user.reagents && user.reagents.has_reagent("mimesbane"))
 			return FALSE
+
 
 /datum/emote/sound
 	var/sound //Sound to play when emote is called

@@ -34,12 +34,11 @@
 	smooth = SMOOTH_TRUE
 	canSmoothWith = list(/obj/structure/table, /obj/structure/table/reinforced)
 
-/obj/structure/table/examine(mob/user)
+/obj/structure/table/New()
 	..()
-	deconstruction_hints(user)
-
-/obj/structure/table/proc/deconstruction_hints(mob/user)
-	to_chat(user, "<span class='notice'>The top is <b>screwed</b> on, but the main <b>bolts</b> are also visible.</span>")
+	for(var/obj/structure/table/T in src.loc)
+		if(T != src)
+			qdel(T)
 
 /obj/structure/table/update_icon()
 	if(smooth)
@@ -47,14 +46,11 @@
 		queue_smooth_neighbors(src)
 
 /obj/structure/table/narsie_act()
-	var/atom/A = loc
-	qdel(src)
-	new /obj/structure/table/wood(A)
+	new /obj/structure/table/wood(src.loc)
 
 /obj/structure/table/ratvar_act()
-	var/atom/A = loc
-	qdel(src)
-	new /obj/structure/table/reinforced/brass(A)
+	new /obj/structure/table/reinforced/brass(src.loc)
+
 
 /obj/structure/table/attack_paw(mob/user)
 	attack_hand(user)
@@ -98,15 +94,15 @@
 
 
 /obj/structure/table/attackby(obj/item/I, mob/user, params)
-	if(!(flags_1 & NODECONSTRUCT_1))
-		if(istype(I, /obj/item/screwdriver) && deconstruction_ready)
+	if(!(flags & NODECONSTRUCT))
+		if(istype(I, /obj/item/weapon/screwdriver) && deconstruction_ready)
 			to_chat(user, "<span class='notice'>You start disassembling [src]...</span>")
 			playsound(src.loc, I.usesound, 50, 1)
 			if(do_after(user, 20*I.toolspeed, target = src))
 				deconstruct(TRUE)
 			return
 
-		if(istype(I, /obj/item/wrench) && deconstruction_ready)
+		if(istype(I, /obj/item/weapon/wrench) && deconstruction_ready)
 			to_chat(user, "<span class='notice'>You start deconstructing [src]...</span>")
 			playsound(src.loc, I.usesound, 50, 1)
 			if(do_after(user, 40*I.toolspeed, target = src))
@@ -114,8 +110,8 @@
 				deconstruct(TRUE, 1)
 			return
 
-	if(istype(I, /obj/item/storage/bag/tray))
-		var/obj/item/storage/bag/tray/T = I
+	if(istype(I, /obj/item/weapon/storage/bag/tray))
+		var/obj/item/weapon/storage/bag/tray/T = I
 		if(T.contents.len > 0) // If the tray isn't empty
 			var/list/obj/item/oldContents = T.contents.Copy()
 			T.quick_empty()
@@ -127,8 +123,9 @@
 			return
 		// If the tray IS empty, continue on (tray will be placed on the table like other items)
 
-	if(user.a_intent != INTENT_HARM && !(I.flags_1 & ABSTRACT_1))
-		if(user.transferItemToLoc(I, drop_location()))
+	if(user.a_intent != INTENT_HARM && !(I.flags & ABSTRACT))
+		if(user.drop_item())
+			I.Move(loc)
 			var/list/click_params = params2list(params)
 			//Center the icon where the user clicked.
 			if(!click_params || !click_params["icon-x"] || !click_params["icon-y"])
@@ -142,7 +139,7 @@
 
 
 /obj/structure/table/deconstruct(disassembled = TRUE, wrench_disassembly = 0)
-	if(!(flags_1 & NODECONSTRUCT_1))
+	if(!(flags & NODECONSTRUCT))
 		var/turf/T = get_turf(src)
 		new buildstack(T, buildstackamount)
 		if(!wrench_disassembly)
@@ -170,7 +167,7 @@
 /obj/structure/table/glass/New()
 	. = ..()
 	debris += new frame
-	debris += new /obj/item/shard
+	debris += new /obj/item/weapon/shard
 
 /obj/structure/table/glass/Destroy()
 	for(var/i in debris)
@@ -179,7 +176,7 @@
 
 /obj/structure/table/glass/Crossed(atom/movable/AM)
 	. = ..()
-	if(flags_1 & NODECONSTRUCT_1)
+	if(flags & NODECONSTRUCT)
 		return
 	if(!isliving(AM))
 		return
@@ -206,13 +203,13 @@
 		var/atom/movable/AM = I
 		AM.forceMove(T)
 		debris -= AM
-		if(istype(AM, /obj/item/shard))
+		if(istype(AM, /obj/item/weapon/shard))
 			AM.throw_impact(L)
 	L.Knockdown(100)
 	qdel(src)
 
 /obj/structure/table/glass/deconstruct(disassembled = TRUE, wrench_disassembly = 0)
-	if(!(flags_1 & NODECONSTRUCT_1))
+	if(!(flags & NODECONSTRUCT))
 		if(disassembled)
 			..()
 			return
@@ -227,7 +224,7 @@
 
 /obj/structure/table/glass/narsie_act()
 	color = NARSIE_WINDOW_COLOUR
-	for(var/obj/item/shard/S in debris)
+	for(var/obj/item/weapon/shard/S in debris)
 		S.color = NARSIE_WINDOW_COLOUR
 
 /*
@@ -288,7 +285,7 @@
  */
 /obj/structure/table/reinforced
 	name = "reinforced table"
-	desc = "A reinforced version of the four legged table."
+	desc = "A reinforced version of the four legged table, much harder to simply deconstruct."
 	icon = 'icons/obj/smooth_structures/reinforced_table.dmi'
 	icon_state = "r_table"
 	deconstruction_ready = 0
@@ -298,29 +295,21 @@
 	integrity_failure = 50
 	armor = list(melee = 10, bullet = 30, laser = 30, energy = 100, bomb = 20, bio = 0, rad = 0, fire = 80, acid = 70)
 
-/obj/structure/table/reinforced/deconstruction_hints(mob/user)
-	if(deconstruction_ready)
-		to_chat(user, "<span class='notice'>The top cover has been <i>welded</i> loose and the main frame's <b>bolts</b> are exposed.</span>")
-	else
-		to_chat(user, "<span class='notice'>The top cover is firmly <b>welded</b> on.</span>")
-
-/obj/structure/table/reinforced/attackby(obj/item/W, mob/user, params)
-	if(istype(W, /obj/item/weldingtool))
-		var/obj/item/weldingtool/WT = W
+/obj/structure/table/reinforced/attackby(obj/item/weapon/W, mob/user, params)
+	if(istype(W, /obj/item/weapon/weldingtool))
+		var/obj/item/weapon/weldingtool/WT = W
 		if(WT.remove_fuel(0, user))
 			playsound(src.loc, W.usesound, 50, 1)
 			if(deconstruction_ready)
 				to_chat(user, "<span class='notice'>You start strengthening the reinforced table...</span>")
 				if (do_after(user, 50*W.toolspeed, target = src))
-					if(!src || !WT.isOn())
-						return
+					if(!src || !WT.isOn()) return
 					to_chat(user, "<span class='notice'>You strengthen the table.</span>")
 					deconstruction_ready = 0
 			else
 				to_chat(user, "<span class='notice'>You start weakening the reinforced table...</span>")
 				if (do_after(user, 50*W.toolspeed, target = src))
-					if(!src || !WT.isOn())
-						return
+					if(!src || !WT.isOn()) return
 					to_chat(user, "<span class='notice'>You weaken the table.</span>")
 					deconstruction_ready = 1
 	else
@@ -416,10 +405,6 @@
 	pass_flags = LETPASSTHROW //You can throw objects over this, despite it's density.
 	max_integrity = 20
 
-/obj/structure/rack/examine(mob/user)
-	..()
-	to_chat(user, "<span class='notice'>It's held together by a couple of <b>bolts</b>.</span>")
-
 /obj/structure/rack/CanPass(atom/movable/mover, turf/target)
 	if(src.density == 0) //Because broken racks -Agouri |TODO: SPRITE!|
 		return 1
@@ -435,22 +420,23 @@
 		. = . || mover.checkpass(PASSTABLE)
 
 /obj/structure/rack/MouseDrop_T(obj/O, mob/user)
-	if ((!( istype(O, /obj/item) ) || user.get_active_held_item() != O))
+	if ((!( istype(O, /obj/item/weapon) ) || user.get_active_held_item() != O))
 		return
-	if(!user.dropItemToGround(O))
+	if(!user.drop_item())
 		return
 	if(O.loc != src.loc)
 		step(O, get_dir(O, src))
 
 
-/obj/structure/rack/attackby(obj/item/W, mob/user, params)
-	if (istype(W, /obj/item/wrench) && !(flags_1&NODECONSTRUCT_1))
+/obj/structure/rack/attackby(obj/item/weapon/W, mob/user, params)
+	if (istype(W, /obj/item/weapon/wrench) && !(flags&NODECONSTRUCT))
 		playsound(src.loc, W.usesound, 50, 1)
 		deconstruct(TRUE)
 		return
 	if(user.a_intent == INTENT_HARM)
 		return ..()
-	if(user.transferItemToLoc(W, drop_location()))
+	if(user.drop_item())
+		W.Move(loc)
 		return 1
 
 /obj/structure/rack/attack_paw(mob/living/user)
@@ -480,9 +466,9 @@
  */
 
 /obj/structure/rack/deconstruct(disassembled = TRUE)
-	if(!(flags_1&NODECONSTRUCT_1))
+	if(!(flags&NODECONSTRUCT))
 		density = FALSE
-		var/obj/item/rack_parts/newparts = new(loc)
+		var/obj/item/weapon/rack_parts/newparts = new(loc)
 		transfer_fingerprints_to(newparts)
 	qdel(src)
 
@@ -491,29 +477,29 @@
  * Rack Parts
  */
 
-/obj/item/rack_parts
+/obj/item/weapon/rack_parts
 	name = "rack parts"
 	desc = "Parts of a rack."
-	icon = 'icons/obj/items_and_weapons.dmi'
+	icon = 'icons/obj/items.dmi'
 	icon_state = "rack_parts"
-	flags_1 = CONDUCT_1
+	flags = CONDUCT
 	materials = list(MAT_METAL=2000)
 	var/building = FALSE
 
-/obj/item/rack_parts/attackby(obj/item/W, mob/user, params)
-	if (istype(W, /obj/item/wrench))
+/obj/item/weapon/rack_parts/attackby(obj/item/weapon/W, mob/user, params)
+	if (istype(W, /obj/item/weapon/wrench))
 		new /obj/item/stack/sheet/metal(user.loc)
 		qdel(src)
 	else
 		. = ..()
 
-/obj/item/rack_parts/attack_self(mob/user)
+/obj/item/weapon/rack_parts/attack_self(mob/user)
 	if(building)
 		return
 	building = TRUE
 	to_chat(user, "<span class='notice'>You start constructing a rack...</span>")
-	if(do_after(user, 50, target = user, progress=TRUE))
-		if(!user.temporarilyRemoveItemFromInventory(src))
+	if(do_after(user, 50, target = src, progress=TRUE))
+		if(!user.drop_item())
 			return
 		var/obj/structure/rack/R = new /obj/structure/rack(user.loc)
 		user.visible_message("<span class='notice'>[user] assembles \a [R].\

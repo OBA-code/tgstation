@@ -6,12 +6,11 @@
 
 /datum/action/neck_chop
 	name = "Neck Chop - Injures the neck, stopping the victim from speaking for a while."
-	icon_icon = 'icons/mob/actions/actions_items.dmi'
 	button_icon_state = "neckchop"
 
 /datum/action/neck_chop/Trigger()
 	if(owner.incapacitated())
-		to_chat(owner, "<span class='warning'>You can't use [name] while you're incapacitated.</span>")
+		to_chat(owner, "<span class='warning'>You can't use Krav Maga while you're incapacitated.</span>")
 		return
 	var/mob/living/carbon/human/H = owner
 	if (H.mind.martial_art.streak == "neck_chop")
@@ -23,12 +22,11 @@
 
 /datum/action/leg_sweep
 	name = "Leg Sweep - Trips the victim, knocking them down for a brief moment."
-	icon_icon = 'icons/mob/actions/actions_items.dmi'
 	button_icon_state = "legsweep"
 
 /datum/action/leg_sweep/Trigger()
 	if(owner.incapacitated())
-		to_chat(owner, "<span class='warning'>You can't use [name] while you're incapacitated.</span>")
+		to_chat(owner, "<span class='warning'>You can't use Krav Maga while you're incapacitated.</span>")
 		return
 	var/mob/living/carbon/human/H = owner
 	if (H.mind.martial_art.streak == "leg_sweep")
@@ -40,12 +38,11 @@
 
 /datum/action/lung_punch//referred to internally as 'quick choke'
 	name = "Lung Punch - Delivers a strong punch just above the victim's abdomen, constraining the lungs. The victim will be unable to breathe for a short time."
-	icon_icon = 'icons/mob/actions/actions_items.dmi'
 	button_icon_state = "lungpunch"
 
 /datum/action/lung_punch/Trigger()
 	if(owner.incapacitated())
-		to_chat(owner, "<span class='warning'>You can't use [name] while you're incapacitated.</span>")
+		to_chat(owner, "<span class='warning'>You can't use Krav Maga while you're incapacitated.</span>")
 		return
 	var/mob/living/carbon/human/H = owner
 	if (H.mind.martial_art.streak == "quick_choke")
@@ -57,14 +54,14 @@
 
 /datum/martial_art/krav_maga/teach(mob/living/carbon/human/H,make_temporary=0)
 	if(..())
-		to_chat(H, "<span class = 'userdanger'>You know the arts of [name]!</span>")
+		to_chat(H, "<span class = 'userdanger'>You know the arts of Krav Maga!</span>")
 		to_chat(H, "<span class = 'danger'>Place your cursor over a move at the top of the screen to see what it does.</span>")
 		neckchop.Grant(H)
 		legsweep.Grant(H)
 		lungpunch.Grant(H)
 
 /datum/martial_art/krav_maga/on_remove(mob/living/carbon/human/H)
-	to_chat(H, "<span class = 'userdanger'>You suddenly forget the arts of [name]...</span>")
+	to_chat(H, "<span class = 'userdanger'>You suddenly forget the arts of Krav Maga...</span>")
 	neckchop.Remove(H)
 	legsweep.Remove(H)
 	lungpunch.Remove(H)
@@ -140,7 +137,7 @@
 		playsound(get_turf(D), 'sound/effects/hit_punch.ogg', 50, 1, -1)
 	D.visible_message("<span class='danger'>[A] [picked_hit_type] [D]!</span>", \
 					  "<span class='userdanger'>[A] [picked_hit_type] you!</span>")
-	add_logs(A, D, "[picked_hit_type] with [name]")
+	add_logs(A, D, "[picked_hit_type] with Krav Maga")
 	return 1
 
 /datum/martial_art/krav_maga/disarm_act(var/mob/living/carbon/human/A, var/mob/living/carbon/human/D)
@@ -150,7 +147,7 @@
 	if(prob(60))
 		I = D.get_active_held_item()
 		if(I)
-			if(D.temporarilyRemoveItemFromInventory(I))
+			if(D.drop_item())
 				A.put_in_hands(I)
 		D.visible_message("<span class='danger'>[A] has disarmed [D]!</span>", \
 							"<span class='userdanger'>[A] has disarmed [D]!</span>")

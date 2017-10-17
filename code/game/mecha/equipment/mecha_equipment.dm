@@ -35,9 +35,12 @@
 		if(chassis.selected == src)
 			chassis.selected = null
 		src.update_chassis_page()
-		chassis.occupant_message("<span class='danger'>[src] is destroyed!</span>")
+		chassis.occupant_message("<span class='danger'>The [src] is destroyed!</span>")
 		chassis.log_append_to_last("[src] is destroyed.",1)
-		SEND_SOUND(chassis.occupant, sound(istype(src, /obj/item/mecha_parts/mecha_equipment/weapon) ? 'sound/mecha/weapdestr.ogg' : 'sound/mecha/critdestr.ogg', volume=50))
+		if(istype(src, /obj/item/mecha_parts/mecha_equipment/weapon))
+			chassis.occupant << sound('sound/mecha/weapdestr.ogg',volume=50)
+		else
+			chassis.occupant << sound('sound/mecha/critdestr.ogg',volume=50)
 		chassis = null
 	return ..()
 
@@ -46,8 +49,7 @@
 		log_message("Critical failure",1)
 
 /obj/item/mecha_parts/mecha_equipment/proc/get_equip_info()
-	if(!chassis)
-		return
+	if(!chassis) return
 	var/txt = "<span style=\"color:[equip_ready?"#0f0":"#f00"];\">*</span>&nbsp;"
 	if(chassis.selected == src)
 		txt += "<b>[src.name]</b>"
@@ -137,7 +139,7 @@
 
 /obj/item/mecha_parts/mecha_equipment/proc/occupant_message(message)
 	if(chassis)
-		chassis.occupant_message("[icon2html(src, chassis.occupant)] [message]")
+		chassis.occupant_message("[bicon(src)] [message]")
 	return
 
 /obj/item/mecha_parts/mecha_equipment/proc/log_message(message)

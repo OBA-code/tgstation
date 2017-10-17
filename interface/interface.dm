@@ -1,15 +1,12 @@
 //Please use mob or src (not usr) in these procs. This way they can be called in the same fashion as procs.
-/client/verb/wiki(query as text)
+/client/verb/wiki()
 	set name = "wiki"
-	set desc = "Type what you want to know about.  This will open the wiki in your web browser. Type nothing to go to the main page."
+	set desc = "Visit the wiki."
 	set hidden = 1
-	var/wikiurl = CONFIG_GET(string/wikiurl)
-	if(wikiurl)
-		if(query)
-			var/output = wikiurl + "/index.php?title=Special%3ASearch&profile=default&search=" + query
-			src << link(output)
-		else if (query != null)
-			src << link(wikiurl)
+	if(config.wikiurl)
+		if(alert("This will open the wiki in your browser. Are you sure?",,"Yes","No")=="No")
+			return
+		src << link(config.wikiurl)
 	else
 		to_chat(src, "<span class='danger'>The wiki URL is not set in the server configuration.</span>")
 	return
@@ -18,11 +15,10 @@
 	set name = "forum"
 	set desc = "Visit the forum."
 	set hidden = 1
-	var/forumurl = CONFIG_GET(string/forumurl)
-	if(forumurl)
+	if(config.forumurl)
 		if(alert("This will open the forum in your browser. Are you sure?",,"Yes","No")=="No")
 			return
-		src << link(forumurl)
+		src << link(config.forumurl)
 	else
 		to_chat(src, "<span class='danger'>The forum URL is not set in the server configuration.</span>")
 	return
@@ -31,11 +27,10 @@
 	set name = "rules"
 	set desc = "Show Server Rules."
 	set hidden = 1
-	var/rulesurl = CONFIG_GET(string/rulesurl)
-	if(rulesurl)
+	if(config.rulesurl)
 		if(alert("This will open the rules in your browser. Are you sure?",,"Yes","No")=="No")
 			return
-		src << link(rulesurl)
+		src << link(config.rulesurl)
 	else
 		to_chat(src, "<span class='danger'>The rules URL is not set in the server configuration.</span>")
 	return
@@ -44,11 +39,10 @@
 	set name = "github"
 	set desc = "Visit Github"
 	set hidden = 1
-	var/githuburl = CONFIG_GET(string/githuburl)
-	if(githuburl)
+	if(config.githuburl)
 		if(alert("This will open the Github repository in your browser. Are you sure?",,"Yes","No")=="No")
 			return
-		src << link(githuburl)
+		src << link(config.githuburl)
 	else
 		to_chat(src, "<span class='danger'>The Github URL is not set in the server configuration.</span>")
 	return
@@ -57,17 +51,14 @@
 	set name = "report-issue"
 	set desc = "Report an issue"
 	set hidden = 1
-	var/githuburl = CONFIG_GET(string/githuburl)
-	if(githuburl)
+	if(config.githuburl)
 		var/message = "This will open the Github issue reporter in your browser. Are you sure?"
 		if(GLOB.revdata.testmerge.len)
 			message += "<br>The following experimental changes are active and are probably the cause of any new or sudden issues you may experience. If possible, please try to find a specific thread for your issue instead of posting to the general issue tracker:<br>"
 			message += GLOB.revdata.GetTestMergeInfo(FALSE)
 		if(tgalert(src, message, "Report Issue","Yes","No")=="No")
 			return
-		var/static/issue_template = file2text(".github/ISSUE_TEMPLATE.md")
-		var/servername = CONFIG_GET(string/servername)
-		src << link("[githuburl]/issues/new[GLOB.round_id ? "?body=[url_encode("Issue reported from Round ID: [GLOB.round_id][servername ? " ([servername])" : ""]\n\n[issue_template]")]" : ""]")
+		src << link("[config.githuburl]/issues/new")
 	else
 		to_chat(src, "<span class='danger'>The Github URL is not set in the server configuration.</span>")
 	return

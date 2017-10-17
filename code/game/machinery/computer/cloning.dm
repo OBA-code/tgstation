@@ -3,7 +3,7 @@
 	desc = "Used to clone people and manage DNA."
 	icon_screen = "dna"
 	icon_keyboard = "med_key"
-	circuit = /obj/item/circuitboard/computer/cloning
+	circuit = /obj/item/weapon/circuitboard/computer/cloning
 	req_access = list(ACCESS_HEADS) //ONLY USED FOR RECORD DELETION RIGHT NOW.
 	var/obj/machinery/dna_scannernew/scanner = null //Linked scanner. For scanning.
 	var/list/pods //Linked cloning pods
@@ -13,14 +13,14 @@
 	var/menu = 1 //Which menu screen to display
 	var/list/records = list()
 	var/datum/data/record/active_record = null
-	var/obj/item/disk/data/diskette = null //Mostly so the geneticist can steal everything.
+	var/obj/item/weapon/disk/data/diskette = null //Mostly so the geneticist can steal everything.
 	var/loading = 0 // Nice loading text
 	var/autoprocess = 0
 
 	light_color = LIGHT_COLOR_BLUE
 
 /obj/machinery/computer/cloning/Initialize()
-	. = ..()
+	..()
 	updatemodules(TRUE)
 
 /obj/machinery/computer/cloning/Destroy()
@@ -115,10 +115,11 @@
 	LAZYREMOVE(pods, pod)
 
 /obj/machinery/computer/cloning/attackby(obj/item/W, mob/user, params)
-	if(istype(W, /obj/item/disk/data)) //INSERT SOME DISKETTES
+	if(istype(W, /obj/item/weapon/disk/data)) //INSERT SOME DISKETTES
 		if (!src.diskette)
-			if (!user.transferItemToLoc(W,src))
+			if(!user.drop_item())
 				return
+			W.loc = src
 			src.diskette = W
 			to_chat(user, "<span class='notice'>You insert [W].</span>")
 			playsound(src, 'sound/machines/terminal_insert_disc.ogg', 50, 0)
@@ -231,7 +232,7 @@
 				dat += "<h4>[src.active_record.fields["name"]]</h4>"
 				dat += "Scan ID [src.active_record.fields["id"]] <a href='byond://?src=\ref[src];clone=[active_record.fields["id"]]'>Clone</a><br>"
 
-				var/obj/item/implant/health/H = locate(src.active_record.fields["imp"])
+				var/obj/item/weapon/implant/health/H = locate(src.active_record.fields["imp"])
 
 				if ((H) && (istype(H)))
 					dat += "<b>Health Implant Data:</b><br />[H.sensehealth()]<br><br />"
@@ -338,7 +339,7 @@
 			playsound(src, 'sound/machines/terminal_prompt.ogg', 50, 0)
 
 		else if (src.menu == 4)
-			var/obj/item/card/id/C = usr.get_active_held_item()
+			var/obj/item/weapon/card/id/C = usr.get_active_held_item()
 			if (istype(C)||istype(C, /obj/item/device/pda))
 				if(src.check_access(C))
 					src.temp = "[src.active_record.fields["name"]] => Record deleted."
@@ -372,7 +373,7 @@
 
 			if("eject")
 				if(src.diskette)
-					src.diskette.forceMove(drop_location())
+					src.diskette.loc = src.loc
 					src.diskette = null
 					playsound(src, 'sound/machines/terminal_insert_disc.ogg', 50, 0)
 			if("save")
@@ -403,7 +404,7 @@
 			else if(!pod)
 				temp = "<font class='bad'>No Clonepods available.</font>"
 				playsound(src, 'sound/machines/terminal_prompt_deny.ogg', 50, 0)
-			else if(!CONFIG_GET(flag/revival_cloning))
+			else if(!config.revival_cloning)
 				temp = "<font class='bad'>Unable to initiate cloning cycle.</font>"
 				playsound(src, 'sound/machines/terminal_prompt_deny.ogg', 50, 0)
 			else if(pod.occupant)
@@ -470,7 +471,7 @@
 		// species datums
 		R.fields["mrace"] = dna.species
 	else
-		var/datum/species/rando_race = pick(CONFIG_GET(keyed_flag_list/roundstart_races))
+		var/datum/species/rando_race = pick(config.roundstart_races)
 		R.fields["mrace"] = rando_race.type
 
 	R.fields["ckey"] = mob_occupant.ckey
@@ -487,12 +488,12 @@
 		R.fields["mind"] = "\ref[mob_occupant.mind]"
 
    //Add an implant if needed
-	var/obj/item/implant/health/imp
-	for(var/obj/item/implant/health/HI in mob_occupant.implants)
+	var/obj/item/weapon/implant/health/imp
+	for(var/obj/item/weapon/implant/health/HI in mob_occupant.implants)
 		imp = HI
 		break
 	if(!imp)
-		imp = new /obj/item/implant/health(mob_occupant)
+		imp = new /obj/item/weapon/implant/health(mob_occupant)
 		imp.implant(mob_occupant)
 	R.fields["imp"] = "\ref[imp]"
 

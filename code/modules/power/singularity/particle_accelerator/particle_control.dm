@@ -17,12 +17,12 @@
 	var/active = 0
 	var/strength = 0
 	var/powered = 0
-	mouse_opacity = MOUSE_OPACITY_OPAQUE
+	mouse_opacity = 2
 
-/obj/machinery/particle_accelerator/control_box/Initialize()
-	. = ..()
+/obj/machinery/particle_accelerator/control_box/New()
 	wires = new /datum/wires/particle_accelerator/control_box(src)
 	connected_parts = list()
+	..()
 
 /obj/machinery/particle_accelerator/control_box/Destroy()
 	if(active)
@@ -31,7 +31,8 @@
 		var/obj/structure/particle_accelerator/part = CP
 		part.master = null
 	connected_parts.Cut()
-	QDEL_NULL(wires)
+	qdel(wires)
+	wires = null
 	return ..()
 
 /obj/machinery/particle_accelerator/control_box/attack_hand(mob/user)
@@ -204,8 +205,8 @@
 /obj/machinery/particle_accelerator/control_box/proc/toggle_power()
 	active = !active
 	investigate_log("turned [active?"<font color='green'>ON</font>":"<font color='red'>OFF</font>"] by [usr ? key_name(usr) : "outside forces"]", INVESTIGATE_SINGULO)
-	message_admins("PA Control Computer turned [active ?"ON":"OFF"] by [usr ? key_name_admin(usr) : "outside forces"][ADMIN_QUE(usr)] [ADMIN_FLW(usr)] in [ADMIN_COORDJMP(src)]",0,1)
-	log_game("PA Control Computer turned [active ?"ON":"OFF"] by [usr ? "[key_name(usr)]" : "outside forces"] in [COORD(src)]")
+	message_admins("PA Control Computer turned [active ?"ON":"OFF"] by [usr ? key_name_admin(usr) : "outside forces"](<A HREF='?_src_=holder;adminmoreinfo=\ref[usr]'>?</A>) (<A HREF='?_src_=holder;adminplayerobservefollow=\ref[usr]'>FLW</A>) in ([x],[y],[z] - <A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>JMP</a>)",0,1)
+	log_game("PA Control Computer turned [active ?"ON":"OFF"] by [usr ? "[key_name(usr)]" : "outside forces"] in ([x],[y],[z])")
 	if(active)
 		use_power = ACTIVE_POWER_USE
 		for(var/CP in connected_parts)
@@ -257,11 +258,11 @@
 	..()
 	switch(construction_state)
 		if(PA_CONSTRUCTION_UNSECURED)
-			to_chat(user, "Looks like it's not attached to the flooring.")
+			to_chat(user, "Looks like it's not attached to the flooring")
 		if(PA_CONSTRUCTION_UNWIRED)
-			to_chat(user, "It is missing some cables.")
+			to_chat(user, "It is missing some cables")
 		if(PA_CONSTRUCTION_PANEL_OPEN)
-			to_chat(user, "The panel is open.")
+			to_chat(user, "The panel is open")
 
 
 /obj/machinery/particle_accelerator/control_box/attackby(obj/item/W, mob/user, params)
@@ -269,7 +270,7 @@
 
 	switch(construction_state)
 		if(PA_CONSTRUCTION_UNSECURED)
-			if(istype(W, /obj/item/wrench) && !isinspace())
+			if(istype(W, /obj/item/weapon/wrench) && !isinspace())
 				playsound(loc, W.usesound, 75, 1)
 				anchored = TRUE
 				user.visible_message("[user.name] secures the [name] to the floor.", \
@@ -277,7 +278,7 @@
 				construction_state = PA_CONSTRUCTION_UNWIRED
 				did_something = TRUE
 		if(PA_CONSTRUCTION_UNWIRED)
-			if(istype(W, /obj/item/wrench))
+			if(istype(W, /obj/item/weapon/wrench))
 				playsound(loc, W.usesound, 75, 1)
 				anchored = FALSE
 				user.visible_message("[user.name] detaches the [name] from the floor.", \
@@ -292,18 +293,18 @@
 					construction_state = PA_CONSTRUCTION_PANEL_OPEN
 					did_something = TRUE
 		if(PA_CONSTRUCTION_PANEL_OPEN)
-			if(istype(W, /obj/item/wirecutters))//TODO:Shock user if its on?
+			if(istype(W, /obj/item/weapon/wirecutters))//TODO:Shock user if its on?
 				user.visible_message("[user.name] removes some wires from the [name].", \
 					"You remove some wires.")
 				construction_state = PA_CONSTRUCTION_UNWIRED
 				did_something = TRUE
-			else if(istype(W, /obj/item/screwdriver))
+			else if(istype(W, /obj/item/weapon/screwdriver))
 				user.visible_message("[user.name] closes the [name]'s access panel.", \
 					"You close the access panel.")
 				construction_state = PA_CONSTRUCTION_COMPLETE
 				did_something = TRUE
 		if(PA_CONSTRUCTION_COMPLETE)
-			if(istype(W, /obj/item/screwdriver))
+			if(istype(W, /obj/item/weapon/screwdriver))
 				user.visible_message("[user.name] opens the [name]'s access panel.", \
 					"You open the access panel.")
 				construction_state = PA_CONSTRUCTION_PANEL_OPEN

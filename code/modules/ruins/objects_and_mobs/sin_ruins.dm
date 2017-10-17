@@ -24,9 +24,7 @@
 		know it'll be worth it.</span>")
 	icon_state = "slots2"
 	playsound(src, 'sound/lavaland/cursed_slot_machine.ogg', 50, 0)
-	addtimer(CALLBACK(src, .proc/determine_victor, user), 50)
-
-/obj/structure/cursed_slot_machine/proc/determine_victor(mob/living/user)
+	sleep(50)
 	icon_state = "slots1"
 	in_use = FALSE
 	if(prob(win_prob))
@@ -38,7 +36,6 @@
 	else
 		if(user)
 			to_chat(user, "<span class='boldwarning'>Fucking machine! Must be rigged. Still... one more try couldn't hurt, right?</span>")
-
 
 /obj/structure/cursed_money
 	name = "bag of money"
@@ -64,9 +61,11 @@
 		<span class='danger'>And see a bag full of dice. Confused, \
 		you take one... and the bag vanishes.</span>")
 	var/turf/T = get_turf(user)
-	var/obj/item/dice/d20/fate/one_use/critical_fail = new(T)
+	var/obj/item/weapon/dice/d20/fate/one_use/critical_fail = new(T)
 	user.put_in_hands(critical_fail)
 	qdel(src)
+
+
 
 /obj/effect/gluttony //Gluttony's wall: Used in the Gluttony ruin. Only lets the overweight through.
 	name = "gluttony's wall"
@@ -107,20 +106,18 @@
 
 //can't be bothered to do sloth right now, will make later
 
-/obj/item/kitchen/knife/envy //Envy's knife: Found in the Envy ruin. Attackers take on the appearance of whoever they strike.
+/obj/item/weapon/kitchen/knife/envy //Envy's knife: Found in the Envy ruin. Attackers take on the appearance of whoever they strike.
 	name = "envy's knife"
 	desc = "Their success will be yours."
 	icon = 'icons/obj/wizard.dmi'
 	icon_state = "render"
-	item_state = "knife"
-	lefthand_file = 'icons/mob/inhands/equipment/kitchen_lefthand.dmi'
-	righthand_file = 'icons/mob/inhands/equipment/kitchen_righthand.dmi'
+	item_state = "render"
 	force = 18
 	throwforce = 10
 	w_class = WEIGHT_CLASS_NORMAL
 	hitsound = 'sound/weapons/bladeslice.ogg'
 
-/obj/item/kitchen/knife/envy/afterattack(atom/movable/AM, mob/living/carbon/human/user, proximity)
+/obj/item/weapon/kitchen/knife/envy/afterattack(atom/movable/AM, mob/living/carbon/human/user, proximity)
 	..()
 	if(!proximity)
 		return

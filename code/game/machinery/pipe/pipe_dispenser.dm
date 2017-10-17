@@ -2,29 +2,24 @@
 	name = "pipe dispenser"
 	icon = 'icons/obj/stationobjs.dmi'
 	icon_state = "pipe_d"
-	desc = "Dispenses countless types of pipes. Very useful if you need pipes."
 	density = TRUE
 	anchored = TRUE
 	var/wait = 0
-	var/piping_layer = PIPING_LAYER_DEFAULT
 
 /obj/machinery/pipedispenser/attack_paw(mob/user)
-	return attack_hand(user)
+	return src.attack_hand(user)
 
 /obj/machinery/pipedispenser/attack_hand(mob/user)
 	if(..())
 		return 1
 	var/dat = {"
-PIPING LAYER: <A href='?src=\ref[src];layer_down=1'>--</A><b>[piping_layer]</b><A href='?src=\ref[src];layer_up=1'>++</A><BR>
-<b>Pipes:</b><BR>
+<b>Regular pipes:</b><BR>
 <A href='?src=\ref[src];make=[PIPE_SIMPLE];dir=1'>Pipe</A><BR>
 <A href='?src=\ref[src];make=[PIPE_SIMPLE];dir=5'>Bent Pipe</A><BR>
 <A href='?src=\ref[src];make=[PIPE_MANIFOLD];dir=1'>Manifold</A><BR>
-<A href='?src=\ref[src];make=[PIPE_LAYER_MANIFOLD];dir=1'>Layer Manifold</A><BR>
 <A href='?src=\ref[src];make=[PIPE_4WAYMANIFOLD];dir=1'>4-Way Manifold</A><BR>
 <A href='?src=\ref[src];make=[PIPE_MVALVE];dir=1'>Manual Valve</A><BR>
 <A href='?src=\ref[src];make=[PIPE_DVALVE];dir=1'>Digital Valve</A><BR>
-<A href='?src=\ref[src];make=[PIPE_BLUESPACE];dir=1'>Bluespace Pipe</A><BR>
 <b>Devices:</b><BR>
 <A href='?src=\ref[src];make=[PIPE_CONNECTOR];dir=1'>Connector</A><BR>
 <A href='?src=\ref[src];make=[PIPE_UVENT];dir=1'>Vent</A><BR>
@@ -56,34 +51,31 @@ PIPING LAYER: <A href='?src=\ref[src];layer_down=1'>--</A><b>[piping_layer]</b><
 		usr << browse(null, "window=pipedispenser")
 		return 1
 	usr.set_machine(src)
-	add_fingerprint(usr)
+	src.add_fingerprint(usr)
 	if(href_list["make"])
 		if(wait < world.time)
 			var/p_type = text2path(href_list["make"])
 			var/p_dir = text2num(href_list["dir"])
-			var/obj/item/pipe/P = new (loc, p_type, p_dir)
-			P.setPipingLayer(piping_layer)
+			var/obj/item/pipe/P = new (src.loc, pipe_type=p_type, dir=p_dir)
 			P.add_fingerprint(usr)
 			wait = world.time + 10
 	if(href_list["makemeter"])
 		if(wait < world.time )
-			new /obj/item/pipe_meter(loc)
+			new /obj/item/pipe_meter(src.loc)
 			wait = world.time + 15
-	if(href_list["layer_up"])
-		piping_layer = Clamp(++piping_layer, PIPING_LAYER_MIN, PIPING_LAYER_MAX)
-	if(href_list["layer_down"])
-		piping_layer = Clamp(--piping_layer, PIPING_LAYER_MIN, PIPING_LAYER_MAX)
 	return
 
 /obj/machinery/pipedispenser/attackby(obj/item/W, mob/user, params)
 	add_fingerprint(user)
 	if (istype(W, /obj/item/pipe) || istype(W, /obj/item/pipe_meter))
 		to_chat(usr, "<span class='notice'>You put [W] back into [src].</span>")
+		if(!user.drop_item())
+			return
 		qdel(W)
 		return
-	else if (istype(W, /obj/item/wrench))
+	else if (istype(W, /obj/item/weapon/wrench))
 		if (!anchored && !isinspace())
-			playsound(src, W.usesound, 50, 1)
+			playsound(src.loc, W.usesound, 50, 1)
 			to_chat(user, "<span class='notice'>You begin to fasten \the [src] to the floor...</span>")
 			if (do_after(user, 40*W.toolspeed, target = src))
 				add_fingerprint(user)
@@ -96,7 +88,7 @@ PIPING LAYER: <A href='?src=\ref[src];layer_down=1'>--</A><b>[piping_layer]</b><
 				if (usr.machine==src)
 					usr << browse(null, "window=pipedispenser")
 		else if(anchored)
-			playsound(src, W.usesound, 50, 1)
+			playsound(src.loc, W.usesound, 50, 1)
 			to_chat(user, "<span class='notice'>You begin to unfasten \the [src] from the floor...</span>")
 			if (do_after(user, 20*W.toolspeed, target = src))
 				add_fingerprint(user)
@@ -115,7 +107,6 @@ PIPING LAYER: <A href='?src=\ref[src];layer_down=1'>--</A><b>[piping_layer]</b><
 	name = "disposal pipe dispenser"
 	icon = 'icons/obj/stationobjs.dmi'
 	icon_state = "pipe_d"
-	desc = "Dispenses pipes that will ultimately be used to move trash around."
 	density = TRUE
 	anchored = TRUE
 
@@ -168,11 +159,11 @@ Nah
 	if(..())
 		return 1
 	usr.set_machine(src)
-	add_fingerprint(usr)
+	src.add_fingerprint(usr)
 	if(href_list["dmake"])
 		if(wait < world.time)
 			var/p_type = text2num(href_list["dmake"])
-			var/obj/structure/disposalconstruct/C = new (loc,p_type)
+			var/obj/structure/disposalconstruct/C = new (src.loc,p_type)
 
 			if(!C.can_place())
 				to_chat(usr, "<span class='warning'>There's not enough room to build that here!</span>")
@@ -191,7 +182,6 @@ Nah
 	icon = 'icons/obj/stationobjs.dmi'
 	icon_state = "pipe_d"
 	density = TRUE
-	desc = "Dispenses pipes that will move beings around."
 	anchored = TRUE
 
 /obj/machinery/pipedispenser/disposal/transit_tube/attack_hand(mob/user)
@@ -219,7 +209,7 @@ Nah
 	if(..())
 		return 1
 	usr.set_machine(src)
-	add_fingerprint(usr)
+	src.add_fingerprint(usr)
 	if(wait < world.time)
 		if(href_list["tube"])
 			var/tube_type = text2num(href_list["tube"])

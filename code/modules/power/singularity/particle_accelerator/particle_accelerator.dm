@@ -40,11 +40,11 @@
 
 	switch(construction_state)
 		if(PA_CONSTRUCTION_UNSECURED)
-			to_chat(user, "Looks like it's not attached to the flooring.")
+			to_chat(user, "Looks like it's not attached to the flooring")
 		if(PA_CONSTRUCTION_UNWIRED)
-			to_chat(user, "It is missing some cables.")
+			to_chat(user, "It is missing some cables")
 		if(PA_CONSTRUCTION_PANEL_OPEN)
-			to_chat(user, "The panel is open.")
+			to_chat(user, "The panel is open")
 
 	to_chat(user, "<span class='notice'>Alt-click to rotate it clockwise.</span>")
 
@@ -97,7 +97,7 @@
 
 	switch(construction_state)
 		if(PA_CONSTRUCTION_UNSECURED)
-			if(istype(W, /obj/item/wrench) && !isinspace())
+			if(istype(W, /obj/item/weapon/wrench) && !isinspace())
 				playsound(loc, W.usesound, 75, 1)
 				anchored = TRUE
 				user.visible_message("[user.name] secures the [name] to the floor.", \
@@ -105,7 +105,7 @@
 				construction_state = PA_CONSTRUCTION_UNWIRED
 				did_something = TRUE
 		if(PA_CONSTRUCTION_UNWIRED)
-			if(istype(W, /obj/item/wrench))
+			if(istype(W, /obj/item/weapon/wrench))
 				playsound(loc, W.usesound, 75, 1)
 				anchored = FALSE
 				user.visible_message("[user.name] detaches the [name] from the floor.", \
@@ -120,18 +120,18 @@
 					construction_state = PA_CONSTRUCTION_PANEL_OPEN
 					did_something = TRUE
 		if(PA_CONSTRUCTION_PANEL_OPEN)
-			if(istype(W, /obj/item/wirecutters))//TODO:Shock user if its on?
+			if(istype(W, /obj/item/weapon/wirecutters))//TODO:Shock user if its on?
 				user.visible_message("[user.name] removes some wires from the [name].", \
 					"You remove some wires.")
 				construction_state = PA_CONSTRUCTION_UNWIRED
 				did_something = TRUE
-			else if(istype(W, /obj/item/screwdriver))
+			else if(istype(W, /obj/item/weapon/screwdriver))
 				user.visible_message("[user.name] closes the [name]'s access panel.", \
 					"You close the access panel.")
 				construction_state = PA_CONSTRUCTION_COMPLETE
 				did_something = TRUE
 		if(PA_CONSTRUCTION_COMPLETE)
-			if(istype(W, /obj/item/screwdriver))
+			if(istype(W, /obj/item/weapon/screwdriver))
 				user.visible_message("[user.name] opens the [name]'s access panel.", \
 					"You open the access panel.")
 				construction_state = PA_CONSTRUCTION_PANEL_OPEN
@@ -147,7 +147,7 @@
 
 
 /obj/structure/particle_accelerator/deconstruct(disassembled = TRUE)
-	if(!(flags_1 & NODECONSTRUCT_1))
+	if(!(flags & NODECONSTRUCT))
 		new /obj/item/stack/sheet/metal (loc, 5)
 	qdel(src)
 
@@ -187,13 +187,13 @@
 
 /obj/structure/particle_accelerator/end_cap
 	name = "Alpha Particle Generation Array"
-	desc = "This is where Alpha particles are generated from \[REDACTED\]."
+	desc = "This is where Alpha particles are generated from \[REDACTED\]"
 	icon_state = "end_cap"
 	reference = "end_cap"
 
 /obj/structure/particle_accelerator/power_box
 	name = "Particle Focusing EM Lens"
-	desc = "This uses electromagnetic waves to focus the Alpha particles."
+	desc = "This uses electromagnetic waves to focus the Alpha-Particles."
 	icon = 'icons/obj/machines/particle_accelerator.dmi'
 	icon_state = "power_box"
 	reference = "power_box"

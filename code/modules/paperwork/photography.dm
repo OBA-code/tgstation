@@ -13,21 +13,19 @@
  */
 /obj/item/device/camera_film
 	name = "film cartridge"
-	icon = 'icons/obj/items_and_weapons.dmi'
+	icon = 'icons/obj/items.dmi'
 	desc = "A camera film cartridge. Insert it into a camera to reload it."
 	icon_state = "film"
 	item_state = "electropack"
-	lefthand_file = 'icons/mob/inhands/misc/devices_lefthand.dmi'
-	righthand_file = 'icons/mob/inhands/misc/devices_righthand.dmi'
 	w_class = WEIGHT_CLASS_TINY
 	resistance_flags = FLAMMABLE
 
 /*
  * Photo
  */
-/obj/item/photo
+/obj/item/weapon/photo
 	name = "photo"
-	icon = 'icons/obj/items_and_weapons.dmi'
+	icon = 'icons/obj/items.dmi'
 	icon_state = "photo"
 	item_state = "paper"
 	w_class = WEIGHT_CLASS_TINY
@@ -39,20 +37,20 @@
 	var/sillynewscastervar  //Photo objects with this set to 1 will not be ejected by a newscaster. Only gets set to 1 if a silicon puts one of their images into a newscaster
 
 
-/obj/item/photo/attack_self(mob/user)
+/obj/item/weapon/photo/attack_self(mob/user)
 	user.examinate(src)
 
 
-/obj/item/photo/attackby(obj/item/P, mob/user, params)
-	if(istype(P, /obj/item/pen) || istype(P, /obj/item/toy/crayon))
+/obj/item/weapon/photo/attackby(obj/item/weapon/P, mob/user, params)
+	if(istype(P, /obj/item/weapon/pen) || istype(P, /obj/item/toy/crayon))
 		var/txt = sanitize(input(user, "What would you like to write on the back?", "Photo Writing", null)  as text)
 		txt = copytext(txt, 1, 128)
-		if(loc == user && user.stat == CONSCIOUS)
+		if(loc == user && user.stat == 0)
 			scribble = txt
 	..()
 
 
-/obj/item/photo/examine(mob/user)
+/obj/item/weapon/photo/examine(mob/user)
 	..()
 
 	if(in_range(src, user))
@@ -61,7 +59,7 @@
 		to_chat(user, "<span class='warning'>You need to get closer to get a good look at this photo!</span>")
 
 
-/obj/item/photo/proc/show(mob/user)
+/obj/item/weapon/photo/proc/show(mob/user)
 	user << browse_rsc(img, "tmp_photo.png")
 	user << browse("<html><head><title>[name]</title></head>" \
 		+ "<body style='overflow:hidden;margin:0;text-align:center'>" \
@@ -71,18 +69,18 @@
 	onclose(user, "[name]")
 
 
-/obj/item/photo/verb/rename()
+/obj/item/weapon/photo/verb/rename()
 	set name = "Rename photo"
 	set category = "Object"
 	set src in usr
 
 	var/n_name = copytext(sanitize(input(usr, "What would you like to label the photo?", "Photo Labelling", null)  as text), 1, MAX_NAME_LEN)
 	//loc.loc check is for making possible renaming photos in clipboards
-	if((loc == usr || loc.loc && loc.loc == usr) && usr.stat == CONSCIOUS && usr.canmove && !usr.restrained())
+	if((loc == usr || loc.loc && loc.loc == usr) && usr.stat == 0 && usr.canmove && !usr.restrained())
 		name = "photo[(n_name ? text("- '[n_name]'") : null)]"
 	add_fingerprint(usr)
 
-/obj/item/photo/proc/photocreate(inicon, inimg, indesc, inblueprints)
+/obj/item/weapon/photo/proc/photocreate(inicon, inimg, indesc, inblueprints)
 	icon = inicon
 	img = inimg
 	desc = indesc
@@ -91,14 +89,12 @@
 /*
  * Photo album
  */
-/obj/item/storage/photo_album
+/obj/item/weapon/storage/photo_album
 	name = "photo album"
-	icon = 'icons/obj/items_and_weapons.dmi'
+	icon = 'icons/obj/items.dmi'
 	icon_state = "album"
 	item_state = "briefcase"
-	lefthand_file = 'icons/mob/inhands/equipment/briefcase_lefthand.dmi'
-	righthand_file = 'icons/mob/inhands/equipment/briefcase_righthand.dmi'
-	can_hold = list(/obj/item/photo)
+	can_hold = list(/obj/item/weapon/photo)
 	resistance_flags = FLAMMABLE
 
 /*
@@ -106,14 +102,12 @@
  */
 /obj/item/device/camera
 	name = "camera"
-	icon = 'icons/obj/items_and_weapons.dmi'
+	icon = 'icons/obj/items.dmi'
 	desc = "A polaroid camera."
 	icon_state = "camera"
 	item_state = "electropack"
-	lefthand_file = 'icons/mob/inhands/misc/devices_lefthand.dmi'
-	righthand_file = 'icons/mob/inhands/misc/devices_righthand.dmi'
 	w_class = WEIGHT_CLASS_SMALL
-	flags_1 = CONDUCT_1
+	flags = CONDUCT
 	slot_flags = SLOT_BELT
 	materials = list(MAT_METAL=2000)
 	var/pictures_max = 10
@@ -185,7 +179,7 @@
 
 /obj/item/device/camera/examine(mob/user)
 	..()
-	to_chat(user, "It has [pictures_left] photo\s left.")
+	to_chat(user, "It has [pictures_left] photos left.")
 
 
 /obj/item/device/camera/proc/camera_get_icon(list/turfs, turf/center)
@@ -224,9 +218,8 @@
 		var/offX = 32 * (A.x - center.x) + A.pixel_x + 33
 		var/offY = 32 * (A.y - center.y) + A.pixel_y + 33
 		if(ismovableatom(A))
-			var/atom/movable/AM = A
-			offX += AM.step_x
-			offY += AM.step_y
+			offX += A:step_x
+			offY += A:step_y
 
 		res.Blend(img, blendMode2iconMode(A.blend_mode), offX, offY)
 
@@ -309,11 +302,11 @@
 
 
 /obj/item/device/camera/proc/printpicture(mob/user, icon/temp, mobs, flag) //Normal camera proc for creating photos
-	var/obj/item/photo/P = new/obj/item/photo(get_turf(src))
+	var/obj/item/weapon/photo/P = new/obj/item/weapon/photo(get_turf(src))
 	if(in_range(src, user)) //needed because of TK
 		user.put_in_hands(P)
 	var/icon/small_img = icon(temp)
-	var/icon/ic = icon('icons/obj/items_and_weapons.dmi',"photo")
+	var/icon/ic = icon('icons/obj/items.dmi',"photo")
 	small_img.Scale(8, 8)
 	ic.Blend(small_img,ICON_OVERLAY, 13, 13)
 	P.icon = ic
@@ -330,7 +323,7 @@
 /obj/item/device/camera/proc/aipicture(mob/user, icon/temp, mobs, isAi) //instead of printing a picture like a regular camera would, we do this instead for the AI
 
 	var/icon/small_img = icon(temp)
-	var/icon/ic = icon('icons/obj/items_and_weapons.dmi',"photo")
+	var/icon/ic = icon('icons/obj/items.dmi',"photo")
 	small_img.Scale(8, 8)
 	ic.Blend(small_img,ICON_OVERLAY, 13, 13)
 	var/icon = ic
@@ -406,7 +399,7 @@
 			return q
 
 /obj/item/device/camera/siliconcam/proc/viewpichelper(obj/item/device/camera/siliconcam/targetloc)
-	var/obj/item/photo/P = new/obj/item/photo()
+	var/obj/item/weapon/photo/P = new/obj/item/weapon/photo()
 	var/datum/picture/selection = selectpicture(targetloc)
 	if(selection)
 		P.photocreate(selection.fields["icon"], selection.fields["img"], selection.fields["desc"])
@@ -443,12 +436,9 @@
 	to_chat(user, "<span class='notice'>[pictures_left] photos left.</span>")
 	icon_state = "camera_off"
 	on = FALSE
-	addtimer(CALLBACK(src, .proc/cooldown), 64)
-
-/obj/item/device/camera/proc/cooldown()
-	set waitfor = FALSE
-	icon_state = "camera"
-	on = TRUE
+	spawn(64)
+		icon_state = "camera"
+		on = TRUE
 
 /obj/item/device/camera/siliconcam/proc/toggle_camera_mode()
 	if(in_camera_mode)
@@ -487,7 +477,7 @@
 		if(q.fields["name"] == find)
 			selection = q
 			break
-	var/obj/item/photo/p = new /obj/item/photo(C.loc)
+	var/obj/item/weapon/photo/p = new /obj/item/weapon/photo(C.loc)
 	p.photocreate(selection.fields["icon"], selection.fields["img"], selection.fields["desc"], selection.fields["blueprints"])
 	p.pixel_x = rand(-10, 10)
 	p.pixel_y = rand(-10, 10)
@@ -502,13 +492,13 @@
 	desc = "The perfect showcase for your favorite deathtrap memories."
 	icon = 'icons/obj/decals.dmi'
 	materials = list()
-	flags_1 = 0
+	flags = 0
 	icon_state = "frame-empty"
 	result_path = /obj/structure/sign/picture_frame
-	var/obj/item/photo/displayed
+	var/obj/item/weapon/photo/displayed
 
 /obj/item/wallframe/picture/attackby(obj/item/I, mob/user)
-	if(istype(I, /obj/item/photo))
+	if(istype(I, /obj/item/weapon/photo))
 		if(!displayed)
 			if(!user.transferItemToLoc(I, src))
 				return
@@ -559,7 +549,7 @@
 	desc = "Every time you look it makes you laugh."
 	icon = 'icons/obj/decals.dmi'
 	icon_state = "frame-empty"
-	var/obj/item/photo/framed
+	var/obj/item/weapon/photo/framed
 
 /obj/structure/sign/picture_frame/New(loc, dir, building)
 	..()
@@ -576,7 +566,7 @@
 		..()
 
 /obj/structure/sign/picture_frame/attackby(obj/item/I, mob/user, params)
-	if(istype(I, /obj/item/screwdriver) || istype(I, /obj/item/wrench))
+	if(istype(I, /obj/item/weapon/screwdriver) || istype(I, /obj/item/weapon/wrench))
 		to_chat(user, "<span class='notice'>You start unsecuring [name]...</span>")
 		playsound(loc, I.usesound, 50, 1)
 		if(do_after(user, 30*I.toolspeed, target = src))
@@ -585,9 +575,9 @@
 		deconstruct()
 		return
 
-	else if(istype(I, /obj/item/photo))
+	else if(istype(I, /obj/item/weapon/photo))
 		if(!framed)
-			var/obj/item/photo/P = I
+			var/obj/item/weapon/photo/P = I
 			if(!user.transferItemToLoc(P, src))
 				return
 			framed = P
@@ -607,7 +597,7 @@
 		add_overlay(getFlatIcon(framed))
 
 /obj/structure/sign/picture_frame/deconstruct(disassembled = TRUE)
-	if(!(flags_1 & NODECONSTRUCT_1))
+	if(!(flags & NODECONSTRUCT))
 		var/obj/item/wallframe/picture/F = new /obj/item/wallframe/picture(loc)
 		if(framed)
 			F.displayed = framed

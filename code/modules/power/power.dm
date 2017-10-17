@@ -113,7 +113,7 @@
 
 // attach a wire to a power machine - leads from the turf you are standing on
 //almost never called, overwritten by all power machines but terminal and generator
-/obj/machinery/power/attackby(obj/item/W, mob/user, params)
+/obj/machinery/power/attackby(obj/item/weapon/W, mob/user, params)
 	if(istype(W, /obj/item/stack/cable_coil))
 		var/obj/item/stack/cable_coil/coil = W
 		var/turf/T = user.loc
@@ -216,6 +216,7 @@
 
 //remove the old powernet and replace it with a new one throughout the network.
 /proc/propagate_network(obj/O, datum/powernet/PN)
+	//world.log << "propagating new network"
 	var/list/worklist = list()
 	var/list/found_machines = list()
 	var/index = 1
@@ -278,7 +279,7 @@
 //dist_check - set to only shock mobs within 1 of source (vendors, airlocks, etc.)
 //No animations will be performed by this proc.
 /proc/electrocute_mob(mob/living/carbon/M, power_source, obj/source, siemens_coeff = 1, dist_check = FALSE)
-	if(ismecha(M.loc))
+	if(istype(M.loc, /obj/mecha))
 		return 0	//feckin mechs are dumb
 	if(dist_check)
 		if(!in_range(source,M))
@@ -299,11 +300,11 @@
 		power_source = Cable.powernet
 
 	var/datum/powernet/PN
-	var/obj/item/stock_parts/cell/cell
+	var/obj/item/weapon/stock_parts/cell/cell
 
 	if(istype(power_source, /datum/powernet))
 		PN = power_source
-	else if(istype(power_source, /obj/item/stock_parts/cell))
+	else if(istype(power_source, /obj/item/weapon/stock_parts/cell))
 		cell = power_source
 	else if(istype(power_source, /obj/machinery/power/apc))
 		var/obj/machinery/power/apc/apc = power_source
@@ -340,7 +341,7 @@
 	else if (istype(power_source, /datum/powernet))
 		var/drained_power = drained_energy/GLOB.CELLRATE //convert from "joules" to "watts"
 		PN.load+=drained_power
-	else if (istype(power_source, /obj/item/stock_parts/cell))
+	else if (istype(power_source, /obj/item/weapon/stock_parts/cell))
 		cell.use(drained_energy)
 	return drained_energy
 

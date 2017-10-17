@@ -5,7 +5,6 @@
 	name = "unattached transit tube"
 	icon = 'icons/obj/atmospherics/pipes/transit_tube.dmi'
 	icon_state = "straight"
-	desc = "An unattached segment of transit tube."
 	density = FALSE
 	layer = LOW_ITEM_LAYER //same as the built tube
 	anchored = FALSE
@@ -64,7 +63,7 @@
 
 
 /obj/structure/c_transit_tube/attackby(obj/item/I, mob/user, params)
-	if(istype(I, /obj/item/wrench))
+	if(istype(I, /obj/item/weapon/wrench))
 		to_chat(user, "<span class='notice'>You start attaching the [name]...</span>")
 		add_fingerprint(user)
 		playsound(src.loc, I.usesound, 50, 1)

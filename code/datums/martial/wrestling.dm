@@ -199,7 +199,7 @@
 	set waitfor = FALSE
 	if (D)
 		animate(D, transform = matrix(180, MATRIX_ROTATE), time = 1, loop = 0)
-	sleep(15)
+	sleep (15)
 	if (D)
 		animate(D, transform = null, time = 1, loop = 0)
 
@@ -258,7 +258,7 @@
 				D.pixel_y = 0
 			return 0
 
-		sleep(1)
+		sleep (1)
 
 	if (A && D)
 		A.pixel_x = 0
@@ -358,12 +358,9 @@
 
 	for (var/obj/O in oview(1, A))
 		if (O.density == 1)
-			if (O == A)
-				continue
-			if (O == D)
-				continue
-			if (O.opacity)
-				continue
+			if (O == A) continue
+			if (O == D) continue
+			if (O.opacity) continue
 			else
 				surface = O
 				ST = get_turf(O)
@@ -441,11 +438,11 @@
 	add_logs(A, D, "cinched")
 	return 1
 
-/obj/item/storage/belt/champion/wrestling
+/obj/item/weapon/storage/belt/champion/wrestling
 	name = "Wrestling Belt"
 	var/datum/martial_art/wrestling/style = new
 
-/obj/item/storage/belt/champion/wrestling/equipped(mob/user, slot)
+/obj/item/weapon/storage/belt/champion/wrestling/equipped(mob/user, slot)
 	if(!ishuman(user))
 		return
 	if(slot == slot_belt)
@@ -453,7 +450,7 @@
 		style.teach(H,1)
 	return
 
-/obj/item/storage/belt/champion/wrestling/dropped(mob/user)
+/obj/item/weapon/storage/belt/champion/wrestling/dropped(mob/user)
 	if(!ishuman(user))
 		return
 	var/mob/living/carbon/human/H = user

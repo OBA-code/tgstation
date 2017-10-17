@@ -15,9 +15,9 @@
 	use_power = IDLE_POWER_USE
 	idle_power_usage = 30
 	machinetype = 8
+	//heatgen = 0
 	netspeed = 5
 	long_range_link = 1
-	circuit = /obj/item/circuitboard/machine/telecomms/relay
 	var/broadcasting = 1
 	var/receiving = 1
 
@@ -45,6 +45,22 @@
 		return FALSE
 	return receiving
 
+/obj/machinery/telecomms/relay/New()
+	..()
+	var/obj/item/weapon/circuitboard/machine/B = new /obj/item/weapon/circuitboard/machine/telecomms/relay(null)
+	B.apply_default_parts(src)
+
+/obj/item/weapon/circuitboard/machine/telecomms/relay
+	name = "Relay Mainframe (Machine Board)"
+	build_path = /obj/machinery/telecomms/relay
+	origin_tech = "programming=2;engineering=2;bluespace=2"
+	req_components = list(
+							/obj/item/weapon/stock_parts/manipulator = 2,
+							/obj/item/stack/cable_coil = 2,
+							/obj/item/weapon/stock_parts/subspace/filter = 2)
+
+
+
 //Preset Relay
 
 /obj/machinery/telecomms/relay/preset
@@ -68,10 +84,3 @@
 	hide = 1
 	toggled = FALSE
 	autolinkers = list("r_relay")
-
-/obj/machinery/telecomms/relay/preset/reebe
-	name = "hierophant relay"
-	desc = "A stolen telecommunications relay that ingeniously combines bluespace technology with the Hierophant network to send and receive messages to and from Reebe."
-	id = "Hierophant Relay"
-	hide = TRUE
-	autolinkers = list("h_relay")

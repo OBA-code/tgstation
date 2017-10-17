@@ -1,7 +1,7 @@
 /obj/structure/fireaxecabinet
 	name = "fire axe cabinet"
 	desc = "There is a small label that reads \"For Emergency use only\" along with details for safe use of the axe. As if."
-	var/obj/item/twohanded/fireaxe/fireaxe = new/obj/item/twohanded/fireaxe
+	var/obj/item/weapon/twohanded/fireaxe/fireaxe = new/obj/item/weapon/twohanded/fireaxe
 	icon = 'icons/obj/wallmounts.dmi'
 	icon_state = "fireaxe"
 	anchored = TRUE
@@ -12,8 +12,8 @@
 	max_integrity = 150
 	integrity_failure = 50
 
-/obj/structure/fireaxecabinet/Initialize()
-	. = ..()
+/obj/structure/fireaxecabinet/New()
+	..()
 	update_icon()
 
 /obj/structure/fireaxecabinet/Destroy()
@@ -24,8 +24,8 @@
 /obj/structure/fireaxecabinet/attackby(obj/item/I, mob/user, params)
 	if(iscyborg(user) || istype(I, /obj/item/device/multitool))
 		toggle_lock(user)
-	else if(istype(I, /obj/item/weldingtool) && user.a_intent == INTENT_HELP && !broken)
-		var/obj/item/weldingtool/WT = I
+	else if(istype(I, /obj/item/weapon/weldingtool) && user.a_intent == INTENT_HELP && !broken)
+		var/obj/item/weapon/weldingtool/WT = I
 		if(obj_integrity < max_integrity && WT.remove_fuel(2, user))
 			to_chat(user, "<span class='notice'>You begin repairing [src].</span>")
 			playsound(loc, WT.usesound, 40, 1)
@@ -48,14 +48,15 @@
 			obj_integrity = max_integrity
 			update_icon()
 	else if(open || broken)
-		if(istype(I, /obj/item/twohanded/fireaxe) && !fireaxe)
-			var/obj/item/twohanded/fireaxe/F = I
+		if(istype(I, /obj/item/weapon/twohanded/fireaxe) && !fireaxe)
+			var/obj/item/weapon/twohanded/fireaxe/F = I
 			if(F.wielded)
 				to_chat(user, "<span class='warning'>Unwield the [F.name] first.</span>")
 				return
-			if(!user.transferItemToLoc(F, src))
+			if(!user.drop_item())
 				return
 			fireaxe = F
+			F.forceMove(src)
 			to_chat(user, "<span class='caution'>You place the [F.name] back in the [name].</span>")
 			update_icon()
 			return
@@ -82,15 +83,15 @@
 		update_icon()
 
 /obj/structure/fireaxecabinet/obj_break(damage_flag)
-	if(!broken && !(flags_1 & NODECONSTRUCT_1))
+	if(!broken && !(flags & NODECONSTRUCT))
 		update_icon()
 		broken = TRUE
 		playsound(src, 'sound/effects/glassbr3.ogg', 100, 1)
-		new /obj/item/shard(loc)
-		new /obj/item/shard(loc)
+		new /obj/item/weapon/shard(loc)
+		new /obj/item/weapon/shard(loc)
 
 /obj/structure/fireaxecabinet/deconstruct(disassembled = TRUE)
-	if(!(flags_1 & NODECONSTRUCT_1))
+	if(!(flags & NODECONSTRUCT))
 		if(fireaxe && loc)
 			fireaxe.forceMove(loc)
 			fireaxe = null

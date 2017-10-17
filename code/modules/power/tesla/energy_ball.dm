@@ -1,6 +1,24 @@
 #define TESLA_DEFAULT_POWER 1738260
 #define TESLA_MINI_POWER 869130
 
+GLOBAL_LIST_INIT(blacklisted_tesla_types, typecacheof(list(/obj/machinery/atmospherics,
+										/obj/machinery/power/emitter,
+										/obj/machinery/field/generator,
+										/mob/living/simple_animal,
+										/obj/machinery/particle_accelerator/control_box,
+										/obj/structure/particle_accelerator/fuel_chamber,
+										/obj/structure/particle_accelerator/particle_emitter/center,
+										/obj/structure/particle_accelerator/particle_emitter/left,
+										/obj/structure/particle_accelerator/particle_emitter/right,
+										/obj/structure/particle_accelerator/power_box,
+										/obj/structure/particle_accelerator/end_cap,
+										/obj/machinery/field/containment,
+										/obj/structure/disposalpipe,
+										/obj/structure/sign,
+										/obj/machinery/gateway,
+										/obj/structure/lattice,
+										/obj/structure/grille,
+										/obj/machinery/the_singularitygen/tesla)))
 /obj/singularity/energy_ball
 	name = "energy ball"
 	desc = "An energy ball."
@@ -57,7 +75,7 @@
 		pixel_x = 0
 		pixel_y = 0
 
-		tesla_zap(src, 7, TESLA_DEFAULT_POWER, TRUE)
+		setDir(tesla_zap(src, 7, TESLA_DEFAULT_POWER, TRUE))
 
 		pixel_x = -32
 		pixel_y = -32
@@ -75,9 +93,9 @@
 
 /obj/singularity/energy_ball/proc/move_the_basket_ball(var/move_amount)
 	//we face the last thing we zapped, so this lets us favor that direction a bit
-	var/move_bias = pick(GLOB.alldirs)
+	var/first_move = dir
 	for(var/i in 0 to move_amount)
-		var/move_dir = pick(GLOB.alldirs + move_bias) //ensures large-ball teslas don't just sit around 
+		var/move_dir = pick(GLOB.alldirs + first_move) //give the first move direction a bit of favoring.
 		if(target && prob(60))
 			move_dir = get_dir(src,target)
 		var/turf/T = get_step(src, move_dir)
@@ -165,27 +183,8 @@
 	var/obj/machinery/closest_machine
 	var/obj/structure/closest_structure
 	var/obj/structure/blob/closest_blob
-	var/static/things_to_shock = typecacheof(list(/obj/machinery, /mob/living, /obj/structure))
-	var/static/blacklisted_tesla_types = typecacheof(list(/obj/machinery/atmospherics,
-										/obj/machinery/power/emitter,
-										/obj/machinery/field/generator,
-										/mob/living/simple_animal,
-										/obj/machinery/particle_accelerator/control_box,
-										/obj/structure/particle_accelerator/fuel_chamber,
-										/obj/structure/particle_accelerator/particle_emitter/center,
-										/obj/structure/particle_accelerator/particle_emitter/left,
-										/obj/structure/particle_accelerator/particle_emitter/right,
-										/obj/structure/particle_accelerator/power_box,
-										/obj/structure/particle_accelerator/end_cap,
-										/obj/machinery/field/containment,
-										/obj/structure/disposalpipe,
-										/obj/structure/sign,
-										/obj/machinery/gateway,
-										/obj/structure/lattice,
-										/obj/structure/grille,
-										/obj/machinery/the_singularitygen/tesla))
 
-	for(var/A in typecache_filter_multi_list_exclusion(oview(source, zap_range+2), things_to_shock, blacklisted_tesla_types))
+	for(var/A in oview(source, zap_range+2))
 		if(istype(A, /obj/machinery/power/tesla_coil))
 			var/dist = get_dist(source, A)
 			var/obj/machinery/power/tesla_coil/C = A
@@ -208,13 +207,13 @@
 				closest_atom = A
 				closest_dist = dist
 
-		else if(closest_grounding_rod)
+		else if(closest_grounding_rod || is_type_in_typecache(A, GLOB.blacklisted_tesla_types))
 			continue
 
 		else if(isliving(A))
 			var/dist = get_dist(source, A)
 			var/mob/living/L = A
-			if(dist <= zap_range && (dist < closest_dist || !closest_mob) && L.stat != DEAD && !(L.flags_2 & TESLA_IGNORE_2))
+			if(dist <= zap_range && (dist < closest_dist || !closest_mob) && L.stat != DEAD && !HAS_SECONDARY_FLAG(L, TESLA_IGNORE))
 				closest_mob = L
 				closest_atom = A
 				closest_dist = dist
@@ -222,7 +221,7 @@
 		else if(closest_mob)
 			continue
 
-		else if(ismachinery(A))
+		else if(istype(A, /obj/machinery))
 			var/obj/machinery/M = A
 			var/dist = get_dist(source, A)
 			if(dist <= zap_range && (dist < closest_dist || !closest_machine) && !M.being_shocked)
@@ -244,7 +243,7 @@
 		else if(closest_blob)
 			continue
 
-		else if(isstructure(A))
+		else if(istype(A, /obj/structure))
 			var/obj/structure/S = A
 			var/dist = get_dist(source, A)
 			if(dist <= zap_range && (dist < closest_dist || !closest_tesla_coil) && !S.being_shocked)

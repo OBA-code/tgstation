@@ -63,7 +63,6 @@
 	return list(
 		head,
 		wear_mask,
-		wear_neck,
 		glasses,
 		ears,
 		)
@@ -147,19 +146,17 @@
 	. = ..() //See mob.dm for an explanation on this and some rage about people copypasting instead of calling ..() like they should.
 	if(!. || !I)
 		return
-	if(index && !QDELETED(src) && dna.species.mutanthands) //hand freed, fill with claws, skip if we're getting deleted.
+	if(index && dna.species.mutanthands)
 		put_in_hand(new dna.species.mutanthands(), index)
 	if(I == wear_suit)
 		if(s_store && invdrop)
 			dropItemToGround(s_store, TRUE) //It makes no sense for your suit storage to stay on you if you drop your suit.
 		if(wear_suit.breakouttime) //when unequipping a straightjacket
-			drop_all_held_items() //suit is restraining
 			update_action_buttons_icon() //certain action buttons may be usable again.
 		wear_suit = null
-		if(!QDELETED(src)) //no need to update we're getting deleted anyway
-			if(I.flags_inv & HIDEJUMPSUIT)
-				update_inv_w_uniform()
-			update_inv_wear_suit()
+		if(I.flags_inv & HIDEJUMPSUIT)
+			update_inv_w_uniform()
+		update_inv_wear_suit()
 	else if(I == w_uniform)
 		if(invdrop)
 			if(r_store)
@@ -172,12 +169,10 @@
 				dropItemToGround(belt)
 		w_uniform = null
 		update_suit_sensors()
-		if(!QDELETED(src))
-			update_inv_w_uniform()
+		update_inv_w_uniform(invdrop)
 	else if(I == gloves)
 		gloves = null
-		if(!QDELETED(src))
-			update_inv_gloves()
+		update_inv_gloves()
 	else if(I == glasses)
 		glasses = null
 		var/obj/item/clothing/glasses/G = I
@@ -190,42 +185,34 @@
 				overlay_fullscreen("nearsighted", /obj/screen/fullscreen/impaired, 1)
 		if(G.vision_flags || G.darkness_view || G.invis_override || G.invis_view || !isnull(G.lighting_alpha))
 			update_sight()
-		if(!QDELETED(src))
-			update_inv_glasses()
+		update_inv_glasses()
 	else if(I == ears)
 		ears = null
-		if(!QDELETED(src))
-			update_inv_ears()
+		update_inv_ears()
 	else if(I == shoes)
 		shoes = null
-		if(!QDELETED(src))
-			update_inv_shoes()
+		update_inv_shoes()
 	else if(I == belt)
 		belt = null
-		if(!QDELETED(src))
-			update_inv_belt()
+		update_inv_belt()
 	else if(I == wear_id)
 		wear_id = null
 		sec_hud_set_ID()
-		if(!QDELETED(src))
-			update_inv_wear_id()
+		update_inv_wear_id()
 	else if(I == r_store)
 		r_store = null
-		if(!QDELETED(src))
-			update_inv_pockets()
+		update_inv_pockets()
 	else if(I == l_store)
 		l_store = null
-		if(!QDELETED(src))
-			update_inv_pockets()
+		update_inv_pockets()
 	else if(I == s_store)
 		s_store = null
-		if(!QDELETED(src))
-			update_inv_s_store()
+		update_inv_s_store()
 
 /mob/living/carbon/human/wear_mask_update(obj/item/clothing/C, toggle_off = 1)
 	if((C.flags_inv & (HIDEHAIR|HIDEFACIALHAIR)) || (initial(C.flags_inv) & (HIDEHAIR|HIDEFACIALHAIR)))
 		update_hair()
-	if(toggle_off && internal && !getorganslot(ORGAN_SLOT_BREATHING_TUBE))
+	if(toggle_off && internal && !getorganslot("breathing_tube"))
 		update_internals_hud_icon(0)
 		internal = null
 	if(C.flags_inv & HIDEEYES)
@@ -236,10 +223,6 @@
 /mob/living/carbon/human/head_update(obj/item/I, forced)
 	if((I.flags_inv & (HIDEHAIR|HIDEFACIALHAIR)) || forced)
 		update_hair()
-	else
-		var/obj/item/clothing/C = I
-		if(istype(C) && C.dynamic_hair_suffix)
-			update_hair()
 	if(I.flags_inv & HIDEEYES || forced)
 		update_inv_glasses()
 	if(I.flags_inv & HIDEEARS || forced)
@@ -260,11 +243,3 @@
 		return 0
 
 	return O.equip(src, visualsOnly)
-
-
-//delete all equipment without dropping anything
-/mob/living/carbon/human/proc/delete_equipment()
-	for(var/slot in get_all_slots())//order matters, dependant slots go first
-		qdel(slot)
-	for(var/obj/item/I in held_items)
-		qdel(I)

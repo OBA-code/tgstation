@@ -9,7 +9,7 @@
 
 	if (tr_flags & TR_KEEPIMPLANTS)
 		for(var/X in implants)
-			var/obj/item/implant/IMP = X
+			var/obj/item/weapon/implant/IMP = X
 			stored_implants += IMP
 			IMP.removed(src, 1, 1)
 
@@ -83,7 +83,7 @@
 	//re-add implants to new mob
 	if (tr_flags & TR_KEEPIMPLANTS)
 		for(var/Y in implants)
-			var/obj/item/implant/IMP = Y
+			var/obj/item/weapon/implant/IMP = Y
 			IMP.implant(O, null, 1)
 
 	//re-add organs to new mob. this order prevents moving the mind to a brain at any point
@@ -155,7 +155,7 @@
 
 	if (tr_flags & TR_KEEPIMPLANTS)
 		for(var/X in implants)
-			var/obj/item/implant/IMP = X
+			var/obj/item/weapon/implant/IMP = X
 			stored_implants += IMP
 			IMP.removed(src, 1, 1)
 
@@ -238,7 +238,7 @@
 	//re-add implants to new mob
 	if (tr_flags & TR_KEEPIMPLANTS)
 		for(var/Y in implants)
-			var/obj/item/implant/IMP = Y
+			var/obj/item/weapon/implant/IMP = Y
 			IMP.implant(O, null, 1)
 
 	if(tr_flags & TR_KEEPORGANS)
@@ -329,14 +329,16 @@
 			continue
 		loc_landmark = sloc.loc
 	if(!loc_landmark)
-		for(var/obj/effect/landmark/tripai/L in GLOB.landmarks_list)
-			if(locate(/mob/living/silicon/ai) in L.loc)
-				continue
-			loc_landmark = L.loc
+		for(var/obj/effect/landmark/tripai in GLOB.landmarks_list)
+			if(tripai.name == "tripai")
+				if(locate(/mob/living/silicon/ai) in tripai.loc)
+					continue
+				loc_landmark = tripai.loc
 	if(!loc_landmark)
 		to_chat(src, "Oh god sorry we can't find an unoccupied AI spawn location, so we're spawning you on top of someone.")
-		for(var/obj/effect/landmark/start/ai/sloc in GLOB.landmarks_list)
-			loc_landmark = sloc.loc
+		for(var/obj/effect/landmark/start/sloc in GLOB.landmarks_list)
+			if (sloc.name == "AI")
+				loc_landmark = sloc.loc
 
 	if(!transfer_after)
 		mind.active = FALSE
@@ -381,7 +383,7 @@
 	else if(transfer_after)
 		R.key = key
 
-	if (CONFIG_GET(flag/rename_cyborg))
+	if (config.rename_cyborg)
 		R.rename_self("cyborg")
 
 	if(R.mmi)
@@ -491,30 +493,6 @@
 
 	to_chat(new_corgi, "<B>You are now a Corgi. Yap Yap!</B>")
 	. = new_corgi
-	qdel(src)
-
-/mob/living/carbon/proc/gorillize()
-	if(notransform)
-		return
-
-	var/Itemlist = get_equipped_items()
-	Itemlist += held_items
-	for(var/obj/item/W in Itemlist)
-		dropItemToGround(W, TRUE)
-
-	regenerate_icons()
-	notransform = TRUE
-	canmove = FALSE
-	icon = null
-	invisibility = INVISIBILITY_MAXIMUM
-	var/mob/living/simple_animal/hostile/gorilla/new_gorilla = new (get_turf(src))
-	new_gorilla.a_intent = INTENT_HARM
-	if(mind)
-		mind.transfer_to(new_gorilla)
-	else
-		new_gorilla.key = key
-	to_chat(new_gorilla, "<B>You are now a gorilla. Ooga ooga!</B>")
-	. = new_gorilla
 	qdel(src)
 
 /mob/living/carbon/human/Animalize()

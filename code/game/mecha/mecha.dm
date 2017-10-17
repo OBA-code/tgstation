@@ -23,19 +23,18 @@
 	layer = BELOW_MOB_LAYER//icon draw layer
 	infra_luminosity = 15 //byond implementation is bugged.
 	force = 5
-	flags_1 = HEAR_1
+	flags = HEAR
 	var/can_move = 1
 	var/mob/living/carbon/occupant = null
 	var/step_in = 10 //make a step in step_in/10 sec.
 	var/dir_in = 2//What direction will the mech face when entered/powered on? Defaults to South.
 	var/step_energy_drain = 10
 	var/melee_energy_drain = 15
-	var/overload_step_energy_drain_min = 100
 	max_integrity = 300 //max_integrity is base health
 	var/deflect_chance = 10 //chance to deflect the incoming projectiles, hits, or lesser the effect of ex_act.
 	armor = list(melee = 20, bullet = 10, laser = 0, energy = 0, bomb = 0, bio = 0, rad = 0, fire = 100, acid = 100)
 	var/list/facing_modifiers = list(FRONT_ARMOUR = 1.5, SIDE_ARMOUR = 1, BACK_ARMOUR = 0.5)
-	var/obj/item/stock_parts/cell/cell
+	var/obj/item/weapon/stock_parts/cell/cell
 	var/state = 0
 	var/list/log = new
 	var/last_message = 0
@@ -203,19 +202,6 @@
 	GLOB.mechas_list -= src //global mech list
 	return ..()
 
-/obj/mecha/CheckParts(list/parts_list)
-	..()
-	var/obj/item/C = locate(/obj/item/stock_parts/cell) in contents
-	cell = C
-	var/obj/item/stock_parts/scanning_module/SM = locate() in contents
-	var/obj/item/stock_parts/capacitor/CP = locate() in contents
-	if(SM)
-		step_energy_drain = 20 - (5 * SM.rating) //10 is normal, so on lowest part its worse, on second its ok and on higher its real good up to 0 on best
-		qdel(SM)
-	if(CP)
-		armor["energy"] += (CP.rating * 10) //Each level of capacitor protects the mech against emp by 10%
-		qdel(CP)
-
 ////////////////////////
 ////// Helpers /////////
 ////////////////////////
@@ -224,7 +210,7 @@
 	internal_tank = new /obj/machinery/portable_atmospherics/canister/air(src)
 	return internal_tank
 
-/obj/mecha/proc/add_cell(var/obj/item/stock_parts/cell/C=null)
+/obj/mecha/proc/add_cell(var/obj/item/weapon/stock_parts/cell/C=null)
 	if(C)
 		C.forceMove(src)
 		cell = C
@@ -237,9 +223,9 @@
 	cabin_air = new
 	cabin_air.temperature = T20C
 	cabin_air.volume = 200
-	cabin_air.add_gases(/datum/gas/oxygen, /datum/gas/nitrogen)
-	cabin_air.gases[/datum/gas/oxygen][MOLES] = O2STANDARD*cabin_air.volume/(R_IDEAL_GAS_EQUATION*cabin_air.temperature)
-	cabin_air.gases[/datum/gas/nitrogen][MOLES] = N2STANDARD*cabin_air.volume/(R_IDEAL_GAS_EQUATION*cabin_air.temperature)
+	cabin_air.assert_gases("o2","n2")
+	cabin_air.gases["o2"][MOLES] = O2STANDARD*cabin_air.volume/(R_IDEAL_GAS_EQUATION*cabin_air.temperature)
+	cabin_air.gases["n2"][MOLES] = N2STANDARD*cabin_air.volume/(R_IDEAL_GAS_EQUATION*cabin_air.temperature)
 	return cabin_air
 
 /obj/mecha/proc/add_radio()
@@ -276,7 +262,7 @@
 	if(equipment && equipment.len)
 		to_chat(user, "It's equipped with:")
 		for(var/obj/item/mecha_parts/mecha_equipment/ME in equipment)
-			to_chat(user, "[icon2html(ME, user)] \A [ME].")
+			to_chat(user, "[bicon(ME)] [ME]")
 
 //processing internal damage, temperature, air regulation, alert updates, lights power use.
 /obj/mecha/process()
@@ -303,7 +289,7 @@
 		if(internal_damage & MECHA_INT_TANK_BREACH) //remove some air from internal tank
 			if(internal_tank)
 				var/datum/gas_mixture/int_tank_air = internal_tank.return_air()
-				var/datum/gas_mixture/leaked_gas = int_tank_air.remove_ratio(0.1)
+				var/datum/gas_mixture/leaked_gas = int_tank_air.remove_ratio(0.10)
 				if(loc)
 					loc.assume_air(leaked_gas)
 					air_update_turf()
@@ -435,7 +421,7 @@
 		target = safepick(view(3,target))
 		if(!target)
 			return
-	if(!Adjacent(target))
+	if(!target.Adjacent(src))
 		if(selected && selected.is_ranged())
 			if(selected.action(target,params))
 				selected.start_cooldown()
@@ -465,9 +451,6 @@
 	. = ..()
 	if(.)
 		events.fireEvent("onMove",get_turf(src))
-	if (internal_tank.disconnect()) // Something moved us and broke connection
-		occupant_message("<span class='warning'>Air port connection teared off!</span>")
-		log_message("Lost connection to gas port.")
 
 /obj/mecha/Process_Spacemove(var/movement_dir = 0)
 	. = ..()
@@ -491,7 +474,7 @@
 		user.forceMove(get_turf(src))
 		to_chat(user, "<span class='notice'>You climb out from [src].</span>")
 		return 0
-	if(internal_tank.connected_port)
+	if(connected_port)
 		if(world.time - last_message > 20)
 			occupant_message("<span class='warning'>Unable to move while connected to the air system port!</span>")
 			last_message = world.time
@@ -594,8 +577,7 @@
 ///////////////////////////////////
 
 /obj/mecha/proc/check_for_internal_damage(list/possible_int_damage,ignore_threshold=null)
-	if(!islist(possible_int_damage) || isemptylist(possible_int_damage))
-		return
+	if(!islist(possible_int_damage) || isemptylist(possible_int_damage)) return
 	if(prob(20))
 		if(ignore_threshold || obj_integrity*100/max_integrity < internal_damage_threshold)
 			for(var/T in possible_int_damage)
@@ -614,7 +596,7 @@
 /obj/mecha/proc/setInternalDamage(int_dam_flag)
 	internal_damage |= int_dam_flag
 	log_append_to_last("Internal damage of type [int_dam_flag].",1)
-	SEND_SOUND(occupant, sound('sound/machines/warning-buzzer.ogg',wait=0))
+	occupant << sound('sound/machines/warning-buzzer.ogg',wait=0)
 	diag_hud_set_mechstat()
 	return
 
@@ -641,7 +623,7 @@
 	if(user.can_dominate_mechs)
 		examine(user) //Get diagnostic information!
 		for(var/obj/item/mecha_parts/mecha_tracking/B in trackers)
-			to_chat(user, "<span class='danger'>Warning: Tracking Beacon detected. Enter at your own risk. Beacon Data:</span>")
+			to_chat(user, "<span class='danger'>Warning: Tracking Beacon detected. Enter at your own risk. Beacon Data:")
 			to_chat(user, "[B.get_mecha_info()]")
 			break
 		//Nothing like a big, red link to make the player feel powerful!
@@ -654,7 +636,7 @@
 		var/can_control_mech = 0
 		for(var/obj/item/mecha_parts/mecha_tracking/ai_control/A in trackers)
 			can_control_mech = 1
-			to_chat(user, "<span class='notice'>[icon2html(src, user)] Status of [name]:</span>\n[A.get_mecha_info()]")
+			to_chat(user, "<span class='notice'>[bicon(src)] Status of [name]:</span>\n[A.get_mecha_info()]")
 			break
 		if(!can_control_mech)
 			to_chat(user, "<span class='warning'>You cannot control exosuits without AI control beacons installed.</span>")
@@ -693,7 +675,7 @@
 			AI.linked_core = new /obj/structure/AIcore/deactivated(AI.loc)
 			if(AI.can_dominate_mechs)
 				if(occupant) //Oh, I am sorry, were you using that?
-					to_chat(AI, "<span class='warning'>Pilot detected! Forced ejection initiated!</span>")
+					to_chat(AI, "<span class='warning'>Pilot detected! Forced ejection initiated!")
 					to_chat(occupant, "<span class='danger'>You have been forcibly ejected!</span>")
 					go_out(1) //IT IS MINE, NOW. SUCK IT, RD!
 			ai_enter_mech(AI, interaction)
@@ -709,7 +691,7 @@
 				to_chat(user, "<span class='warning'>[AI.name] is currently unresponsive, and cannot be uploaded.</span>")
 				return
 			if(occupant || dna_lock) //Normal AIs cannot steal mechs!
-				to_chat(user, "<span class='warning'>Access denied. [name] is [occupant ? "currently occupied" : "secured with a DNA lock"].</span>")
+				to_chat(user, "<span class='warning'>Access denied. [name] is [occupant ? "currently occupied" : "secured with a DNA lock"].")
 				return
 			AI.control_disabled = 0
 			AI.radio_enabled = 1
@@ -725,14 +707,14 @@
 	icon_state = initial(icon_state)
 	playsound(src, 'sound/machines/windowdoor.ogg', 50, 1)
 	if(!internal_damage)
-		SEND_SOUND(occupant, sound('sound/mecha/nominal.ogg',volume=50))
+		occupant << sound('sound/mecha/nominal.ogg',volume=50)
 	AI.cancel_camera()
 	AI.controlled_mech = src
 	AI.remote_control = src
 	AI.canmove = 1 //Much easier than adding AI checks! Be sure to set this back to 0 if you decide to allow an AI to leave a mech somehow.
 	AI.can_shunt = 0 //ONE AI ENTERS. NO AI LEAVES.
-	to_chat(AI, AI.can_dominate_mechs ? "<span class='announce'>Takeover of [name] complete! You are now loaded onto the onboard computer. Do not attempt to leave the station sector!</span>" :\
-		"<span class='notice'>You have been uploaded to a mech's onboard computer.</span>")
+	to_chat(AI, "[AI.can_dominate_mechs ? "<span class='announce'>Takeover of [name] complete! You are now loaded onto the onboard computer. Do not attempt to leave the station sector!</span>" \
+	: "<span class='notice'>You have been uploaded to a mech's onboard computer."]")
 	to_chat(AI, "<span class='reallybig boldnotice'>Use Middle-Mouse to activate mech functions and equipment. Click normally for AI interactions.</span>")
 	if(interaction == AI_TRANS_FROM_CARD)
 		GrantActions(AI, FALSE) //No eject/return to core action for AI uploaded by card
@@ -781,11 +763,39 @@
 		. = t_air.return_pressure()
 	return
 
-/obj/mecha/return_temperature()
+
+/obj/mecha/proc/return_temperature()
 	var/datum/gas_mixture/t_air = return_air()
 	if(t_air)
 		. = t_air.return_temperature()
 	return
+
+/obj/mecha/proc/connect(obj/machinery/atmospherics/components/unary/portables_connector/new_port)
+	//Make sure not already connected to something else
+	if(connected_port || !new_port || new_port.connected_device)
+		return 0
+
+	//Make sure are close enough for a valid connection
+	if(new_port.loc != loc)
+		return 0
+
+	//Perform the connection
+	connected_port = new_port
+	connected_port.connected_device = src
+	var/datum/pipeline/connected_port_parent = connected_port.PARENT1
+	connected_port_parent.reconcile_air()
+
+	log_message("Connected to gas port.")
+	return 1
+
+/obj/mecha/proc/disconnect()
+	if(!connected_port)
+		return 0
+
+	connected_port.connected_device = null
+	connected_port = null
+	log_message("Disconnected from gas port.")
+	return 1
 
 /obj/mecha/portableConnectorReturnAir()
 	return internal_tank.return_air()
@@ -850,7 +860,7 @@
 		setDir(dir_in)
 		playsound(src, 'sound/machines/windowdoor.ogg', 50, 1)
 		if(!internal_damage)
-			SEND_SOUND(occupant, sound('sound/mecha/nominal.ogg',volume=50))
+			occupant << sound('sound/mecha/nominal.ogg',volume=50)
 		return 1
 	else
 		return 0
@@ -904,7 +914,7 @@
 	setDir(dir_in)
 	log_message("[mmi_as_oc] moved in as pilot.")
 	if(!internal_damage)
-		SEND_SOUND(occupant, sound('sound/mecha/nominal.ogg',volume=50))
+		occupant << sound('sound/mecha/nominal.ogg',volume=50)
 	GrantActions(brainmob)
 	return TRUE
 
@@ -994,7 +1004,7 @@
 /obj/mecha/proc/occupant_message(message as text)
 	if(message)
 		if(occupant && occupant.client)
-			to_chat(occupant, "[icon2html(src, occupant)] [message]")
+			to_chat(occupant, "[bicon(src)] [message]")
 	return
 
 /obj/mecha/proc/log_message(message as text,red=null)
@@ -1035,6 +1045,9 @@ GLOBAL_VAR_INIT(year_integer, text2num(year)) // = 2013???
 	if(!isnull(get_charge()))
 		cell.give(amount)
 		return 1
+	return 0
+
+/obj/mecha/allow_drop()
 	return 0
 
 /obj/mecha/update_remote_sight(mob/living/user)

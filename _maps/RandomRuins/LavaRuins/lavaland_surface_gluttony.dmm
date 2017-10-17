@@ -1,4 +1,4 @@
-//MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE 
+//MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE
 "a" = (
 /turf/closed/mineral/volcanic/lava_land_surface,
 /area/lavaland/surface/outdoors)
@@ -6,95 +6,163 @@
 /turf/open/floor/plating/asteroid/basalt/lava_land_surface,
 /area/lavaland/surface/outdoors)
 "c" = (
-/turf/open/lava/smooth/lava_land_surface,
+/turf/open/floor/plating/lava/smooth/lava_land_surface,
 /area/lavaland/surface/outdoors)
+"d" = (
+/turf/closed/indestructible/riveted/uranium{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
+/area/ruin/powered)
 "e" = (
-/turf/open/lava/smooth,
+/turf/open/floor/plating/lava/smooth,
 /area/ruin/powered/gluttony)
 "f" = (
-/obj/item/reagent_containers/syringe/gluttony,
-/turf/open/floor/plasteel/freezer,
+/obj/item/weapon/reagent_containers/syringe/gluttony,
+/turf/open/floor/plasteel/freezer{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
 /area/ruin/powered/gluttony)
 "g" = (
 /obj/effect/gluttony,
-/turf/open/floor/plasteel/freezer,
+/turf/open/floor/plasteel/freezer{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
 /area/ruin/powered/gluttony)
 "h" = (
-/obj/item/veilrender/vealrender,
-/turf/open/floor/plasteel/freezer,
+/obj/item/weapon/veilrender/vealrender,
+/turf/open/floor/plasteel/freezer{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
 /area/ruin/powered/gluttony)
 "i" = (
-/turf/open/floor/plasteel/freezer,
+/turf/open/floor/plasteel/freezer{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
 /area/ruin/powered/gluttony)
 "j" = (
 /obj/item/trash/plate,
-/turf/open/floor/plasteel/freezer,
+/turf/open/floor/plasteel/freezer{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
 /area/ruin/powered/gluttony)
+"k" = (
+/obj/machinery/door/airlock/uranium,
+/obj/structure/fans/tiny/invisible,
+/turf/open/floor/plasteel/freezer{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
+/area/ruin/powered)
 "l" = (
 /obj/item/trash/candy,
-/turf/open/floor/plasteel/freezer,
+/turf/open/floor/plasteel/freezer{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
 /area/ruin/powered/gluttony)
 "m" = (
 /obj/item/trash/raisins,
-/turf/open/floor/plasteel/freezer,
+/turf/open/floor/plasteel/freezer{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
 /area/ruin/powered/gluttony)
 "n" = (
 /obj/item/trash/pistachios,
-/turf/open/floor/plasteel/freezer,
+/turf/open/floor/plasteel/freezer{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
 /area/ruin/powered/gluttony)
 "o" = (
 /obj/item/trash/popcorn,
-/turf/open/floor/plasteel/freezer,
+/turf/open/floor/plasteel/freezer{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
 /area/ruin/powered/gluttony)
 "p" = (
 /obj/item/trash/semki,
-/turf/open/floor/plasteel/freezer,
+/turf/open/floor/plasteel/freezer{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
 /area/ruin/powered/gluttony)
 "q" = (
 /obj/item/trash/syndi_cakes,
-/turf/open/floor/plasteel/freezer,
+/turf/open/floor/plasteel/freezer{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
 /area/ruin/powered/gluttony)
 "r" = (
 /obj/effect/gluttony,
 /obj/machinery/light/small{
 	dir = 1
 	},
-/turf/open/floor/plasteel/freezer,
+/turf/open/floor/plasteel/freezer{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
+/area/ruin/powered/gluttony)
+"s" = (
+/obj/effect/gluttony,
+/obj/machinery/light/small{
+	dir = 1
+	},
+/turf/open/floor/plasteel/freezer{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
 /area/ruin/powered/gluttony)
 "t" = (
 /obj/machinery/light/small{
 	dir = 1
 	},
-/turf/open/floor/plasteel/freezer,
+/turf/open/floor/plasteel/freezer{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
+/area/ruin/powered/gluttony)
+"u" = (
+/obj/effect/gluttony,
+/obj/machinery/light/small{
+	dir = 1
+	},
+/turf/open/floor/plasteel/freezer{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
 /area/ruin/powered/gluttony)
 "v" = (
 /obj/machinery/light/small,
-/turf/open/floor/plasteel/freezer,
+/turf/open/floor/plasteel/freezer{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
+/area/ruin/powered/gluttony)
+"w" = (
+/obj/machinery/light/small,
+/turf/open/floor/plasteel/freezer{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
+/area/ruin/powered/gluttony)
+"x" = (
+/obj/machinery/light/small,
+/turf/open/floor/plasteel/freezer{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
+/area/ruin/powered/gluttony)
+"y" = (
+/obj/machinery/light/small,
+/turf/open/floor/plasteel/freezer{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
 /area/ruin/powered/gluttony)
 "z" = (
 /obj/item/trash/plate,
 /obj/machinery/light/small{
 	dir = 8
 	},
-/turf/open/floor/plasteel/freezer,
+/turf/open/floor/plasteel/freezer{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
 /area/ruin/powered/gluttony)
 "A" = (
 /obj/machinery/light/small{
 	dir = 4
 	},
-/turf/open/floor/plasteel/freezer,
-/area/ruin/powered/gluttony)
-"D" = (
-/obj/effect/baseturf_helper/lava_land/surface,
-/turf/open/floor/plasteel/freezer,
-/area/ruin/powered/gluttony)
-"R" = (
-/turf/closed/indestructible/riveted/uranium,
-/area/ruin/powered/gluttony)
-"S" = (
-/obj/machinery/door/airlock/uranium,
-/obj/structure/fans/tiny/invisible,
-/turf/open/floor/plasteel/freezer,
+/turf/open/floor/plasteel/freezer{
+	baseturf = /turf/open/floor/plating/lava/smooth
+	},
 /area/ruin/powered/gluttony)
 
 (1,1,1) = {"
@@ -172,11 +240,11 @@ b
 b
 b
 c
-R
-R
-S
-R
-R
+d
+d
+k
+d
+d
 c
 b
 a
@@ -194,11 +262,11 @@ a
 b
 b
 c
-R
+d
 h
 i
 o
-R
+d
 c
 b
 a
@@ -216,11 +284,11 @@ a
 b
 b
 c
-R
+d
 i
-D
+i
 v
-R
+d
 c
 b
 b
@@ -238,11 +306,11 @@ b
 b
 b
 c
-R
+d
 i
 l
 i
-R
+d
 c
 b
 b
@@ -260,11 +328,11 @@ c
 c
 c
 c
-R
+d
 t
 i
 m
-R
+d
 c
 c
 c
@@ -277,21 +345,21 @@ b
 b
 b
 c
-R
-R
-R
-R
-R
-R
+d
+d
+d
+d
+d
+d
 g
 m
-v
-R
-R
-R
-R
-R
-R
+w
+d
+d
+d
+d
+d
+d
 c
 b
 "}
@@ -299,9 +367,9 @@ b
 a
 b
 c
-R
+d
 e
-R
+d
 r
 g
 g
@@ -313,7 +381,7 @@ i
 z
 l
 i
-R
+d
 c
 b
 "}
@@ -321,7 +389,7 @@ b
 a
 b
 c
-R
+d
 f
 g
 g
@@ -335,7 +403,7 @@ i
 i
 i
 i
-S
+k
 b
 b
 "}
@@ -343,10 +411,10 @@ b
 a
 b
 c
-R
+d
 e
-R
-r
+d
+s
 g
 g
 g
@@ -357,7 +425,7 @@ l
 A
 i
 q
-R
+d
 c
 b
 "}
@@ -365,21 +433,21 @@ b
 a
 b
 c
-R
-R
-R
-R
-R
-R
+d
+d
+d
+d
+d
+d
 g
 i
-v
-R
-R
-R
-R
-R
-R
+x
+d
+d
+d
+d
+d
+d
 c
 b
 "}
@@ -392,11 +460,11 @@ c
 c
 c
 c
-R
-r
+d
+u
 i
 i
-R
+d
 c
 c
 c
@@ -414,11 +482,11 @@ b
 b
 b
 c
-R
+d
 i
 g
 i
-R
+d
 c
 b
 b
@@ -436,11 +504,11 @@ b
 b
 b
 c
-R
+d
 j
 i
-v
-R
+y
+d
 c
 b
 b
@@ -458,11 +526,11 @@ b
 b
 b
 c
-R
+d
 i
 n
 i
-R
+d
 c
 b
 b
@@ -480,11 +548,11 @@ b
 b
 b
 c
-R
-R
-S
-R
-R
+d
+d
+k
+d
+d
 c
 b
 b

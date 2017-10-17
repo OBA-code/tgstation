@@ -4,7 +4,6 @@
 	icon = 'icons/obj/closet.dmi'
 	icon_state = "generic"
 	density = TRUE
-	layer = BELOW_OBJ_LAYER
 	var/icon_door = null
 	var/icon_door_override = FALSE //override to have open overlay use icon different to its base's
 	var/secure = FALSE //secure locker or not, also used if overriding a non-secure locker with a secure door overlay to add fancy lights
@@ -16,8 +15,8 @@
 	max_integrity = 200
 	integrity_failure = 50
 	armor = list(melee = 20, bullet = 10, laser = 10, energy = 0, bomb = 10, bio = 0, rad = 0, fire = 70, acid = 60)
-	var/breakout_time = 1200
-	var/message_cooldown
+	var/breakout_time = 2
+	var/lastbang
 	var/can_weld_shut = TRUE
 	var/horizontal = FALSE
 	var/allow_objects = FALSE
@@ -26,7 +25,7 @@
 	var/max_mob_size = MOB_SIZE_HUMAN //Biggest mob_size accepted by the container
 	var/mob_storage_capacity = 3 // how many human sized mob/living can fit together inside a closet.
 	var/storage_capacity = 30 //This is so that someone can't pack hundreds of items in a locker/crate then open it in a populated area to crash clients.
-	var/cutting_tool = /obj/item/weldingtool
+	var/cutting_tool = /obj/item/weapon/weldingtool
 	var/open_sound = 'sound/machines/click.ogg'
 	var/close_sound = 'sound/machines/click.ogg'
 	var/cutting_sound = 'sound/items/welder.ogg'
@@ -39,7 +38,7 @@
 /obj/structure/closet/Initialize(mapload)
 	if(mapload && !opened)		// if closed, any item at the crate's loc is put in the contents
 		addtimer(CALLBACK(src, .proc/take_contents), 0)
-	. = ..()
+	..()
 	update_icon()
 	PopulateContents()
 
@@ -54,7 +53,6 @@
 /obj/structure/closet/update_icon()
 	cut_overlays()
 	if(!opened)
-		layer = OBJ_LAYER
 		if(icon_door)
 			add_overlay("[icon_door]_door")
 		else
@@ -71,7 +69,6 @@
 				add_overlay("off")
 
 	else
-		layer = BELOW_OBJ_LAYER
 		if(icon_door_override)
 			add_overlay("[icon_door]_open")
 		else
@@ -79,12 +76,8 @@
 
 /obj/structure/closet/examine(mob/user)
 	..()
-	if(welded)
-		to_chat(user, "<span class='notice'>It's welded shut.</span>")
 	if(anchored)
-		to_chat(user, "<span class='notice'>It is <b>bolted</b> to the ground.</span>")
-	if(opened)
-		to_chat(user, "<span class='notice'>The parts are <b>welded</b> together.</span>")
+		to_chat(user, "It is anchored to the ground.")
 	else if(secure && !opened)
 		to_chat(user, "<span class='notice'>Alt-click to [locked ? "unlock" : "lock"].</span>")
 
@@ -117,17 +110,17 @@
 	return 1
 
 /obj/structure/closet/proc/dump_contents()
-	var/atom/L = drop_location()
+	var/turf/T = get_turf(src)
 	for(var/atom/movable/AM in src)
-		AM.forceMove(L)
+		AM.forceMove(T)
 		if(throwing) // you keep some momentum when getting out of a thrown closet
 			step(AM, dir)
 	if(throwing)
 		throwing.finalize(FALSE)
 
 /obj/structure/closet/proc/take_contents()
-	var/atom/L = drop_location()
-	for(var/atom/movable/AM in L)
+	var/turf/T = get_turf(src)
+	for(var/atom/movable/AM in T)
 		if(AM != src && insert(AM) == -1) // limit reached
 			break
 
@@ -171,7 +164,7 @@
 			return
 		if(!allow_dense && AM.density)
 			return
-		if(AM.anchored || AM.has_buckled_mobs() || (AM.flags_1 & NODROP_1))
+		if(AM.anchored || AM.has_buckled_mobs() || (AM.flags & NODROP))
 			return
 	else
 		return
@@ -200,21 +193,21 @@
 		return open(user)
 
 /obj/structure/closet/deconstruct(disassembled = TRUE)
-	if(ispath(material_drop) && material_drop_amount && !(flags_1 & NODECONSTRUCT_1))
+	if(ispath(material_drop) && material_drop_amount && !(flags & NODECONSTRUCT))
 		new material_drop(loc, material_drop_amount)
 	qdel(src)
 
 /obj/structure/closet/obj_break(damage_flag)
-	if(!broken && !(flags_1 & NODECONSTRUCT_1))
+	if(!broken && !(flags & NODECONSTRUCT))
 		bust_open()
 
-/obj/structure/closet/attackby(obj/item/W, mob/user, params)
+/obj/structure/closet/attackby(obj/item/weapon/W, mob/user, params)
 	if(user in src)
 		return
 	if(opened)
 		if(istype(W, cutting_tool))
-			if(istype(W, /obj/item/weldingtool))
-				var/obj/item/weldingtool/WT = W
+			if(istype(W, /obj/item/weapon/weldingtool))
+				var/obj/item/weapon/weldingtool/WT = W
 				if(WT.remove_fuel(0, user))
 					to_chat(user, "<span class='notice'>You begin cutting \the [src] apart...</span>")
 					playsound(loc, cutting_sound, 40, 1)
@@ -232,10 +225,11 @@
 									"<span class='notice'>You cut \the [src] apart with \the [W].</span>")
 				deconstruct(TRUE)
 				return 0
-		if(user.transferItemToLoc(W, drop_location())) // so we put in unlit welder too
+		if(user.drop_item()) // so we put in unlit welder too
+			W.forceMove(loc)
 			return 1
-	else if(istype(W, /obj/item/weldingtool) && can_weld_shut)
-		var/obj/item/weldingtool/WT = W
+	else if(istype(W, /obj/item/weapon/weldingtool) && can_weld_shut)
+		var/obj/item/weapon/weldingtool/WT = W
 		if(!WT.remove_fuel(0, user))
 			return
 		to_chat(user, "<span class='notice'>You begin [welded ? "unwelding":"welding"] \the [src]...</span>")
@@ -249,7 +243,7 @@
 							"<span class='notice'>You [welded ? "weld" : "unwelded"] \the [src] with \the [WT].</span>",
 							"<span class='italics'>You hear welding.</span>")
 			update_icon()
-	else if(istype(W, /obj/item/wrench) && anchorable)
+	else if(istype(W, /obj/item/weapon/wrench) && anchorable)
 		if(isinspace() && !anchored)
 			return
 		anchored = !anchored
@@ -257,7 +251,7 @@
 		user.visible_message("<span class='notice'>[user] [anchored ? "anchored" : "unanchored"] \the [src] [anchored ? "to" : "from"] the ground.</span>", \
 						"<span class='notice'>You [anchored ? "anchored" : "unanchored"] \the [src] [anchored ? "to" : "from"] the ground.</span>", \
 						"<span class='italics'>You hear a ratchet.</span>")
-	else if(user.a_intent != INTENT_HARM && !(W.flags_1 & NOBLUDGEON_1))
+	else if(user.a_intent != INTENT_HARM && !(W.flags & NOBLUDGEON))
 		if(W.GetID() || !toggle(user))
 			togglelock(user)
 		return 1
@@ -306,12 +300,14 @@
 /obj/structure/closet/relaymove(mob/user)
 	if(user.stat || !isturf(loc) || !isliving(user))
 		return
-	if(locked)
-		if(message_cooldown <= world.time)
-			message_cooldown = world.time + 50
-			to_chat(user, "<span class='warning'>[src]'s door won't budge!</span>")
-		return
-	container_resist()
+	var/mob/living/L = user
+	if(!open())
+		if(L.last_special <= world.time)
+			container_resist(L)
+		if(world.time > lastbang+5)
+			lastbang = world.time
+			for(var/mob/M in get_hearers_in_view(src, null))
+				M.show_message("<FONT size=[max(0, 5 - get_dist(src, M))]>BANG, bang!</FONT>", 2)
 
 /obj/structure/closet/attack_hand(mob/user)
 	..()
@@ -371,10 +367,9 @@
 	//okay, so the closet is either welded or locked... resist!!!
 	user.changeNext_move(CLICK_CD_BREAKOUT)
 	user.last_special = world.time + CLICK_CD_BREAKOUT
-	user.visible_message("<span class='warning'>[src] begins to shake violently!</span>", \
-		"<span class='notice'>You lean on the back of [src] and start pushing the door open... (this will take about [DisplayTimeText(breakout_time)].)</span>", \
-		"<span class='italics'>You hear banging from [src].</span>")
-	if(do_after(user,(breakout_time), target = src))
+	to_chat(user, "<span class='notice'>You lean on the back of [src] and start pushing the door open.</span>")
+	visible_message("<span class='warning'>[src] begins to shake violently!</span>")
+	if(do_after(user,(breakout_time * 60 * 10), target = src)) //minutes * 60seconds * 10deciseconds
 		if(!user || user.stat != CONSCIOUS || user.loc != src || opened || (!locked && !welded) )
 			return
 		//we check after a while whether there is a point of resisting anymore and whether the user is capable of resisting
@@ -393,7 +388,7 @@
 
 /obj/structure/closet/AltClick(mob/user)
 	..()
-	if(!user.canUseTopic(src, be_close=TRUE) || !isturf(loc))
+	if(!user.canUseTopic(src, be_close=TRUE))
 		to_chat(user, "<span class='warning'>You can't do that right now!</span>")
 		return
 	if(opened || !secure)
@@ -453,10 +448,3 @@
 /obj/structure/closet/singularity_act()
 	dump_contents()
 	..()
-
-/obj/structure/closet/AllowDrop()
-	return TRUE
-
-
-/obj/structure/closet/return_temperature()
-	return

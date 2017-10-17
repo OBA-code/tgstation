@@ -4,7 +4,6 @@
 	name = "stacking machine console"
 	icon = 'icons/obj/machines/mining_machines.dmi'
 	icon_state = "console"
-	desc = "Controls a stacking machine... in theory."
 	density = FALSE
 	anchored = TRUE
 	var/obj/machinery/mineral/stacking_machine/machine = null
@@ -43,8 +42,7 @@
 	usr.set_machine(src)
 	src.add_fingerprint(usr)
 	if(href_list["release"])
-		if(!(text2path(href_list["release"]) in machine.stack_list))
-			return //someone tried to spawn materials by spoofing hrefs
+		if(!(text2path(href_list["release"]) in machine.stack_list)) return //someone tried to spawn materials by spoofing hrefs
 		var/obj/item/stack/sheet/inp = machine.stack_list[text2path(href_list["release"])]
 		var/obj/item/stack/sheet/out = new inp.type()
 		out.amount = inp.amount
@@ -62,7 +60,6 @@
 	name = "stacking machine"
 	icon = 'icons/obj/machines/mining_machines.dmi'
 	icon_state = "stacker"
-	desc = "A machine that automatically stacks acquired materials. Controlled by a nearby console."
 	density = TRUE
 	anchored = TRUE
 	var/obj/machinery/mineral/stacking_unit_console/CONSOLE

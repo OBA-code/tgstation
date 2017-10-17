@@ -144,9 +144,6 @@ TOGGLE_CHECKBOX(/datum/verbs/menu/Settings/Sound, togglemidis)()
 	else
 		to_chat(usr, "You will no longer hear sounds uploaded by admins")
 		usr.stop_sound_channel(CHANNEL_ADMIN)
-		var/client/C = usr.client
-		if(C && C.chatOutput && !C.chatOutput.broken && C.chatOutput.loaded)
-			C.chatOutput.sendMusic(" ")
 	SSblackbox.add_details("preferences_verb","Toggle Hearing Midis|[usr.client.prefs.toggles & SOUND_MIDI]") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
 /datum/verbs/menu/Settings/Sound/togglemidis/Get_checked(client/C)
 	return C.prefs.toggles & SOUND_MIDI
@@ -177,8 +174,8 @@ TOGGLE_CHECKBOX(/datum/verbs/menu/Settings/Sound, Toggle_Soundscape)()
 		to_chat(usr, "You will now hear ambient sounds.")
 	else
 		to_chat(usr, "You will no longer hear ambient sounds.")
-		usr.stop_sound_channel(CHANNEL_AMBIENCE)
-		usr.stop_sound_channel(CHANNEL_BUZZ)
+		usr << sound(null, repeat = 0, wait = 0, volume = 0, channel = 1)
+		usr << sound(null, repeat = 0, wait = 0, volume = 0, channel = 2)
 	SSblackbox.add_details("preferences_verb","Toggle Ambience|[usr.client.prefs.toggles & SOUND_AMBIENCE]") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
 /datum/verbs/menu/Settings/Sound/Toggle_Soundscape/Get_checked(client/C)
 	return C.prefs.toggles & SOUND_AMBIENCE
@@ -194,7 +191,7 @@ TOGGLE_CHECKBOX(/datum/verbs/menu/Settings/Sound, toggle_ship_ambience)()
 		to_chat(usr, "You will now hear ship ambience.")
 	else
 		to_chat(usr, "You will no longer hear ship ambience.")
-		usr.stop_sound_channel(CHANNEL_BUZZ)
+		usr << sound(null, repeat = 0, wait = 0, volume = 0, channel = 2)
 		usr.client.ambience_playing = 0
 	SSblackbox.add_details("preferences_verb", "Toggle Ship Ambience|[usr.client.prefs.toggles & SOUND_SHIP_AMBIENCE]") //If you are copy-pasting this, I bet you read this comment expecting to see the same thing :^)
 /datum/verbs/menu/Settings/Sound/toggle_ship_ambience/Get_checked(client/C)
@@ -232,10 +229,7 @@ TOGGLE_CHECKBOX(/datum/verbs/menu/Settings/Sound, toggleprayersounds)()
 	set name = "Stop Sounds"
 	set category = "Preferences"
 	set desc = "Stop Current Sounds"
-	SEND_SOUND(usr, sound(null))
-	var/client/C = usr.client
-	if(C && C.chatOutput && !C.chatOutput.broken && C.chatOutput.loaded)
-		C.chatOutput.sendMusic(" ")
+	usr << sound(null)
 	SSblackbox.add_details("preferences_verb","Stop Self Sounds") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
 
 
@@ -391,8 +385,7 @@ GLOBAL_LIST_INIT(ghost_orbits, list(GHOST_ORBIT_CIRCLE,GHOST_ORBIT_TRIANGLE,GHOS
 	set name = "Show/Hide Radio Chatter"
 	set category = "Preferences"
 	set desc = "Toggle seeing radiochatter from nearby radios and speakers"
-	if(!holder)
-		return
+	if(!holder) return
 	prefs.chat_toggles ^= CHAT_RADIO
 	prefs.save_preferences()
 	to_chat(usr, "You will [(prefs.chat_toggles & CHAT_RADIO) ? "now" : "no longer"] see radio chatter from nearby radios or speakers")

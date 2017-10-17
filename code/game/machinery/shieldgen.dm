@@ -10,9 +10,9 @@
 	max_integrity = 200 //The shield can only take so much beating (prevents perma-prisons)
 	CanAtmosPass = ATMOS_PASS_DENSITY
 
-/obj/structure/emergency_shield/Initialize()
-	. = ..()
-	setDir(pick(GLOB.cardinals))
+/obj/structure/emergency_shield/New()
+	src.setDir(pick(1,2,3,4))
+	..()
 	air_update_turf(1)
 
 /obj/structure/emergency_shield/Destroy()
@@ -55,10 +55,10 @@
 
 /obj/structure/emergency_shield/invoker
 	name = "Invoker's Shield"
-	desc = "A weak shield summoned by cultists to protect them while they carry out delicate rituals."
+	desc = "A weak shield summoned by cultists to protect them while they carry out delicate rituals"
 	color = "#FF0000"
 	max_integrity = 20
-	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+	mouse_opacity = 0
 
 /obj/structure/emergency_shield/invoker/emp_act(severity)
 	return
@@ -111,7 +111,7 @@
 
 
 /obj/machinery/shieldgen/deconstruct(disassembled = TRUE)
-	if(!(flags_1 & NODECONSTRUCT_1))
+	if(!(flags & NODECONSTRUCT))
 		if(!(stat && BROKEN))
 			stat |= BROKEN
 			locked = pick(0,1)
@@ -140,8 +140,8 @@
 			to_chat(user, "<span class='warning'>The device must first be secured to the floor!</span>")
 	return
 
-/obj/machinery/shieldgen/attackby(obj/item/W, mob/user, params)
-	if(istype(W, /obj/item/screwdriver))
+/obj/machinery/shieldgen/attackby(obj/item/weapon/W, mob/user, params)
+	if(istype(W, /obj/item/weapon/screwdriver))
 		playsound(src.loc, W.usesound, 100, 1)
 		panel_open = !panel_open
 		if(panel_open)
@@ -163,7 +163,7 @@
 			to_chat(user, "<span class='notice'>You repair \the [src].</span>")
 			update_icon()
 
-	else if(istype(W, /obj/item/wrench))
+	else if(istype(W, /obj/item/weapon/wrench))
 		if(locked)
 			to_chat(user, "<span class='warning'>The bolts are covered! Unlocking this would retract the covers.</span>")
 			return
@@ -180,25 +180,19 @@
 			anchored = FALSE
 
 	else if(W.GetID())
-		if(allowed(user) && !emagged)
+		if(allowed(user))
 			locked = !locked
 			to_chat(user, "<span class='notice'>You [locked ? "lock" : "unlock"] the controls.</span>")
-		else if(emagged)
-			to_chat(user, "<span class='danger'>Error, access controller damaged!</span>")
 		else
 			to_chat(user, "<span class='danger'>Access denied.</span>")
 
 	else
 		return ..()
 
-/obj/machinery/shieldgen/emag_act(mob/user)
-	if(emagged)
-		to_chat(user, "<span class='warning'>The access controller is damaged!</span>")
-		return
-	emagged = TRUE
-	locked = FALSE
-	playsound(src, "sparks", 100, 1)
-	to_chat(user, "<span class='warning'>You short out the access controller.</span>")
+/obj/machinery/shieldgen/emag_act()
+	if(!(stat & BROKEN))
+		stat |= BROKEN
+		update_icon()
 
 /obj/machinery/shieldgen/update_icon()
 	if(active)
@@ -216,7 +210,7 @@
 	anchored = FALSE
 	density = TRUE
 	req_access = list(ACCESS_TELEPORTER)
-	flags_1 = CONDUCT_1
+	flags = CONDUCT
 	use_power = NO_POWER_USE
 	max_integrity = 300
 	var/active = FALSE
@@ -339,15 +333,13 @@
 	return ..()
 
 /obj/machinery/shieldwallgen/attackby(obj/item/W, mob/user, params)
-	if(istype(W, /obj/item/wrench))
+	if(istype(W, /obj/item/weapon/wrench))
 		default_unfasten_wrench(user, W, 0)
 
 	else if(W.GetID())
-		if(allowed(user) && !emagged)
+		if(allowed(user))
 			locked = !locked
 			to_chat(user, "<span class='notice'>You [src.locked ? "lock" : "unlock"] the controls.</span>")
-		else if(emagged)
-			to_chat(user, "<span class='danger'>Error, access controller damaged!</span>")
 		else
 			to_chat(user, "<span class='danger'>Access denied.</span>")
 
@@ -380,14 +372,6 @@
 		update_activity()
 	add_fingerprint(user)
 
-/obj/machinery/shieldwallgen/emag_act(mob/user)
-	if(emagged)
-		to_chat(user, "<span class='warning'>The access controller is damaged!</span>")
-		return
-	emagged = TRUE
-	locked = FALSE
-	playsound(src, "sparks", 100, 1)
-	to_chat(user, "<span class='warning'>You short out the access controller.</span>")
 
 //////////////Containment Field START
 /obj/machinery/shieldwall

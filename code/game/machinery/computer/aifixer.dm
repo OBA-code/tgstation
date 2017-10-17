@@ -4,13 +4,13 @@
 	req_access = list(ACCESS_CAPTAIN, ACCESS_ROBOTICS, ACCESS_HEADS)
 	var/mob/living/silicon/ai/occupier = null
 	var/active = 0
-	circuit = /obj/item/circuitboard/computer/aifixer
+	circuit = /obj/item/weapon/circuitboard/computer/aifixer
 	icon_keyboard = "tech_key"
 	icon_screen = "ai-fixer"
 	light_color = LIGHT_COLOR_PINK
 
 /obj/machinery/computer/aifixer/attackby(obj/I, mob/user, params)
-	if(occupier && istype(I, /obj/item/screwdriver))
+	if(occupier && istype(I, /obj/item/weapon/screwdriver))
 		if(stat & (NOPOWER|BROKEN))
 			to_chat(user, "<span class='warning'>The screws on [name]'s screen won't budge.</span>")
 		else
@@ -56,7 +56,7 @@
 
 		dat += "<b>Laws:</b><br>[laws]<br>"
 
-		if (src.occupier.stat == DEAD)
+		if (src.occupier.stat == 2)
 			dat += "<span class='bad'>AI non-functional</span>"
 		else
 			dat += "<span class='good'>AI functional</span>"
@@ -136,7 +136,7 @@
 		if(occupier && !active)
 			to_chat(occupier, "You have been downloaded to a mobile storage device. Still no remote access.")
 			to_chat(user, "<span class='boldnotice'>Transfer successful</span>: [occupier.name] ([rand(1000,9999)].exe) removed from host terminal and stored within local memory.")
-			occupier.forceMove(card)
+			occupier.loc = card
 			card.AI = occupier
 			occupier = null
 			update_icon()

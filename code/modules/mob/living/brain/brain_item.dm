@@ -6,7 +6,7 @@
 	throw_range = 5
 	layer = ABOVE_MOB_LAYER
 	zone = "head"
-	slot = ORGAN_SLOT_BRAIN
+	slot = "brain"
 	vital = TRUE
 	origin_tech = "biotech=5"
 	attack_verb = list("attacked", "slapped", "whacked")
@@ -18,12 +18,12 @@
 	vital = FALSE
 	decoy_override = TRUE
 
-/obj/item/organ/brain/Insert(mob/living/carbon/C, special = 0,no_id_transfer = FALSE)
+/obj/item/organ/brain/Insert(mob/living/carbon/C, special = 0)
 	..()
 
 	name = "brain"
 
-	if(C.mind && C.mind.changeling && !no_id_transfer)	//congrats, you're trapped in a body you don't control
+	if(C.mind && C.mind.changeling)	//congrats, you're trapped in a body you don't control
 		if(brainmob && !(C.stat == DEAD || (C.status_flags & FAKEDEATH)))
 			to_chat(brainmob, "<span class = danger>You can't feel your body! You're still just a brain!</span>")
 		loc = C
@@ -44,9 +44,9 @@
 	//Update the body's icon so it doesnt appear debrained anymore
 	C.update_hair()
 
-/obj/item/organ/brain/Remove(mob/living/carbon/C, special = 0, no_id_transfer = FALSE)
+/obj/item/organ/brain/Remove(mob/living/carbon/C, special = 0)
 	..()
-	if((!gc_destroyed || (owner && !owner.gc_destroyed)) && !no_id_transfer)
+	if(!gc_destroyed || (owner && !owner.gc_destroyed))
 		transfer_identity(C)
 	C.update_hair()
 
@@ -70,7 +70,7 @@
 		C.dna.copy_dna(brainmob.stored_dna)
 		if(L.disabilities & NOCLONE)
 			brainmob.disabilities |= NOCLONE	//This is so you can't just decapitate a husked guy and clone them without needing to get a new body
-		var/obj/item/organ/zombie_infection/ZI = L.getorganslot(ORGAN_SLOT_ZOMBIE)
+		var/obj/item/organ/zombie_infection/ZI = L.getorganslot("zombie_infection")
 		if(ZI)
 			brainmob.set_species(ZI.old_species)	//For if the brain is cloned
 	if(L.mind && L.mind.current)
@@ -108,15 +108,16 @@
 	if(user.zone_selected != "head")
 		return ..()
 
-	if((C.head && (C.head.flags_cover & HEADCOVERSEYES)) || (C.wear_mask && (C.wear_mask.flags_cover & MASKCOVERSEYES)) || (C.glasses && (C.glasses.flags_1 & GLASSESCOVERSEYES)))
+	if((C.head && (C.head.flags_cover & HEADCOVERSEYES)) || (C.wear_mask && (C.wear_mask.flags_cover & MASKCOVERSEYES)) || (C.glasses && (C.glasses.flags & GLASSESCOVERSEYES)))
 		to_chat(user, "<span class='warning'>You're going to need to remove their head cover first!</span>")
 		return
 
 //since these people will be dead M != usr
 
 	if(!C.getorgan(/obj/item/organ/brain))
-		if(!C.get_bodypart("head") || !C.temporarilyRemoveItemFromInventory(src))
+		if(!C.get_bodypart("head"))
 			return
+		user.drop_item()
 		var/msg = "[C] has [src] inserted into [C.p_their()] head by [user]."
 		if(C == user)
 			msg = "[user] inserts [src] into [user.p_their()] head!"

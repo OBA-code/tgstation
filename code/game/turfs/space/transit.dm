@@ -2,7 +2,7 @@
 	icon_state = "black"
 	dir = SOUTH
 	baseturf = /turf/open/space/transit
-	flags_1 = NOJAUNT_1 //This line goes out to every wizard that ever managed to escape the den. I'm sorry.
+	flags = NOJAUNT //This line goes out to every wizard that ever managed to escape the den. I'm sorry.
 
 /turf/open/space/transit/get_smooth_underlay_icon(mutable_appearance/underlay_appearance, turf/asking_turf, adjacency_dir)
 	. = ..()
@@ -25,12 +25,10 @@
 	dir = EAST
 
 /turf/open/space/transit/Entered(atom/movable/AM, atom/OldLoc)
-	..()
 	if(!locate(/obj/structure/lattice) in src)
 		throw_atom(AM)
 
 /turf/open/space/transit/proc/throw_atom(atom/movable/AM)
-	set waitfor = FALSE
 	if(!AM || istype(AM, /obj/docking_port))
 		return
 	if(AM.loc != src) 	// Multi-tile objects are "in" multiple locs but its loc is it's true placement.
@@ -65,15 +63,15 @@
 			_y = min
 
 	var/turf/T = locate(_x, _y, _z)
-	AM.forceMove(T)
-
+	AM.loc = T
+	AM.newtonian_move(dir)
 
 /turf/open/space/transit/CanBuildHere()
 	return SSshuttle.is_in_shuttle_bounds(src)
 
 
 /turf/open/space/transit/Initialize()
-	. = ..()
+	..()
 	update_icon()
 	for(var/atom/movable/AM in src)
 		throw_atom(AM)

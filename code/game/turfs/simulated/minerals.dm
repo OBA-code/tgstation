@@ -30,13 +30,17 @@
 	pixel_y = -4
 	pixel_x = -4
 	icon = smooth_icon
-	. = ..()
+	..()
 	if (mineralType && mineralAmt && spread && spreadChance)
 		for(var/dir in GLOB.cardinals)
 			if(prob(spreadChance))
 				var/turf/T = get_step(src, dir)
 				if(istype(T, /turf/closed/mineral/random))
 					Spread(T)
+
+/turf/closed/mineral/shuttleRotate(rotation)
+	setDir(angle2dir(rotation+dir2angle(dir)))
+	queue_smooth(src)
 
 /turf/closed/mineral/get_smooth_underlay_icon(mutable_appearance/underlay_appearance, turf/asking_turf, adjacency_dir)
 	if(turf_type)
@@ -46,12 +50,12 @@
 	return ..()
 
 
-/turf/closed/mineral/attackby(obj/item/pickaxe/P, mob/user, params)
+/turf/closed/mineral/attackby(obj/item/weapon/pickaxe/P, mob/user, params)
 	if (!user.IsAdvancedToolUser())
 		to_chat(usr, "<span class='warning'>You don't have the dexterity to do this!</span>")
 		return
 
-	if (istype(P, /obj/item/pickaxe))
+	if (istype(P, /obj/item/weapon/pickaxe))
 		var/turf/T = user.loc
 		if (!isturf(T))
 			return
@@ -83,7 +87,7 @@
 	playsound(src, 'sound/effects/break_stone.ogg', 50, 1) //beautiful destruction
 
 /turf/closed/mineral/attack_animal(mob/living/simple_animal/user)
-	if((user.environment_smash & ENVIRONMENT_SMASH_WALLS) || (user.environment_smash & ENVIRONMENT_SMASH_RWALLS))
+	if(user.environment_smash >= 2)
 		gets_drilled()
 	..()
 
@@ -98,15 +102,21 @@
 	..()
 	if(ishuman(AM))
 		var/mob/living/carbon/human/H = AM
-		var/obj/item/I = H.is_holding_item_of_type(/obj/item/pickaxe)
+		var/obj/item/I = H.is_holding_item_of_type(/obj/item/weapon/pickaxe)
 		if(I)
 			attackby(I,H)
 		return
 	else if(iscyborg(AM))
 		var/mob/living/silicon/robot/R = AM
-		if(istype(R.module_active, /obj/item/pickaxe))
+		if(istype(R.module_active, /obj/item/weapon/pickaxe))
 			src.attackby(R.module_active,R)
 			return
+/*	else if(istype(AM, /obj/mecha))
+		var/obj/mecha/M = AM
+		if(istype(M.selected, /obj/item/mecha_parts/mecha_equipment/drill))
+			src.attackby(M.selected,M)
+			return*/
+//Aparantly mechs are just TOO COOL to call Collide())
 	else
 		return
 
@@ -143,7 +153,7 @@
 			/turf/closed/mineral/gibtonite = 4, /turf/open/floor/plating/asteroid/airless/cave = 2, /turf/closed/mineral/bscrystal = 1)
 	if (display_icon_state)
 		icon_state = display_icon_state
-	. = ..()
+	..()
 	if (prob(mineralChance))
 		var/path = pickweight(mineralSpawnChanceList)
 		var/turf/T = ChangeTurf(path,FALSE,FALSE,TRUE)
@@ -168,7 +178,7 @@
 /turf/closed/mineral/random/high_chance/volcanic
 	environment_type = "basalt"
 	turf_type = /turf/open/floor/plating/asteroid/basalt/lava_land_surface
-	baseturf = /turf/open/lava/smooth/lava_land_surface
+	baseturf = /turf/open/floor/plating/lava/smooth/lava_land_surface
 	initial_gas_mix = LAVALAND_DEFAULT_ATMOS
 	defer_change = 1
 	mineralSpawnChanceList = list(
@@ -189,7 +199,7 @@
 /turf/closed/mineral/random/volcanic
 	environment_type = "basalt"
 	turf_type = /turf/open/floor/plating/asteroid/basalt/lava_land_surface
-	baseturf = /turf/open/lava/smooth/lava_land_surface
+	baseturf = /turf/open/floor/plating/lava/smooth/lava_land_surface
 	initial_gas_mix = LAVALAND_DEFAULT_ATMOS
 	defer_change = 1
 
@@ -211,7 +221,7 @@
 /turf/closed/mineral/random/labormineral/volcanic
 	environment_type = "basalt"
 	turf_type = /turf/open/floor/plating/asteroid/basalt/lava_land_surface
-	baseturf = /turf/open/lava/smooth/lava_land_surface
+	baseturf = /turf/open/floor/plating/lava/smooth/lava_land_surface
 	initial_gas_mix = LAVALAND_DEFAULT_ATMOS
 	defer_change = 1
 	mineralSpawnChanceList = list(
@@ -222,7 +232,7 @@
 
 
 /turf/closed/mineral/iron
-	mineralType = /obj/item/ore/iron
+	mineralType = /obj/item/weapon/ore/iron
 	spreadChance = 20
 	spread = 1
 	scan_state = "rock_Iron"
@@ -236,7 +246,7 @@
 
 
 /turf/closed/mineral/uranium
-	mineralType = /obj/item/ore/uranium
+	mineralType = /obj/item/weapon/ore/uranium
 	spreadChance = 5
 	spread = 1
 	scan_state = "rock_Uranium"
@@ -250,7 +260,7 @@
 
 
 /turf/closed/mineral/diamond
-	mineralType = /obj/item/ore/diamond
+	mineralType = /obj/item/weapon/ore/diamond
 	spreadChance = 0
 	spread = 1
 	scan_state = "rock_Diamond"
@@ -264,7 +274,7 @@
 
 
 /turf/closed/mineral/gold
-	mineralType = /obj/item/ore/gold
+	mineralType = /obj/item/weapon/ore/gold
 	spreadChance = 5
 	spread = 1
 	scan_state = "rock_Gold"
@@ -278,7 +288,7 @@
 
 
 /turf/closed/mineral/silver
-	mineralType = /obj/item/ore/silver
+	mineralType = /obj/item/weapon/ore/silver
 	spreadChance = 5
 	spread = 1
 	scan_state = "rock_Silver"
@@ -292,7 +302,7 @@
 
 
 /turf/closed/mineral/titanium
-	mineralType = /obj/item/ore/titanium
+	mineralType = /obj/item/weapon/ore/titanium
 	spreadChance = 5
 	spread = 1
 	scan_state = "rock_Titanium"
@@ -306,7 +316,7 @@
 
 
 /turf/closed/mineral/plasma
-	mineralType = /obj/item/ore/plasma
+	mineralType = /obj/item/weapon/ore/plasma
 	spreadChance = 8
 	spread = 1
 	scan_state = "rock_Plasma"
@@ -320,7 +330,7 @@
 
 
 /turf/closed/mineral/clown
-	mineralType = /obj/item/ore/bananium
+	mineralType = /obj/item/weapon/ore/bananium
 	mineralAmt = 3
 	spreadChance = 0
 	spread = 0
@@ -328,7 +338,7 @@
 
 
 /turf/closed/mineral/bscrystal
-	mineralType = /obj/item/ore/bluespace_crystal
+	mineralType = /obj/item/weapon/ore/bluespace_crystal
 	mineralAmt = 1
 	spreadChance = 0
 	spread = 0
@@ -351,7 +361,7 @@
 /turf/closed/mineral/volcanic/lava_land_surface
 	environment_type = "basalt"
 	turf_type = /turf/open/floor/plating/asteroid/basalt/lava_land_surface
-	baseturf = /turf/open/lava/smooth/lava_land_surface
+	baseturf = /turf/open/floor/plating/lava/smooth/lava_land_surface
 	defer_change = 1
 
 /turf/closed/mineral/ash_rock //wall piece
@@ -383,7 +393,7 @@
 
 /turf/closed/mineral/gibtonite/Initialize()
 	det_time = rand(8,10) //So you don't know exactly when the hot potato will explode
-	. = ..()
+	..()
 
 /turf/closed/mineral/gibtonite/attackby(obj/item/I, mob/user, params)
 	if(istype(I, /obj/item/device/mining_scanner) || istype(I, /obj/item/device/t_scanner/adv_mining_scanner) && stage == 1)
@@ -451,7 +461,7 @@
 		stage = GIBTONITE_DETONATE
 		explosion(bombturf,1,2,5, adminlog = 0)
 	if(stage == GIBTONITE_STABLE) //Gibtonite deposit is now benign and extractable. Depending on how close you were to it blowing up before defusing, you get better quality ore.
-		var/obj/item/twohanded/required/gibtonite/G = new /obj/item/twohanded/required/gibtonite/(src)
+		var/obj/item/weapon/twohanded/required/gibtonite/G = new /obj/item/weapon/twohanded/required/gibtonite/(src)
 		if(det_time <= 0)
 			G.quality = 3
 			G.icon_state = "Gibtonite ore 3"

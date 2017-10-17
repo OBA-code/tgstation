@@ -155,5 +155,4 @@
 			A.lights = mend
 			A.update_icon()
 		if(WIRE_ZAP1, WIRE_ZAP2) // Ouch.
-			if(usr)
-				A.shock(usr, 50)
+			A.shock(usr, 50)

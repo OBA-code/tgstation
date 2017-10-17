@@ -78,8 +78,6 @@
 
 /datum/datacore/proc/manifest()
 	for(var/mob/dead/new_player/N in GLOB.player_list)
-		if(N.new_character)
-			log_manifest(N.ckey,N.new_character.mind,N.new_character)
 		if(ishuman(N.new_character))
 			manifest_inject(N.new_character, N.client)
 		CHECK_TICK
@@ -198,7 +196,6 @@
 
 
 /datum/datacore/proc/manifest_inject(mob/living/carbon/human/H, client/C)
-	set waitfor = FALSE
 	if(H.mind && (H.mind.assigned_role != H.mind.special_role))
 		var/assignment
 		if(H.mind.assigned_role)
@@ -213,8 +210,8 @@
 		if(!C)
 			C = H.client
 		var/image = get_id_photo(H, C)
-		var/obj/item/photo/photo_front = new()
-		var/obj/item/photo/photo_side = new()
+		var/obj/item/weapon/photo/photo_front = new()
+		var/obj/item/weapon/photo/photo_side = new()
 		photo_front.photocreate(null, icon(image, dir = SOUTH))
 		photo_side.photocreate(null, icon(image, dir = WEST))
 
@@ -225,7 +222,7 @@
 		G.fields["name"]		= H.real_name
 		G.fields["rank"]		= assignment
 		G.fields["age"]			= H.age
-		if(CONFIG_GET(flag/join_with_mutant_race))
+		if(config.mutant_races)
 			G.fields["species"]	= H.dna.species.name
 		G.fields["fingerprint"]	= md5(H.dna.uni_identity)
 		G.fields["p_stat"]		= "Active"
@@ -276,7 +273,7 @@
 		L.fields["species"]		= H.dna.species.type
 		L.fields["features"]	= H.dna.features
 		L.fields["image"]		= image
-		L.fields["mindref"]		= H.mind
+		L.fields["reference"]	= H
 		locked += L
 	return
 
@@ -287,4 +284,4 @@
 		C = H.client
 	if(C)
 		P = C.prefs
-	return get_flat_human_icon(null, J, P, DUMMY_HUMAN_SLOT_MANIFEST)
+	return get_flat_human_icon(null, J, P)

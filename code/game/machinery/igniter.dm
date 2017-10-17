@@ -36,8 +36,8 @@
 			location.hotspot_expose(1000,500,1)
 	return 1
 
-/obj/machinery/igniter/Initialize()
-	. = ..()
+/obj/machinery/igniter/New()
+	..()
 	icon_state = "igniter[on]"
 
 /obj/machinery/igniter/power_change()
@@ -61,14 +61,15 @@
 	anchored = TRUE
 	resistance_flags = FIRE_PROOF
 
-/obj/machinery/sparker/Initialize()
-	. = ..()
+/obj/machinery/sparker/New()
+	..()
 	spark_system = new /datum/effect_system/spark_spread
 	spark_system.set_up(2, 1, src)
 	spark_system.attach(src)
 
 /obj/machinery/sparker/Destroy()
-	QDEL_NULL(spark_system)
+	qdel(spark_system)
+	spark_system = null
 	return ..()
 
 /obj/machinery/sparker/power_change()
@@ -81,8 +82,8 @@
 		icon_state = "[base_state]-p"
 //		src.sd_SetLuminosity(0)
 
-/obj/machinery/sparker/attackby(obj/item/W, mob/user, params)
-	if (istype(W, /obj/item/screwdriver))
+/obj/machinery/sparker/attackby(obj/item/weapon/W, mob/user, params)
+	if (istype(W, /obj/item/weapon/screwdriver))
 		add_fingerprint(user)
 		src.disable = !src.disable
 		if (src.disable)

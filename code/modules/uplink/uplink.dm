@@ -140,8 +140,6 @@ GLOBAL_LIST_EMPTY(uplinks)
 /obj/item/device/radio/uplink/Initialize()
 	. = ..()
 	icon_state = "radio"
-	lefthand_file = 'icons/mob/inhands/misc/devices_lefthand.dmi'
-	righthand_file = 'icons/mob/inhands/misc/devices_righthand.dmi'
 	hidden_uplink = new(src)
 	hidden_uplink.active = TRUE
 	hidden_uplink.lockable = FALSE
@@ -156,7 +154,7 @@ GLOBAL_LIST_EMPTY(uplinks)
 	hidden_uplink.active = TRUE
 	hidden_uplink.lockable = FALSE
 
-/obj/item/pen/uplink/Initialize()
+/obj/item/weapon/pen/uplink/Initialize()
 	. = ..()
 	hidden_uplink = new(src)
 	traitor_unlock_degrees = 360

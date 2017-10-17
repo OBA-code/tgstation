@@ -1,6 +1,6 @@
 /obj/structure/sign/barsign // All Signs are 64 by 32 pixels, they take two tiles
 	name = "Bar Sign"
-	desc = "A bar sign with no writing on it."
+	desc = "A bar sign with no writing on it"
 	icon = 'icons/obj/barsigns.dmi'
 	icon_state = "empty"
 	req_access = list(ACCESS_BAR)
@@ -38,7 +38,7 @@
 		desc = "It displays \"[name]\"."
 
 /obj/structure/sign/barsign/obj_break(damage_flag)
-	if(!broken && !(flags_1 & NODECONSTRUCT_1))
+	if(!broken && !(flags & NODECONSTRUCT))
 		broken = 1
 
 /obj/structure/sign/barsign/deconstruct(disassembled = TRUE)
@@ -71,7 +71,7 @@
 
 
 /obj/structure/sign/barsign/attackby(obj/item/I, mob/user)
-	if(istype(I, /obj/item/screwdriver))
+	if(istype(I, /obj/item/weapon/screwdriver))
 		if(!allowed(user))
 			to_chat(user, "<span class='info'>Access denied.</span>")
 			return
@@ -120,7 +120,7 @@
 		return
 	emagged = TRUE
 	to_chat(user, "<span class='notice'>You emag the barsign. Takeover in progress...</span>")
-	sleep(10 SECONDS)
+	sleep(100) //10 seconds
 	set_sign(new /datum/barsign/hiddensigns/syndibarsign)
 	req_access = list(ACCESS_SYNDICATE)
 

@@ -33,7 +33,7 @@
 /obj/screen/text
 	icon = null
 	icon_state = null
-	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+	mouse_opacity = 0
 	screen_loc = "CENTER-7,CENTER-7"
 	maptext_height = 480
 	maptext_width = 480
@@ -110,7 +110,7 @@
 
 	if(usr.incapacitated())
 		return 1
-	if(ismecha(usr.loc)) // stops inventory actions in a mech
+	if(istype(usr.loc, /obj/mecha)) // stops inventory actions in a mech
 		return 1
 
 	if(hud && hud.mymob && slot_id)
@@ -167,7 +167,7 @@
 		return 1
 	if(usr.incapacitated() || isobserver(usr))
 		return 1
-	if (ismecha(usr.loc)) // stops inventory actions in a mech
+	if (istype(usr.loc, /obj/mecha)) // stops inventory actions in a mech
 		return 1
 
 	if(hud.mymob.active_hand_index == held_index)
@@ -182,8 +182,8 @@
 	name = "close"
 
 /obj/screen/close/Click()
-	if(istype(master, /obj/item/storage))
-		var/obj/item/storage/S = master
+	if(istype(master, /obj/item/weapon/storage))
+		var/obj/item/weapon/storage/S = master
 		S.close(usr)
 	return 1
 
@@ -196,8 +196,7 @@
 	plane = HUD_PLANE
 
 /obj/screen/drop/Click()
-	if(usr.stat == CONSCIOUS)
-		usr.dropItemToGround(usr.get_active_held_item())
+	usr.drop_item_v()
 
 /obj/screen/act_intent
 	name = "intent"
@@ -251,7 +250,7 @@
 		to_chat(C, "<span class='notice'>You are no longer running on internals.</span>")
 		icon_state = "internal0"
 	else
-		if(!C.getorganslot(ORGAN_SLOT_BREATHING_TUBE))
+		if(!C.getorganslot("breathing_tube"))
 			if(!istype(C.wear_mask, /obj/item/clothing/mask))
 				to_chat(C, "<span class='warning'>You are not wearing an internals mask!</span>")
 				return 1
@@ -259,31 +258,31 @@
 				var/obj/item/clothing/mask/M = C.wear_mask
 				if(M.mask_adjusted) // if mask on face but pushed down
 					M.adjustmask(C) // adjust it back
-				if( !(M.flags_1 & MASKINTERNALS_1) )
+				if( !(M.flags & MASKINTERNALS) )
 					to_chat(C, "<span class='warning'>You are not wearing an internals mask!</span>")
 					return
 
-		var/obj/item/I = C.is_holding_item_of_type(/obj/item/tank)
+		var/obj/item/I = C.is_holding_item_of_type(/obj/item/weapon/tank)
 		if(I)
 			to_chat(C, "<span class='notice'>You are now running on internals from the [I] on your [C.get_held_index_name(C.get_held_index_of_item(I))].</span>")
 			C.internal = I
 		else if(ishuman(C))
 			var/mob/living/carbon/human/H = C
-			if(istype(H.s_store, /obj/item/tank))
+			if(istype(H.s_store, /obj/item/weapon/tank))
 				to_chat(H, "<span class='notice'>You are now running on internals from the [H.s_store] on your [H.wear_suit].</span>")
 				H.internal = H.s_store
-			else if(istype(H.belt, /obj/item/tank))
+			else if(istype(H.belt, /obj/item/weapon/tank))
 				to_chat(H, "<span class='notice'>You are now running on internals from the [H.belt] on your belt.</span>")
 				H.internal = H.belt
-			else if(istype(H.l_store, /obj/item/tank))
+			else if(istype(H.l_store, /obj/item/weapon/tank))
 				to_chat(H, "<span class='notice'>You are now running on internals from the [H.l_store] in your left pocket.</span>")
 				H.internal = H.l_store
-			else if(istype(H.r_store, /obj/item/tank))
+			else if(istype(H.r_store, /obj/item/weapon/tank))
 				to_chat(H, "<span class='notice'>You are now running on internals from the [H.r_store] in your right pocket.</span>")
 				H.internal = H.r_store
 
-		//Separate so CO2 jetpacks are a little less cumbersome.
-		if(!C.internal && istype(C.back, /obj/item/tank))
+		//Seperate so CO2 jetpacks are a little less cumbersome.
+		if(!C.internal && istype(C.back, /obj/item/weapon/tank))
 			to_chat(C, "<span class='notice'>You are now running on internals from the [C.back] on your back.</span>")
 			C.internal = C.back
 
@@ -325,8 +324,7 @@
 	usr.stop_pulling()
 
 /obj/screen/pull/update_icon(mob/mymob)
-	if(!mymob)
-		return
+	if(!mymob) return
 	if(mymob.pulling)
 		icon_state = "pull"
 	else
@@ -352,7 +350,7 @@
 		return 1
 	if(usr.stat || usr.IsUnconscious() || usr.IsKnockdown() || usr.IsStun())
 		return 1
-	if (ismecha(usr.loc)) // stops inventory actions in a mech
+	if (istype(usr.loc, /obj/mecha)) // stops inventory actions in a mech
 		return 1
 	if(master)
 		var/obj/item/I = usr.get_active_held_item()
@@ -470,7 +468,7 @@
 	name = "dmg"
 	blend_mode = BLEND_MULTIPLY
 	screen_loc = "CENTER-7,CENTER-7"
-	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+	mouse_opacity = 0
 	layer = UI_DAMAGE_LAYER
 	plane = FULLSCREEN_PLANE
 
@@ -487,11 +485,16 @@
 	icon = 'icons/mob/screen_cyborg.dmi'
 	screen_loc = ui_borg_health
 
+/obj/screen/healths/deity
+	name = "Nexus Health"
+	icon_state = "deity_nexus"
+	screen_loc = ui_deityhealth
+
 /obj/screen/healths/blob
 	name = "blob health"
 	icon_state = "block"
 	screen_loc = ui_internal
-	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+	mouse_opacity = 0
 
 /obj/screen/healths/blob/naut
 	name = "health"
@@ -508,13 +511,13 @@
 	icon = 'icons/mob/guardian.dmi'
 	icon_state = "base"
 	screen_loc = ui_health
-	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+	mouse_opacity = 0
 
 /obj/screen/healths/clock
 	icon = 'icons/mob/actions.dmi'
 	icon_state = "bg_clock"
 	screen_loc = ui_health
-	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+	mouse_opacity = 0
 
 /obj/screen/healths/clock/gear
 	icon = 'icons/mob/clockwork_mobs.dmi'
@@ -526,13 +529,13 @@
 	icon = 'icons/mob/actions.dmi'
 	icon_state = "bg_revenant"
 	screen_loc = ui_health
-	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+	mouse_opacity = 0
 
 /obj/screen/healths/construct
 	icon = 'icons/mob/screen_construct.dmi'
 	icon_state = "artificer_health0"
 	screen_loc = ui_construct_health
-	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+	mouse_opacity = 0
 
 /obj/screen/healthdoll
 	name = "health doll"

@@ -30,9 +30,9 @@
 	wander = 0
 	attacktext = "glomps"
 	attack_sound = 'sound/effects/blobattack.ogg'
-	butcher_results = list(/obj/item/reagent_containers/food/snacks/meat/slab = 2)
+	butcher_results = list(/obj/item/weapon/reagent_containers/food/snacks/meat/slab = 2)
 
-	var/morphed = FALSE
+	var/morphed = 0
 	var/atom/movable/form = null
 	var/morph_time = 0
 	var/static/list/blacklist_typecache = typecacheof(list(
@@ -77,7 +77,7 @@
 /mob/living/simple_animal/hostile/morph/proc/eat(atom/movable/A)
 	if(A && A.loc != src)
 		visible_message("<span class='warning'>[src] swallows [A] whole!</span>")
-		A.forceMove(src)
+		A.loc = src
 		return 1
 	return 0
 
@@ -93,10 +93,7 @@
 		..()
 
 /mob/living/simple_animal/hostile/morph/proc/assume(atom/movable/target)
-	if(morphed)
-		to_chat(src, "<span class='warning'>You must restore to your original form first!</span>")
-		return
-	morphed = TRUE
+	morphed = 1
 	form = target
 
 	visible_message("<span class='warning'>[src] suddenly twists and changes shape, becoming a copy of [target]!</span>", \
@@ -120,9 +117,8 @@
 
 /mob/living/simple_animal/hostile/morph/proc/restore()
 	if(!morphed)
-		to_chat(src, "<span class='warning'>You're already in your normal form!</span>")
 		return
-	morphed = FALSE
+	morphed = 0
 	form = null
 	alpha = initial(alpha)
 	color = initial(color)
@@ -153,7 +149,7 @@
 
 /mob/living/simple_animal/hostile/morph/proc/barf_contents()
 	for(var/atom/movable/AM in src)
-		AM.forceMove(loc)
+		AM.loc = loc
 		if(prob(90))
 			step(AM, pick(GLOB.alldirs))
 
@@ -228,7 +224,7 @@
 	player_mind.special_role = "Morph"
 	SSticker.mode.traitors |= player_mind
 	to_chat(S, S.playstyle_string)
-	SEND_SOUND(S, sound('sound/magic/mutate.ogg'))
+	S << 'sound/magic/mutate.ogg'
 	message_admins("[key_name_admin(S)] has been made into a morph by an event.")
 	log_game("[key_name(S)] was spawned as a morph by an event.")
 	spawned_mobs += S

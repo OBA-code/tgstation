@@ -5,7 +5,7 @@
 	icon_state = "water"
 	density = TRUE
 	anchored = FALSE
-	container_type = DRAWABLE_1
+	container_type = DRAWABLE
 	pressure_resistance = 2*ONE_ATMOSPHERE
 	max_integrity = 300
 	var/tank_volume = 1000 //In units, how much the dispenser can hold
@@ -17,8 +17,8 @@
 		if(tank_volume && (damage_flag == "bullet" || damage_flag == "laser"))
 			boom()
 
-/obj/structure/reagent_dispensers/attackby(obj/item/W, mob/user, params)
-	if(istype(W, /obj/item/reagent_containers))
+/obj/structure/reagent_dispensers/attackby(obj/item/weapon/W, mob/user, params)
+	if(istype(W, /obj/item/weapon/reagent_containers))
 		return 0 //so we can refill them via their afterattack.
 	else
 		return ..()
@@ -31,7 +31,7 @@
 /obj/structure/reagent_dispensers/examine(mob/user)
 	..()
 	if(reagents.total_volume)
-		to_chat(user, "<span class='notice'>It has [reagents.total_volume] unit\s left.</span>")
+		to_chat(user, "<span class='notice'>It has [reagents.total_volume] units left.</span>")
 	else
 		to_chat(user, "<span class='danger'>It's empty.</span>")
 
@@ -42,7 +42,7 @@
 	qdel(src)
 
 /obj/structure/reagent_dispensers/deconstruct(disassembled = TRUE)
-	if(!(flags_1 & NODECONSTRUCT_1))
+	if(!(flags & NODECONSTRUCT))
 		if(!disassembled)
 			boom()
 	else
@@ -95,11 +95,11 @@
 			boom()
 
 /obj/structure/reagent_dispensers/fueltank/attackby(obj/item/I, mob/living/user, params)
-	if(istype(I, /obj/item/weldingtool))
+	if(istype(I, /obj/item/weapon/weldingtool))
 		if(!reagents.has_reagent("welding_fuel"))
 			to_chat(user, "<span class='warning'>[src] is out of fuel!</span>")
 			return
-		var/obj/item/weldingtool/W = I
+		var/obj/item/weapon/weldingtool/W = I
 		if(!W.welding)
 			if(W.reagents.has_reagent("welding_fuel", W.max_fuel))
 				to_chat(user, "<span class='warning'>Your [W.name] is already full!</span>")
@@ -146,19 +146,14 @@
 
 /obj/structure/reagent_dispensers/water_cooler/examine(mob/user)
 	..()
-	if (paper_cups > 1)
-		to_chat(user, "There are [paper_cups] paper cups left.")
-	else if (paper_cups == 1)
-		to_chat(user, "There is one paper cup left.")
-	else
-		to_chat(user, "There are no paper cups left.")
+	to_chat(user, "There are [paper_cups ? paper_cups : "no"] paper cups left.")
 
 /obj/structure/reagent_dispensers/water_cooler/attack_hand(mob/living/user)
 	if(!paper_cups)
 		to_chat(user, "<span class='warning'>There aren't any cups left!</span>")
 		return
 	user.visible_message("<span class='notice'>[user] takes a cup from [src].</span>", "<span class='notice'>You take a paper cup from [src].</span>")
-	var/obj/item/reagent_containers/food/drinks/sillycup/S = new(get_turf(src))
+	var/obj/item/weapon/reagent_containers/food/drinks/sillycup/S = new(get_turf(src))
 	user.put_in_hands(S)
 	paper_cups--
 
@@ -180,5 +175,4 @@
 	desc = "A dispenser of low-potency virus mutagenic."
 	icon_state = "virus_food"
 	anchored = TRUE
-	density = FALSE
 	reagent_id = "virusfood"

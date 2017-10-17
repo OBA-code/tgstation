@@ -17,7 +17,6 @@
 	cooldown_min = 10
 	include_user = 1
 
-	action_icon = 'icons/mob/actions/actions_spells.dmi'
 	action_icon_state = "skeleton"
 
 /obj/effect/proc_holder/spell/targeted/lichdom/cast(list/targets,mob/user = usr)
@@ -34,7 +33,7 @@
 		for(var/obj/item in hand_items)
 			// I ensouled the nuke disk once. But it's probably a really
 			// mean tactic, so probably should discourage it.
-			if((item.flags_1 & ABSTRACT_1) || (item.flags_1 & NODROP_1) || (item.flags_2 & STATIONLOVING_2))
+			if(ABSTRACT in item.flags || NODROP in item.flags || HAS_SECONDARY_FLAG(item, STATIONLOVING))
 				continue
 			marked_item = item
 			to_chat(M, "<span class='warning'>You begin to focus your very being into [item]...</span>")
@@ -132,7 +131,7 @@
 	lich.real_name = mind.name
 	mind.transfer_to(lich)
 	mind.grab_ghost(force=TRUE)
-	lich.hardset_dna(null,null,lich.real_name,null, new /datum/species/skeleton)
+	lich.hardset_dna(null,null,lich.real_name,null, /datum/species/skeleton)
 	to_chat(lich, "<span class='warning'>Your bones clatter and shutter as you are pulled back into this world!</span>")
 	var/turf/body_turf = get_turf(old_body)
 	lich.Knockdown(200 + 200*resurrections)

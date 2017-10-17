@@ -8,7 +8,7 @@
 
 	var/datum/gas_mixture/air_contents
 	var/obj/machinery/atmospherics/components/unary/portables_connector/connected_port
-	var/obj/item/tank/holding
+	var/obj/item/weapon/tank/holding
 
 	var/volume = 0
 
@@ -45,11 +45,11 @@
 /obj/machinery/portable_atmospherics/proc/connect(obj/machinery/atmospherics/components/unary/portables_connector/new_port)
 	//Make sure not already connected to something else
 	if(connected_port || !new_port || new_port.connected_device)
-		return FALSE
+		return 0
 
 	//Make sure are close enough for a valid connection
-	if(new_port.loc != get_turf(src))
-		return TRUE
+	if(new_port.loc != loc)
+		return 0
 
 	//Perform the connection
 	connected_port = new_port
@@ -58,9 +58,7 @@
 	connected_port_parent.reconcile_air()
 
 	anchored = TRUE //Prevent movement
-	pixel_x = new_port.pixel_x
-	pixel_y = new_port.pixel_y
-	return TRUE
+	return 1
 
 /obj/machinery/portable_atmospherics/Move()
 	. = ..()
@@ -69,24 +67,25 @@
 
 /obj/machinery/portable_atmospherics/proc/disconnect()
 	if(!connected_port)
-		return FALSE
+		return 0
 	anchored = FALSE
 	connected_port.connected_device = null
 	connected_port = null
-	return TRUE
+	return 1
 
 /obj/machinery/portable_atmospherics/portableConnectorReturnAir()
 	return air_contents
 
-/obj/machinery/portable_atmospherics/attackby(obj/item/W, mob/user, params)
-	if(istype(W, /obj/item/tank))
+/obj/machinery/portable_atmospherics/attackby(obj/item/weapon/W, mob/user, params)
+	if(istype(W, /obj/item/weapon/tank))
 		if(!(stat & BROKEN))
-			var/obj/item/tank/T = W
-			if(holding || !user.transferItemToLoc(T, src))
+			var/obj/item/weapon/tank/T = W
+			if(holding || !user.drop_item())
 				return
+			T.loc = src
 			holding = T
 			update_icon()
-	else if(istype(W, /obj/item/wrench))
+	else if(istype(W, /obj/item/weapon/wrench))
 		if(!(stat & BROKEN))
 			if(connected_port)
 				disconnect()

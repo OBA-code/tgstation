@@ -16,8 +16,16 @@
 
 /obj/machinery/r_n_d/server/Initialize()
 	. = ..()
-	var/obj/item/circuitboard/machine/B = new /obj/item/circuitboard/machine/rdserver(null)
+	var/obj/item/weapon/circuitboard/machine/B = new /obj/item/weapon/circuitboard/machine/rdserver(null)
 	B.apply_default_parts(src)
+
+/obj/item/weapon/circuitboard/machine/rdserver
+	name = "R&D Server (Machine Board)"
+	build_path = /obj/machinery/r_n_d/server
+	origin_tech = "programming=3"
+	req_components = list(
+							/obj/item/stack/cable_coil = 2,
+							/obj/item/weapon/stock_parts/scanning_module = 1)
 
 /obj/machinery/r_n_d/server/Destroy()
 	griefProtection()
@@ -25,14 +33,13 @@
 
 /obj/machinery/r_n_d/server/RefreshParts()
 	var/tot_rating = 0
-	for(var/obj/item/stock_parts/SP in src)
+	for(var/obj/item/weapon/stock_parts/SP in src)
 		tot_rating += SP.rating
 	heat_gen /= max(1, tot_rating)
 
 /obj/machinery/r_n_d/server/Initialize(mapload)
 	. = ..()
-	if(!files)
-		files = new /datum/research(src)
+	if(!files) files = new /datum/research(src)
 	var/list/temp_list
 	if(!id_with_upload.len)
 		temp_list = list()
@@ -126,7 +133,7 @@
 	return
 
 /obj/machinery/r_n_d/server/centcom
-	name = "CentCom Central R&D Database"
+	name = "Centcom Central R&D Database"
 	server_id = -1
 
 /obj/machinery/r_n_d/server/centcom/Initialize()
@@ -169,7 +176,7 @@
 	var/list/servers = list()
 	var/list/consoles = list()
 	var/badmin = 0
-	circuit = /obj/item/circuitboard/computer/rdservercontrol
+	circuit = /obj/item/weapon/circuitboard/computer/rdservercontrol
 
 /obj/machinery/computer/rdservercontrol/Topic(href, href_list)
 	if(..())
@@ -255,8 +262,7 @@
 				dat += "[S.name] || "
 				dat += "<A href='?src=\ref[src];access=[S.server_id]'>Access Rights</A> | "
 				dat += "<A href='?src=\ref[src];data=[S.server_id]'>Data Management</A>"
-				if(badmin)
-					dat += " | <A href='?src=\ref[src];transfer=[S.server_id]'>Server-to-Server Transfer</A>"
+				if(badmin) dat += " | <A href='?src=\ref[src];transfer=[S.server_id]'>Server-to-Server Transfer</A>"
 				dat += "<BR>"
 
 		if(1) //Access rights menu
@@ -305,7 +311,7 @@
 	onclose(user, "server_control")
 	return
 
-/obj/machinery/computer/rdservercontrol/attackby(obj/item/D, mob/user, params)
+/obj/machinery/computer/rdservercontrol/attackby(obj/item/weapon/D, mob/user, params)
 	. = ..()
 	src.updateUsrDialog()
 

@@ -8,32 +8,31 @@
 #define COLD_DAMAGE_LEVEL_2 1.5
 #define COLD_DAMAGE_LEVEL_3 3
 
+
 /datum/species
-	var/id	// if the game needs to manually check your race to do something not included in a proc here, it will use this
-	var/limbs_id		//this is used if you want to use a different species limb sprites. Mainly used for angels as they look like humans.
-	var/name	// this is the fluff name. these will be left generic (such as 'Lizardperson' for the lizard race) so servers can change them to whatever
+	var/id = null		// if the game needs to manually check your race to do something not included in a proc here, it will use this
+	var/limbs_id = null	//this is used if you want to use a different species limb sprites. Mainly used for angels as they look like humans.
+	var/name = null		// this is the fluff name. these will be left generic (such as 'Lizardperson' for the lizard race) so servers can change them to whatever
 	var/roundstart = 0	// can this mob be chosen at roundstart? (assuming the config option is checked?)
 	var/default_color = "#FFF"	// if alien colors are disabled, this is the color that will be used by that race
 
 	var/sexes = 1		// whether or not the race has sexual characteristics. at the moment this is only 0 for skeletons and shadows
 
-	var/list/offset_features = list(OFFSET_UNIFORM = list(0,0), OFFSET_ID = list(0,0), OFFSET_GLOVES = list(0,0), OFFSET_GLASSES = list(0,0), OFFSET_EARS = list(0,0), OFFSET_SHOES = list(0,0), OFFSET_S_STORE = list(0,0), OFFSET_FACEMASK = list(0,0), OFFSET_HEAD = list(0,0), OFFSET_FACE = list(0,0), OFFSET_BELT = list(0,0), OFFSET_BACK = list(0,0), OFFSET_SUIT = list(0,0), OFFSET_NECK = list(0,0))
+	var/face_y_offset = 0
+	var/hair_y_offset = 0
 
-	var/hair_color	// this allows races to have specific hair colors... if null, it uses the H's hair/facial hair colors. if "mutcolor", it uses the H's mutant_color
+	var/hair_color = null	// this allows races to have specific hair colors... if null, it uses the H's hair/facial hair colors. if "mutcolor", it uses the H's mutant_color
 	var/hair_alpha = 255	// the alpha used by the hair. 255 is completely solid, 0 is transparent.
 
 	var/use_skintones = 0	// does it use skintones or not? (spoiler alert this is only used by humans)
 	var/exotic_blood = ""	// If your race wants to bleed something other than bog standard blood, change this to reagent id.
 	var/exotic_bloodtype = "" //If your race uses a non standard bloodtype (A+, O-, AB-, etc)
-	var/meat = /obj/item/reagent_containers/food/snacks/meat/slab/human //What the species drops on gibbing
-	var/skinned_type
-	var/liked_food = NONE
-	var/disliked_food = GROSS
-	var/toxic_food = TOXIC
+	var/meat = /obj/item/weapon/reagent_containers/food/snacks/meat/slab/human //What the species drops on gibbing
+	var/skinned_type = null
 	var/list/no_equip = list()	// slots the race can't equip stuff to
 	var/nojumpsuit = 0	// this is sorta... weird. it basically lets you equip stuff that usually needs jumpsuits without one, like belts and pockets and ids
 	var/blacklisted = 0 //Flag to exclude from green slime core species.
-	var/dangerous_existence //A flag for transformation spells that tells them "hey if you turn a person into one of these without preperation, they'll probably die!"
+	var/dangerous_existence = null //A flag for transformation spells that tells them "hey if you turn a person into one of these without preperation, they'll probably die!"
 	var/say_mod = "says"	// affects the speech message
 	var/list/default_features = list() // Default mutant bodyparts for this species. Don't forget to set one for every mutant bodypart you allow this species to have.
 	var/list/mutant_bodyparts = list() 	// Parts of the body that are diferent enough from the standard human model that they cause clipping with some equipment
@@ -64,15 +63,16 @@
 	var/obj/item/organ/lungs/mutantlungs = null
 	var/breathid = "o2"
 
-	var/obj/item/organ/brain/mutant_brain = /obj/item/organ/brain
+	//Flight and floating
+	var/override_float = 0
+
 	var/obj/item/organ/eyes/mutanteyes = /obj/item/organ/eyes
 	var/obj/item/organ/ears/mutantears = /obj/item/organ/ears
-	var/obj/item/mutanthands
+	var/obj/item/mutanthands = null
 	var/obj/item/organ/tongue/mutanttongue = /obj/item/organ/tongue
 
 	var/obj/item/organ/liver/mutantliver
 	var/obj/item/organ/stomach/mutantstomach
-	var/override_float = FALSE
 
 ///////////
 // PROCS //
@@ -103,122 +103,12 @@
 
 	return randname
 
-//Called when cloning, copies some vars that should be kept
-/datum/species/proc/copy_properties_from(datum/species/old_species)
-	return
 
 //Please override this locally if you want to define when what species qualifies for what rank if human authority is enforced.
 /datum/species/proc/qualifies_for_rank(rank, list/features)
 	if(rank in GLOB.command_positions)
 		return 0
 	return 1
-
-//Will regenerate missing organs
-/datum/species/proc/regenerate_organs(mob/living/carbon/C,datum/species/old_species,replace_current=TRUE)
-	var/obj/item/organ/brain/brain = C.getorganslot(ORGAN_SLOT_BRAIN)
-	var/obj/item/organ/heart/heart = C.getorganslot(ORGAN_SLOT_HEART)
-	var/obj/item/organ/lungs/lungs = C.getorganslot(ORGAN_SLOT_LUNGS)
-	var/obj/item/organ/appendix/appendix = C.getorganslot(ORGAN_SLOT_APPENDIX)
-	var/obj/item/organ/eyes/eyes = C.getorganslot(ORGAN_SLOT_EYES)
-	var/obj/item/organ/ears/ears = C.getorganslot(ORGAN_SLOT_EARS)
-	var/obj/item/organ/tongue/tongue = C.getorganslot(ORGAN_SLOT_TONGUE)
-	var/obj/item/organ/liver/liver = C.getorganslot(ORGAN_SLOT_LIVER)
-	var/obj/item/organ/stomach/stomach = C.getorganslot(ORGAN_SLOT_STOMACH)
-
-	var/should_have_brain = TRUE
-	var/should_have_heart = !(NOBLOOD in species_traits)
-	var/should_have_lungs = !(NOBREATH in species_traits)
-	var/should_have_appendix = !(NOHUNGER in species_traits)
-	var/should_have_eyes = TRUE
-	var/should_have_ears = TRUE
-	var/should_have_tongue = TRUE
-	var/should_have_liver = !(NOLIVER in species_traits)
-	var/should_have_stomach = !(NOSTOMACH in species_traits)
-
-	if(brain && (replace_current || !should_have_brain))
-		if(!brain.decoy_override)//Just keep it if it's fake
-			brain.Remove(C,TRUE,TRUE)
-			QDEL_NULL(brain)
-	if(should_have_brain && !brain)
-		brain = new mutant_brain()
-		brain.Insert(C, TRUE, TRUE)
-
-	if(heart && (!should_have_heart || replace_current))
-		heart.Remove(C,1)
-		QDEL_NULL(heart)
-	if(should_have_heart && !heart)
-		heart = new()
-		heart.Insert(C)
-
-	if(lungs && (replace_current || !should_have_lungs))
-		lungs.Remove(C,1)
-		QDEL_NULL(lungs)
-	if(should_have_lungs && !lungs)
-		if(mutantlungs)
-			lungs = new mutantlungs()
-		else
-			lungs = new()
-		lungs.Insert(C)
-
-	if(liver && (!should_have_liver || replace_current))
-		liver.Remove(C,1)
-		QDEL_NULL(liver)
-	if(should_have_liver && !liver)
-		if(mutantliver)
-			liver = new mutantliver()
-		else
-			liver = new()
-		liver.Insert(C)
-
-	if(stomach && (!should_have_stomach || replace_current))
-		stomach.Remove(C,1)
-		QDEL_NULL(stomach)
-	if(should_have_stomach && !stomach)
-		if(mutantstomach)
-			stomach = new mutantstomach()
-		else
-			stomach = new()
-		stomach.Insert(C)
-
-	if(appendix && (!should_have_appendix || replace_current))
-		appendix.Remove(C,1)
-		QDEL_NULL(appendix)
-	if(should_have_appendix && !appendix)
-		appendix = new()
-		appendix.Insert(C)
-
-	if(C.get_bodypart("head"))
-		if(eyes && (replace_current || !should_have_eyes))
-			eyes.Remove(C,1)
-			QDEL_NULL(eyes)
-		if(should_have_eyes && !eyes)
-			eyes = new mutanteyes
-			eyes.Insert(C)
-
-		if(ears && (replace_current || !should_have_ears))
-			ears.Remove(C,1)
-			QDEL_NULL(ears)
-		if(should_have_ears && !ears)
-			ears = new mutantears
-			ears.Insert(C)
-
-		if(tongue && (replace_current || !should_have_tongue))
-			tongue.Remove(C,1)
-			QDEL_NULL(tongue)
-		if(should_have_tongue && !tongue)
-			tongue = new mutanttongue
-			tongue.Insert(C)
-
-	if(old_species)
-		for(var/mutantorgan in old_species.mutant_organs)
-			var/obj/item/organ/I = C.getorgan(mutantorgan)
-			if(I)
-				I.Remove(C)
-				QDEL_NULL(I)
-
-	for(var/path in mutant_organs)
-		var/obj/item/organ/I = new path()
-		I.Insert(C)
 
 /datum/species/proc/on_species_gain(mob/living/carbon/C, datum/species/old_species)
 	// Drop the items the new species can't wear
@@ -235,7 +125,79 @@
 	if(DIGITIGRADE in species_traits)
 		C.Digitigrade_Leg_Swap(FALSE)
 
-	regenerate_organs(C,old_species)
+	var/obj/item/organ/heart/heart = C.getorganslot("heart")
+	var/obj/item/organ/lungs/lungs = C.getorganslot("lungs")
+	var/obj/item/organ/appendix/appendix = C.getorganslot("appendix")
+	var/obj/item/organ/eyes/eyes = C.getorganslot("eye_sight")
+	var/obj/item/organ/ears/ears = C.getorganslot("ears")
+	var/obj/item/organ/tongue/tongue = C.getorganslot("tongue")
+
+	var/obj/item/organ/liver/liver = C.getorganslot("liver")
+	var/obj/item/organ/stomach/stomach = C.getorganslot("stomach")
+
+
+
+	if((NOBLOOD in species_traits) && heart)
+		heart.Remove(C)
+		qdel(heart)
+	else if((!(NOBLOOD in species_traits)) && (!heart))
+		heart = new()
+		heart.Insert(C)
+
+	if(lungs)
+		qdel(lungs)
+		lungs = null
+
+	QDEL_NULL(liver)
+
+	QDEL_NULL(stomach)
+
+	if(C.get_bodypart("head"))
+		if(eyes)
+			qdel(eyes)
+			eyes = new mutanteyes
+			eyes.Insert(C)
+
+		if(ears)
+			qdel(ears)
+			ears = new mutantears
+			ears.Insert(C)
+
+		if(tongue)
+			qdel(tongue)
+			tongue = new mutanttongue
+			tongue.Insert(C)
+
+	if((!(NOBREATH in species_traits)) && !lungs)
+		if(mutantlungs)
+			lungs = new mutantlungs()
+		else
+			lungs = new()
+		lungs.Insert(C)
+
+	if((!(NOLIVER in species_traits)) && (!liver))
+		if(mutantliver)
+			liver = new mutantliver()
+		else
+			liver = new()
+		liver.Insert(C)
+
+	if((!(NOSTOMACH in species_traits)) && (!stomach))
+		if(mutantstomach)
+			stomach = new mutantstomach()
+		else
+			stomach = new()
+		stomach.Insert(C)
+
+	if((NOHUNGER in species_traits) && appendix)
+		qdel(appendix)
+	else if((!(NOHUNGER in species_traits)) && (!appendix))
+		appendix = new()
+		appendix.Insert(C)
+
+	for(var/path in mutant_organs)
+		var/obj/item/organ/I = new path()
+		I.Insert(C)
 
 	if(exotic_bloodtype && C.dna.blood_type != exotic_bloodtype)
 		C.dna.blood_type = exotic_bloodtype
@@ -247,18 +209,13 @@
 
 	if(mutanthands)
 		// Drop items in hands
-		// If you're lucky enough to have a NODROP_1 item, then it stays.
+		// If you're lucky enough to have a NODROP item, then it stays.
 		for(var/V in C.held_items)
 			var/obj/item/I = V
 			if(istype(I))
 				C.dropItemToGround(I)
 			else	//Entries in the list should only ever be items or null, so if it's not an item, we can assume it's an empty hand
 				C.put_in_hands(new mutanthands())
-
-	if(VIRUSIMMUNE in species_traits)
-		for(var/datum/disease/A in C.viruses)
-			A.cure(FALSE)
-
 
 /datum/species/proc/on_species_loss(mob/living/carbon/C)
 	if(C.dna.species.exotic_bloodtype)
@@ -396,9 +353,7 @@
 				else
 					hair_overlay.color = forced_colour
 				hair_overlay.alpha = hair_alpha
-				if(OFFSET_FACE in H.dna.species.offset_features)
-					hair_overlay.pixel_x += H.dna.species.offset_features[OFFSET_FACE][1]
-					hair_overlay.pixel_y += H.dna.species.offset_features[OFFSET_FACE][2]
+				hair_overlay.pixel_y += hair_y_offset
 		if(hair_overlay.icon)
 			standing += hair_overlay
 
@@ -419,18 +374,14 @@
 		if(H.lip_style && (LIPS in species_traits) && HD)
 			var/mutable_appearance/lip_overlay = mutable_appearance('icons/mob/human_face.dmi', "lips_[H.lip_style]", -BODY_LAYER)
 			lip_overlay.color = H.lip_color
-			if(OFFSET_FACE in H.dna.species.offset_features)
-				lip_overlay.pixel_x += H.dna.species.offset_features[OFFSET_FACE][1]
-				lip_overlay.pixel_y += H.dna.species.offset_features[OFFSET_FACE][2]
+			lip_overlay.pixel_y += face_y_offset
 			standing += lip_overlay
 
 		// eyes
 		if((EYECOLOR in species_traits) && HD)
 			var/mutable_appearance/eye_overlay = mutable_appearance('icons/mob/human_face.dmi', "eyes", -BODY_LAYER)
 			eye_overlay.color = "#" + H.eye_color
-			if(OFFSET_FACE in H.dna.species.offset_features)
-				eye_overlay.pixel_x += H.dna.species.offset_features[OFFSET_FACE][1]
-				eye_overlay.pixel_y += H.dna.species.offset_features[OFFSET_FACE][2]
+			eye_overlay.pixel_y += face_y_offset
 			standing += eye_overlay
 
 	//Underwear, Undershirts & Socks
@@ -797,7 +748,7 @@
 				return 0
 			return equip_delay_self_check(I, H, bypass_equip_delay_self)
 		if(slot_l_store)
-			if(I.flags_1 & NODROP_1) //Pockets aren't visible, so you can't move NODROP_1 items into them.
+			if(I.flags & NODROP) //Pockets aren't visible, so you can't move NODROP items into them.
 				return 0
 			if(H.l_store)
 				return 0
@@ -813,7 +764,7 @@
 			if( I.w_class <= WEIGHT_CLASS_SMALL || (I.slot_flags & SLOT_POCKET) )
 				return 1
 		if(slot_r_store)
-			if(I.flags_1 & NODROP_1)
+			if(I.flags & NODROP)
 				return 0
 			if(H.r_store)
 				return 0
@@ -830,7 +781,7 @@
 				return 1
 			return 0
 		if(slot_s_store)
-			if(I.flags_1 & NODROP_1)
+			if(I.flags & NODROP)
 				return 0
 			if(H.s_store)
 				return 0
@@ -846,13 +797,13 @@
 				if(!disable_warning)
 					to_chat(H, "The [I.name] is too big to attach.") //should be src?
 				return 0
-			if( istype(I, /obj/item/device/pda) || istype(I, /obj/item/pen) || is_type_in_list(I, H.wear_suit.allowed) )
+			if( istype(I, /obj/item/device/pda) || istype(I, /obj/item/weapon/pen) || is_type_in_list(I, H.wear_suit.allowed) )
 				return 1
 			return 0
 		if(slot_handcuffed)
 			if(H.handcuffed)
 				return 0
-			if(!istype(I, /obj/item/restraints/handcuffs))
+			if(!istype(I, /obj/item/weapon/restraints/handcuffs))
 				return 0
 			if(num_arms < 2)
 				return 0
@@ -860,14 +811,14 @@
 		if(slot_legcuffed)
 			if(H.legcuffed)
 				return 0
-			if(!istype(I, /obj/item/restraints/legcuffs))
+			if(!istype(I, /obj/item/weapon/restraints/legcuffs))
 				return 0
 			if(num_legs < 2)
 				return 0
 			return 1
 		if(slot_in_backpack)
-			if(H.back && istype(H.back, /obj/item/storage))
-				var/obj/item/storage/B = H.back
+			if(H.back && istype(H.back, /obj/item/weapon/storage))
+				var/obj/item/weapon/storage/B = H.back
 				if(B.can_be_inserted(I, 1, H))
 					return 1
 			return 0
@@ -899,7 +850,7 @@
 /datum/species/proc/get_spans()
 	return list()
 
-/datum/species/proc/check_weakness(obj/item, mob/living/attacker)
+/datum/species/proc/check_weakness(obj/item/weapon, mob/living/attacker)
 	return 0
 
 ////////
@@ -974,31 +925,36 @@
 	return 0
 
 /datum/species/proc/handle_mutations_and_radiation(mob/living/carbon/human/H)
-	. = FALSE
-	var/radiation = H.radiation
 
-	if(RADIMMUNE in species_traits)
-		radiation = 0
-		return TRUE
+	if(!(RADIMMUNE in species_traits))
+		if(H.radiation)
+			if (H.radiation > 100)
+				if(!H.IsKnockdown())
+					H.emote("collapse")
+				H.Knockdown(200)
+				to_chat(H, "<span class='danger'>You feel weak.</span>")
+			switch(H.radiation)
+				if(50 to 75)
+					if(prob(5))
+						if(!H.IsKnockdown())
+							H.emote("collapse")
+						H.Knockdown(60)
+						to_chat(H, "<span class='danger'>You feel weak.</span>")
 
-	if(radiation > RAD_MOB_KNOCKDOWN)
-		if(!H.IsKnockdown())
-			H.emote("collapse")
-		H.Knockdown(RAD_KNOCKDOWN_TIME)
-		to_chat(H, "<span class='danger'>You feel weak.</span>")
-	
-	if(radiation > RAD_MOB_MUTATE)
-		if(prob(1))
-			to_chat(H, "<span class='danger'>You mutate!</span>")
-			H.randmutb()
-			H.emote("gasp")
-			H.domutcheck()
+					if(prob(15))
+						if(!( H.hair_style == "Shaved") || !(H.hair_style == "Bald") || (HAIR in species_traits))
+							to_chat(H, "<span class='danger'>Your hair starts to fall out in clumps...<span>")
+							addtimer(CALLBACK(src, .proc/go_bald, H), 50)
 
-	if(radiation > RAD_MOB_HAIRLOSS)
-		if(prob(15))
-			if(!( H.hair_style == "Shaved") || !(H.hair_style == "Bald") || (HAIR in species_traits))
-				to_chat(H, "<span class='danger'>Your hair starts to fall out in clumps...</span>")
-				addtimer(CALLBACK(src, .proc/go_bald, H), 50)
+				if(75 to 100)
+					if(prob(1))
+						to_chat(H, "<span class='danger'>You mutate!</span>")
+						H.randmutb()
+						H.emote("gasp")
+						H.domutcheck()
+		return 0
+	H.radiation = 0
+	return 1
 
 /datum/species/proc/go_bald(mob/living/carbon/human/H)
 	if(QDELETED(H))	//may be called from a timer
@@ -1037,9 +993,9 @@
 		gravity = 1
 
 	if(!gravity)
-		var/obj/item/tank/jetpack/J = H.back
+		var/obj/item/weapon/tank/jetpack/J = H.back
 		var/obj/item/clothing/suit/space/hardsuit/C = H.wear_suit
-		var/obj/item/organ/cyberimp/chest/thrusters/T = H.getorganslot(ORGAN_SLOT_THRUSTERS)
+		var/obj/item/organ/cyberimp/chest/thrusters/T = H.getorganslot("thrusters")
 		if(!istype(J) && istype(C))
 			J = C.jetpack
 		if(istype(J) && J.full_speed && J.allow_thrust(0.01, H))	//Prevents stacking
@@ -1062,7 +1018,7 @@
 		if(H.back)
 			. += H.back.slowdown
 		for(var/obj/item/I in H.held_items)
-			if(I.flags_2 & SLOWS_WHILE_IN_HAND_2)
+			if(HAS_SECONDARY_FLAG(I, SLOWS_WHILE_IN_HAND))
 				. += I.slowdown
 		var/health_deficiency = (100 - H.health + H.staminaloss)
 		var/hungry = (500 - H.nutrition) / 5 // So overeat would be 100 and default level would be 80
@@ -1095,7 +1051,7 @@
 		return 1
 	else
 		var/we_breathe = (!(NOBREATH in user.dna.species.species_traits))
-		var/we_lung = user.getorganslot(ORGAN_SLOT_LUNGS)
+		var/we_lung = user.getorganslot("lungs")
 
 		if(we_breathe && we_lung)
 			user.do_cpr(target)
@@ -1201,7 +1157,7 @@
 				target.stop_pulling()
 			else
 				I = target.get_active_held_item()
-				if(target.dropItemToGround(I))
+				if(target.drop_item())
 					target.visible_message("<span class='danger'>[user] has disarmed [target]!</span>", \
 						"<span class='userdanger'>[user] has disarmed [target]!</span>", null, COMBAT_MESSAGE_RANGE)
 				else
@@ -1269,6 +1225,7 @@
 
 	var/weakness = H.check_weakness(I, user)
 	apply_damage(I.force * weakness, I.damtype, def_zone, armor_block, H)
+	H.damage_clothes(I.force, I.damtype, "melee", affecting.body_zone)
 
 	H.send_item_attack_message(I, user, hit_area)
 
@@ -1304,7 +1261,7 @@
 						H.adjust_blurriness(10)
 
 					if(prob(I.force + ((100 - H.health)/2)) && H != user)
-						SSticker.mode.remove_revolutionary(H.mind, FALSE, user)
+						SSticker.mode.remove_revolutionary(H.mind)
 
 				if(bloody)	//Apply blood
 					if(H.wear_mask)
@@ -1458,6 +1415,9 @@
 
 	else
 		H.clear_alert("temp")
+
+	// Account for massive pressure differences.  Done by Polymorph
+	// Made it possible to actually have something that can protect against high pressure... Done by Errorage. Polymorph now has an axe sticking from his head for his previous hardcoded nonsense!
 
 	var/pressure = environment.return_pressure()
 	var/adjusted_pressure = H.calculate_affecting_pressure(pressure) //Returns how much pressure actually affects the mob.

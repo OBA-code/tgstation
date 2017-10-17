@@ -5,14 +5,9 @@
 	return 0
 
 /mob/living/carbon/isloyal()
-	for(var/obj/item/implant/mindshield/L in implants)
-		return TRUE
+	for(var/obj/item/weapon/implant/mindshield/L in implants)
+		return 1
 
-/mob/proc/lowest_buckled_mob()
-	. = src
-	if(buckled && ismob(buckled))
-		var/mob/Buckled = buckled
-		. = Buckled.lowest_buckled_mob()
 
 /proc/check_zone(zone)
 	if(!zone)
@@ -286,7 +281,7 @@ It's fairly easy to fix if dealing with single letters but not so much with comp
 
 /mob/proc/abiotic(full_body = 0)
 	for(var/obj/item/I in held_items)
-		if(!(I.flags_1 & NODROP_1))
+		if(!(I.flags & NODROP))
 			return 1
 	return 0
 
@@ -330,9 +325,6 @@ It's fairly easy to fix if dealing with single letters but not so much with comp
 		return	B.eye_blind
 	return 0
 
-/mob/proc/hallucinating()
-	return FALSE
-
 /proc/is_special_character(mob/M) // returns 1 for special characters and 2 for heroes of gamemode //moved out of admins.dm because things other than admin procs were calling this.
 	if(!SSticker.HasRoundStarted())
 		return 0
@@ -368,7 +360,7 @@ It's fairly easy to fix if dealing with single letters but not so much with comp
 				if(M.mind in SSticker.mode.changelings)
 					return 2
 			if("wizard")
-				if(iswizard(M))
+				if(M.mind in SSticker.mode.wizards)
 					return 2
 			if("apprentice")
 				if(M.mind in SSticker.mode.apprentices)
@@ -390,9 +382,9 @@ It's fairly easy to fix if dealing with single letters but not so much with comp
 		return
 	for(var/mob/dead/observer/O in GLOB.player_list)
 		if(O.client)
-			to_chat(O, "<span class='ghostalert'>[message][(enter_link) ? " [enter_link]" : ""]</span>")
+			to_chat(O, "<span class='ghostalert'>[message][(enter_link) ? " [enter_link]" : ""]<span>")
 			if(ghost_sound)
-				SEND_SOUND(O, sound(ghost_sound))
+				O << sound(ghost_sound)
 			if(flashwindow)
 				window_flash(O.client)
 			if(source)

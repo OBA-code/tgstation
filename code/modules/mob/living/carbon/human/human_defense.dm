@@ -62,6 +62,7 @@
 					// redirect the projectile
 					P.original = locate(new_x, new_y, P.z)
 					P.starting = curloc
+					P.current = curloc
 					P.firer = src
 					P.yo = new_y - curloc.y
 					P.xo = new_x - curloc.x
@@ -155,13 +156,8 @@
 	if(!I || !user)
 		return 0
 
-	var/obj/item/bodypart/affecting
-	if(user == src)
-		affecting = get_bodypart(check_zone(user.zone_selected)) //stabbing yourself always hits the right target
-	else
-		affecting = get_bodypart(ran_zone(user.zone_selected))
+	var/obj/item/bodypart/affecting = get_bodypart(ran_zone(user.zone_selected)) //what we're actually ending up trying to hit.
 	var/target_area = parse_zone(check_zone(user.zone_selected)) //our intended target
-
 	SSblackbox.add_details("item_used_for_combat","[I.type]|[I.force]")
 	SSblackbox.add_details("zone_targeted","[target_area]")
 
@@ -180,6 +176,7 @@
 		visible_message("<span class='danger'>[message]</span>", \
 								"<span class='userdanger'>[message]</span>")
 		adjustBruteLoss(15)
+		damage_clothes(15, BRUTE, "melee")
 		return 1
 
 /mob/living/carbon/human/attack_hand(mob/user)
@@ -203,8 +200,7 @@
 		return 0
 
 	if(M.a_intent == INTENT_DISARM) //Always drop item in hand, if no item, get stunned instead.
-		var/obj/item/I = get_active_held_item()
-		if(I && dropItemToGround(I))
+		if(get_active_held_item() && drop_item())
 			playsound(loc, 'sound/weapons/slash.ogg', 25, 1, -1)
 			visible_message("<span class='danger'>[M] disarmed [src]!</span>", \
 					"<span class='userdanger'>[M] disarmed [src]!</span>")
@@ -225,6 +221,7 @@
 				return 0
 			if(stat != DEAD)
 				apply_damage(damage, BRUTE, affecting, run_armor_check(affecting, "melee"))
+				damage_clothes(damage, BRUTE, "melee", affecting.body_zone)
 		return 1
 
 /mob/living/carbon/human/attack_alien(mob/living/carbon/alien/humanoid/M)
@@ -254,10 +251,10 @@
 			if(!dismembering_strike(M, M.zone_selected)) //Dismemberment successful
 				return 1
 			apply_damage(damage, BRUTE, affecting, armor_block)
+			damage_clothes(damage, BRUTE, "melee", affecting.body_zone)
 
 		if(M.a_intent == INTENT_DISARM) //Always drop item in hand, if no item, get stun instead.
-			var/obj/item/I = get_active_held_item()
-			if(I && dropItemToGround(I))
+			if(get_active_held_item() && drop_item())
 				playsound(loc, 'sound/weapons/slash.ogg', 25, 1, -1)
 				visible_message("<span class='danger'>[M] disarmed [src]!</span>", \
 						"<span class='userdanger'>[M] disarmed [src]!</span>")
@@ -282,6 +279,7 @@
 				affecting = get_bodypart("chest")
 			var/armor_block = run_armor_check(affecting, "melee")
 			apply_damage(damage, BRUTE, affecting, armor_block)
+			damage_clothes(damage, BRUTE, "melee", affecting.body_zone)
 
 
 /mob/living/carbon/human/attack_animal(mob/living/simple_animal/M)
@@ -298,6 +296,7 @@
 			affecting = get_bodypart("chest")
 		var/armor = run_armor_check(affecting, "melee", armour_penetration = M.armour_penetration)
 		apply_damage(damage, M.melee_damage_type, affecting, armor)
+		damage_clothes(damage, M.melee_damage_type, "melee", affecting.body_zone)
 
 
 /mob/living/carbon/human/attack_slime(mob/living/simple_animal/slime/M)
@@ -318,6 +317,7 @@
 			affecting = get_bodypart("chest")
 		var/armor_block = run_armor_check(affecting, "melee")
 		apply_damage(damage, BRUTE, affecting, armor_block)
+		damage_clothes(damage, BRUTE, "melee", affecting.body_zone)
 
 /mob/living/carbon/human/mech_melee_attack(obj/mecha/M)
 
@@ -335,9 +335,11 @@
 						Unconscious(20)
 					update |= temp.receive_damage(dmg, 0)
 					playsound(src, 'sound/weapons/punch4.ogg', 50, 1)
+					damage_clothes(dmg, BRUTE, "melee", temp.body_zone)
 				if("fire")
 					update |= temp.receive_damage(0, dmg)
 					playsound(src, 'sound/items/welder.ogg', 50, 1)
+					damage_clothes(dmg, BURN, "melee", temp.body_zone)
 				if("tox")
 					M.mech_toxin_damage(src)
 				else
@@ -371,9 +373,6 @@
 				throw_at(throw_target, 200, 4)
 				damage_clothes(400 - bomb_armor, BRUTE, "bomb")
 			else
-				for(var/I in contents)
-					var/atom/A = I
-					A.ex_act(severity)
 				gib()
 				return
 
@@ -438,7 +437,7 @@
 			else if(S.siemens_coefficient == (-1))
 				total_coeff -= 1
 		siemens_coeff = total_coeff
-		if(flags_2 & TESLA_IGNORE_2)
+		if(HAS_SECONDARY_FLAG(src, TESLA_IGNORE))
 			siemens_coeff = 0
 	else if(!safety)
 		var/gloves_siemens_coeff = 1
@@ -448,7 +447,7 @@
 		siemens_coeff = gloves_siemens_coeff
 	if(undergoing_cardiac_arrest() && !illusion)
 		if(shock_damage * siemens_coeff >= 1 && prob(25))
-			var/obj/item/organ/heart/heart = getorganslot(ORGAN_SLOT_HEART)
+			var/obj/item/organ/heart/heart = getorganslot("heart")
 			heart.beating = TRUE
 			if(stat == CONSCIOUS)
 				to_chat(src, "<span class='notice'>You feel your heart beating again!</span>")

@@ -12,7 +12,6 @@ GLOBAL_LIST_INIT(admin_verbs_default, world.AVerbsDefault())
 	/client/proc/dsay,					/*talk in deadchat using our ckey/fakekey*/
 	/client/proc/investigate_show,		/*various admintools for investigation. Such as a singulo grief-log*/
 	/client/proc/secrets,
-	/client/proc/toggle_hear_radio,		/*allows admins to hide all radio output*/
 	/client/proc/reload_admins,
 	/client/proc/reestablish_db_connection, /*reattempt a connection to the database*/
 	/client/proc/cmd_admin_pm_context,	/*right-click adminPM interface*/
@@ -27,7 +26,6 @@ GLOBAL_LIST_INIT(admin_verbs_admin, world.AVerbsAdmin())
 	/client/proc/invisimin,				/*allows our mob to go invisible/visible*/
 //	/datum/admins/proc/show_traitor_panel,	/*interface which shows a mob's mind*/ -Removed due to rare practical use. Moved to debug verbs ~Errorage
 	/datum/admins/proc/show_player_panel,	/*shows an interface for individual players, with various links (links require additional flags*/
-	/datum/verbs/menu/Admin/verb/playerpanel,
 	/client/proc/game_panel,			/*game panel, allows to change game-mode etc*/
 	/client/proc/check_ai_laws,			/*shows AI and borg laws*/
 	/datum/admins/proc/toggleooc,		/*toggles ooc on/off for everyone*/
@@ -61,7 +59,6 @@ GLOBAL_LIST_INIT(admin_verbs_admin, world.AVerbsAdmin())
 	/client/proc/cmd_admin_local_narrate,	/*sends text to all mobs within view of atom*/
 	/client/proc/cmd_admin_create_centcom_report,
 	/client/proc/cmd_change_command_name,
-	/client/proc/cmd_admin_check_player_exp, /* shows players by playtime */
 	/client/proc/toggle_antag_hud, 	/*toggle display of the admin antag hud*/
 	/client/proc/toggle_AI_interact, /*toggle admin ability to interact with machines as an AI*/
 	/client/proc/customiseSNPC, /* Customise any interactive crewmembers in the world */
@@ -262,8 +259,6 @@ GLOBAL_LIST_INIT(admin_verbs_hideable, list(
 			verbs += GLOB.admin_verbs_poll
 		if(rights & R_SOUNDS)
 			verbs += GLOB.admin_verbs_sounds
-			if(CONFIG_GET(string/invoke_youtubedl))
-				verbs += /client/proc/play_web_sound
 		if(rights & R_SPAWN)
 			verbs += GLOB.admin_verbs_spawn
 
@@ -286,7 +281,6 @@ GLOBAL_LIST_INIT(admin_verbs_hideable, list(
 		/client/proc/stealth,
 		GLOB.admin_verbs_poll,
 		GLOB.admin_verbs_sounds,
-		/client/proc/play_web_sound,
 		GLOB.admin_verbs_spawn,
 		/*Debug verbs added by "show debug verbs"*/
 		/client/proc/Cell,
@@ -302,8 +296,7 @@ GLOBAL_LIST_INIT(admin_verbs_hideable, list(
 		/client/proc/startSinglo,
 		/client/proc/set_server_fps,
 		/client/proc/cmd_admin_grantfullaccess,
-		/client/proc/cmd_admin_areatest_all,
-		/client/proc/cmd_admin_areatest_station,
+		/client/proc/cmd_admin_areatest,
 		/client/proc/readmin
 		)
 	if(holder)
@@ -391,7 +384,7 @@ GLOBAL_LIST_INIT(admin_verbs_hideable, list(
 	if(holder)
 		holder.check_antagonists()
 		log_admin("[key_name(usr)] checked antagonists.")	//for tsar~
-		if(!isobserver(usr) && SSticker.HasRoundStarted())
+		if(!isobserver(usr))
 			message_admins("[key_name_admin(usr)] checked antagonists.")
 	SSblackbox.add_details("admin_verb","Check Antagonists") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
 
@@ -399,7 +392,7 @@ GLOBAL_LIST_INIT(admin_verbs_hideable, list(
 	set name = "Unban Panel"
 	set category = "Admin"
 	if(holder)
-		if(CONFIG_GET(flag/ban_legacy_system))
+		if(config.ban_legacy_system)
 			holder.unbanpanel()
 		else
 			holder.DB_ban_panel()
@@ -462,7 +455,7 @@ GLOBAL_LIST_INIT(admin_verbs_hideable, list(
 				mob.invisibility = INVISIBILITY_MAXIMUM //JUST IN CASE
 				mob.alpha = 0 //JUUUUST IN CASE
 				mob.name = " "
-				mob.mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+				mob.mouse_opacity = 0
 		log_admin("[key_name(usr)] has turned stealth mode [holder.fakekey ? "ON" : "OFF"]")
 		message_admins("[key_name_admin(usr)] has turned stealth mode [holder.fakekey ? "ON" : "OFF"]")
 	SSblackbox.add_details("admin_verb","Stealth Mode") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
@@ -594,8 +587,7 @@ GLOBAL_LIST_INIT(admin_verbs_hideable, list(
 	set name = "Give Disease"
 	set desc = "Gives a Disease to a mob."
 	var/datum/disease/D = input("Choose the disease to give to that guy", "ACHOO") as null|anything in SSdisease.diseases
-	if(!D)
-		return
+	if(!D) return
 	T.ForceContractDisease(new D)
 	SSblackbox.add_details("admin_verb","Give Disease") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
 	log_admin("[key_name(usr)] gave [key_name(T)] the disease [D].")

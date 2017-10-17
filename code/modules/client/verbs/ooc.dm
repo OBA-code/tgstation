@@ -9,19 +9,9 @@
 	if(!mob)
 		return
 
-	if(!holder)
-		if(!GLOB.ooc_allowed)
-			to_chat(src, "<span class='danger'>OOC is globally muted.</span>")
-			return
-		if(!GLOB.dooc_allowed && (mob.stat == DEAD))
-			to_chat(usr, "<span class='danger'>OOC for dead mobs has been turned off.</span>")
-			return
-		if(prefs.muted & MUTE_OOC)
-			to_chat(src, "<span class='danger'>You cannot use OOC (muted).</span>")
-			return
-		if(jobban_isbanned(src.mob, "OOC"))
-			to_chat(src, "<span class='danger'>You have been banned from OOC.</span>")
-			return
+	if(IsGuestKey(key))
+		to_chat(src, "Guests may not use OOC.")
+		return
 
 	msg = copytext(sanitize(msg), 1, MAX_MESSAGE_LEN)
 	var/raw_msg = msg
@@ -35,7 +25,24 @@
 		if(alert("Your message \"[raw_msg]\" looks like it was meant for in game communication, say it in OOC?", "Meant for OOC?", "No", "Yes") != "Yes")
 			return
 
+	if(!(prefs.chat_toggles & CHAT_OOC))
+		to_chat(src, "<span class='danger'>You have OOC muted.</span>")
+		return
+
 	if(!holder)
+		if(!GLOB.ooc_allowed)
+			to_chat(src, "<span class='danger'>OOC is globally muted.</span>")
+			return
+		if(!GLOB.dooc_allowed && (mob.stat == DEAD))
+			to_chat(usr, "<span class='danger'>OOC for dead mobs has been turned off.</span>")
+			return
+		if(prefs.muted & MUTE_OOC)
+			to_chat(src, "<span class='danger'>You cannot use OOC (muted).</span>")
+			return
+		if(src.mob)
+			if(jobban_isbanned(src.mob, "OOC"))
+				to_chat(src, "<span class='danger'>You have been banned from OOC.</span>")
+				return
 		if(handle_spam_prevention(msg,MUTE_OOC))
 			return
 		if(findtext(msg, "byond://"))
@@ -44,25 +51,20 @@
 			message_admins("[key_name_admin(src)] has attempted to advertise in OOC: [msg]")
 			return
 
-	if(!(prefs.chat_toggles & CHAT_OOC))
-		to_chat(src, "<span class='danger'>You have OOC muted.</span>")
-		return
-
-
 	log_talk(mob,"[key_name(src)] : [raw_msg]",LOGOOC)
 	mob.log_message("[key]: [raw_msg]", INDIVIDUAL_OOC_LOG)
 
 	var/keyname = key
 	if(prefs.unlock_content)
 		if(prefs.toggles & MEMBER_PUBLIC)
-			keyname = "<font color='[prefs.ooccolor ? prefs.ooccolor : GLOB.normal_ooc_colour]'>[icon2html('icons/member_content.dmi', world, "blag")][keyname]</font>"
+			keyname = "<font color='[prefs.ooccolor ? prefs.ooccolor : GLOB.normal_ooc_colour]'>[bicon(icon('icons/member_content.dmi', "blag"))][keyname]</font>"
 
 	for(var/client/C in GLOB.clients)
 		if(C.prefs.chat_toggles & CHAT_OOC)
 			if(holder)
 				if(!holder.fakekey || C.holder)
 					if(check_rights_for(src, R_ADMIN))
-						to_chat(C, "<span class='adminooc'>[CONFIG_GET(flag/allow_admin_ooccolor) && prefs.ooccolor ? "<font color=[prefs.ooccolor]>" :"" ]<span class='prefix'>OOC:</span> <EM>[keyname][holder.fakekey ? "/([holder.fakekey])" : ""]:</EM> <span class='message'>[msg]</span></span></font>")
+						to_chat(C, "<span class='adminooc'>[config.allow_admin_ooccolor && prefs.ooccolor ? "<font color=[prefs.ooccolor]>" :"" ]<span class='prefix'>OOC:</span> <EM>[keyname][holder.fakekey ? "/([holder.fakekey])" : ""]:</EM> <span class='message'>[msg]</span></span></font>")
 					else
 						to_chat(C, "<span class='adminobserverooc'><span class='prefix'>OOC:</span> <EM>[keyname][holder.fakekey ? "/([holder.fakekey])" : ""]:</EM> <span class='message'>[msg]</span></span>")
 				else
@@ -79,15 +81,6 @@
 	else //otherwise just toggle it
 		GLOB.ooc_allowed = !GLOB.ooc_allowed
 	to_chat(world, "<B>The OOC channel has been globally [GLOB.ooc_allowed ? "enabled" : "disabled"].</B>")
-
-/proc/toggle_dooc(toggle = null)
-	if(toggle != null)
-		if(toggle != GLOB.dooc_allowed)
-			GLOB.dooc_allowed = toggle
-		else
-			return
-	else
-		GLOB.dooc_allowed = !GLOB.dooc_allowed
 
 GLOBAL_VAR_INIT(normal_ooc_colour, OOC_COLOR)
 
@@ -239,11 +232,11 @@ GLOBAL_VAR_INIT(normal_ooc_colour, OOC_COLOR)
 	set category = "OOC"
 	set desc = "View the notes that admins have written about you"
 
-	if(!CONFIG_GET(flag/see_own_notes))
+	if(!config.see_own_notes)
 		to_chat(usr, "<span class='notice'>Sorry, that function is not enabled on this server.</span>")
 		return
 
-	browse_messages(null, usr.ckey, null, TRUE)
+	browse_messages(null, usr.ckey, null, 1)
 
 /client/proc/ignore_key(client)
 	var/client/C = client

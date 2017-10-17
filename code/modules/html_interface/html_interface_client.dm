@@ -26,8 +26,7 @@
 	src.client = client
 
 /datum/html_interface_client/proc/putExtraVar(key, value)
-	if (!src.extra_vars)
-		src.extra_vars = new/list()
+	if (!src.extra_vars) src.extra_vars = new/list()
 	src.extra_vars[key] = value
 
 /datum/html_interface_client/proc/removeExtraVar(key)
@@ -36,11 +35,9 @@
 
 		src.extra_vars.Remove(key)
 
-		if (!src.extra_vars.len)
-			src.extra_vars = null
+		if (!src.extra_vars.len) src.extra_vars = null
 
 	return .
 
 /datum/html_interface_client/proc/getExtraVar(key)
-	if (src.extra_vars)
-		return src.extra_vars[key]
+	if (src.extra_vars) return src.extra_vars[key]

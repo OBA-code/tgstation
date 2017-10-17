@@ -1,10 +1,10 @@
-/obj/item/electronics/firealarm
+/obj/item/weapon/electronics/firealarm
 	name = "fire alarm electronics"
 	desc = "A fire alarm circuit. Can handle heat levels up to 40 degrees celsius."
 
 /obj/item/wallframe/firealarm
 	name = "fire alarm frame"
-	desc = "Used for building fire alarms."
+	desc = "Used for building fire alarms"
 	icon = 'icons/obj/monitors.dmi'
 	icon_state = "fire_bitem"
 	result_path = /obj/machinery/firealarm
@@ -61,7 +61,7 @@
 		if(stat & NOPOWER)
 			return
 
-		if(src.z in GLOB.station_z_levels)
+		if(src.z == ZLEVEL_STATION)
 			add_overlay("overlay_[GLOB.security_level]")
 		else
 			//var/green = SEC_LEVEL_GREEN
@@ -82,7 +82,7 @@
 		return
 	emagged = TRUE
 	if(user)
-		user.visible_message("<span class='warning'>Sparks fly out of [src]!</span>",
+		user.visible_message("<span class='warning'>Sparks fly out of the [src]!</span>",
 							"<span class='notice'>You emag [src], disabling its thermal sensors.</span>")
 	playsound(src, "sparks", 50, 1)
 
@@ -121,7 +121,7 @@
 	var/list/data = list()
 	data["emagged"] = emagged
 
-	if(src.z in GLOB.station_z_levels)
+	if(src.z == ZLEVEL_STATION)
 		data["seclevel"] = get_security_level()
 	else
 		data["seclevel"] = "green"
@@ -145,7 +145,7 @@
 /obj/machinery/firealarm/attackby(obj/item/W, mob/user, params)
 	add_fingerprint(user)
 
-	if(istype(W, /obj/item/screwdriver) && buildstage == 2)
+	if(istype(W, /obj/item/weapon/screwdriver) && buildstage == 2)
 		playsound(src.loc, W.usesound, 50, 1)
 		panel_open = !panel_open
 		to_chat(user, "<span class='notice'>The wires have been [panel_open ? "exposed" : "unexposed"].</span>")
@@ -154,8 +154,8 @@
 
 	if(panel_open)
 
-		if(istype(W, /obj/item/weldingtool) && user.a_intent == INTENT_HELP)
-			var/obj/item/weldingtool/WT = W
+		if(istype(W, /obj/item/weapon/weldingtool) && user.a_intent == INTENT_HELP)
+			var/obj/item/weapon/weldingtool/WT = W
 			if(obj_integrity < max_integrity)
 				if(WT.remove_fuel(0,user))
 					to_chat(user, "<span class='notice'>You begin repairing [src]...</span>")
@@ -178,7 +178,7 @@
 						user.visible_message("[user] has disconnected [src]'s detecting unit!", "<span class='notice'>You disconnect [src]'s detecting unit.</span>")
 					return
 
-				else if (istype(W, /obj/item/wirecutters))
+				else if (istype(W, /obj/item/weapon/wirecutters))
 					buildstage = 1
 					playsound(src.loc, W.usesound, 50, 1)
 					new /obj/item/stack/cable_coil(user.loc, 5)
@@ -197,7 +197,7 @@
 						update_icon()
 					return
 
-				else if(istype(W, /obj/item/crowbar))
+				else if(istype(W, /obj/item/weapon/crowbar))
 					playsound(src.loc, W.usesound, 50, 1)
 					user.visible_message("[user.name] removes the electronics from [src.name].", \
 										"<span class='notice'>You start prying out the circuit...</span>")
@@ -208,29 +208,19 @@
 								stat &= ~BROKEN
 							else
 								to_chat(user, "<span class='notice'>You pry out the circuit.</span>")
-								new /obj/item/electronics/firealarm(user.loc)
+								new /obj/item/weapon/electronics/firealarm(user.loc)
 							buildstage = 0
 							update_icon()
 					return
 			if(0)
-				if(istype(W, /obj/item/electronics/firealarm))
+				if(istype(W, /obj/item/weapon/electronics/firealarm))
 					to_chat(user, "<span class='notice'>You insert the circuit.</span>")
 					qdel(W)
 					buildstage = 1
 					update_icon()
 					return
 
-				else if(istype(W, /obj/item/device/electroadaptive_pseudocircuit))
-					var/obj/item/device/electroadaptive_pseudocircuit/P = W
-					if(!P.adapt_circuit(user, 15))
-						return
-					user.visible_message("<span class='notice'>[user] fabricates a circuit and places it into [src].</span>", \
-					"<span class='notice'>You adapt a fire alarm circuit and slot it into the assembly.</span>")
-					buildstage = 1
-					update_icon()
-					return
-
-				else if(istype(W, /obj/item/wrench))
+				else if(istype(W, /obj/item/weapon/wrench))
 					user.visible_message("[user] removes the fire alarm assembly from the wall.", \
 										 "<span class='notice'>You remove the fire alarm assembly from the wall.</span>")
 					var/obj/item/wallframe/firealarm/frame = new /obj/item/wallframe/firealarm()
@@ -249,15 +239,15 @@
 				alarm()
 
 /obj/machinery/firealarm/obj_break(damage_flag)
-	if(!(stat & BROKEN) && !(flags_1 & NODECONSTRUCT_1) && buildstage != 0) //can't break the electronics if there isn't any inside.
+	if(!(stat & BROKEN) && !(flags & NODECONSTRUCT) && buildstage != 0) //can't break the electronics if there isn't any inside.
 		stat |= BROKEN
 		update_icon()
 
 /obj/machinery/firealarm/deconstruct(disassembled = TRUE)
-	if(!(flags_1 & NODECONSTRUCT_1))
+	if(!(flags & NODECONSTRUCT))
 		new /obj/item/stack/sheet/metal(loc, 1)
 		if(!(stat & BROKEN))
-			var/obj/item/I = new /obj/item/electronics/firealarm(loc)
+			var/obj/item/I = new /obj/item/weapon/electronics/firealarm(loc)
 			if(!disassembled)
 				I.obj_integrity = I.max_integrity * 0.5
 		new /obj/item/stack/cable_coil(loc, 3)

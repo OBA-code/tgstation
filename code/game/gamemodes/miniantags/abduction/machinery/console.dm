@@ -1,13 +1,8 @@
-/proc/get_abductor_console(team_number)
-	for(var/obj/machinery/abductor/console/C in GLOB.machines)
-		if(C.team_number == team_number)
-			return C
-
 //Common
 
 /obj/machinery/abductor
 	resistance_flags = INDESTRUCTIBLE | LAVA_PROOF | FIRE_PROOF | ACID_PROOF
-	var/team_number = 0
+	var/team = 0
 
 //Console
 
@@ -74,7 +69,7 @@
 
 		dat+="<br>"
 		dat += "<a href='?src=\ref[src];select_disguise=1'>Select Agent Vest Disguise</a><br>"
-		dat += "<a href='?src=\ref[src];toggle_vest=1'>[vest.flags_1 & NODROP_1 ? "Unlock" : "Lock"] Vest</a><br>"
+		dat += "<a href='?src=\ref[src];toggle_vest=1'>[vest.flags & NODROP ? "Unlock" : "Lock"] Vest</a><br>"
 	else
 		dat += "<span class='bad'>NO AGENT VEST DETECTED</span>"
 	var/datum/browser/popup = new(user, "computer", "Abductor Console", 400, 500)
@@ -100,7 +95,7 @@
 	else if(href_list["dispense"])
 		switch(href_list["dispense"])
 			if("baton")
-				Dispense(/obj/item/abductor_baton,cost=2)
+				Dispense(/obj/item/weapon/abductor_baton,cost=2)
 			if("helmet")
 				Dispense(/obj/item/clothing/head/helmet/abductor)
 			if("silencer")
@@ -144,21 +139,21 @@
 	return INITIALIZE_HINT_LATELOAD
 
 /obj/machinery/abductor/console/LateInitialize()
-	if(!team_number)
+	if(!team)
 		return
 
 	for(var/obj/machinery/abductor/pad/p in GLOB.machines)
-		if(p.team_number == team_number)
+		if(p.team == team)
 			pad = p
 			break
 
 	for(var/obj/machinery/abductor/experiment/e in GLOB.machines)
-		if(e.team_number == team_number)
+		if(e.team == team)
 			experiment = e
 			e.console = src
 
 	for(var/obj/machinery/computer/camera_advanced/abductor/c in GLOB.machines)
-		if(c.team_number == team_number)
+		if(c.team == team)
 			camera = c
 			c.console = src
 

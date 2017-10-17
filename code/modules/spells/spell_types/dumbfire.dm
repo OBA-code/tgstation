@@ -57,14 +57,14 @@
 
 	var/current_loc = user.loc
 
-	projectile.forceMove(current_loc)
+	projectile.loc = current_loc
 
 	for(var/i = 0,i < proj_lifespan,i++)
 		if(!projectile)
 			break
 
 		if(proj_insubstantial)
-			projectile.forceMove(get_step(projectile, projectile.dir))
+			projectile.loc = get_step(projectile, projectile.dir)
 		else
 			step(projectile, projectile.dir)
 

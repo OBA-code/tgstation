@@ -50,7 +50,7 @@
 
 
 /mob/living/carbon/human/calculate_affecting_pressure(pressure)
-	if((wear_suit && (wear_suit.flags_1 & STOPSPRESSUREDMAGE_1)) && (head && (head.flags_1 & STOPSPRESSUREDMAGE_1)))
+	if((wear_suit && (wear_suit.flags & STOPSPRESSUREDMAGE)) && (head && (head.flags & STOPSPRESSUREDMAGE)))
 		return ONE_ATMOSPHERE
 	else
 		return pressure
@@ -84,7 +84,7 @@
 #define HUMAN_CRIT_MAX_OXYLOSS (SSmobs.wait/30)
 /mob/living/carbon/human/check_breath(datum/gas_mixture/breath)
 
-	var/L = getorganslot(ORGAN_SLOT_LUNGS)
+	var/L = getorganslot("lungs")
 
 	if(!L)
 		if(health >= HEALTH_THRESHOLD_CRIT)
@@ -280,13 +280,13 @@
 
 /mob/living/carbon/human/has_smoke_protection()
 	if(wear_mask)
-		if(wear_mask.flags_1 & BLOCK_GAS_SMOKE_EFFECT_1)
+		if(wear_mask.flags & BLOCK_GAS_SMOKE_EFFECT)
 			. = 1
 	if(glasses)
-		if(glasses.flags_1 & BLOCK_GAS_SMOKE_EFFECT_1)
+		if(glasses.flags & BLOCK_GAS_SMOKE_EFFECT)
 			. = 1
 	if(head)
-		if(head.flags_1 & BLOCK_GAS_SMOKE_EFFECT_1)
+		if(head.flags & BLOCK_GAS_SMOKE_EFFECT)
 			. = 1
 	if(NOBREATH in dna.species.species_traits)
 		. = 1
@@ -318,7 +318,7 @@
 /mob/living/carbon/human/proc/undergoing_cardiac_arrest()
 	if(!can_heartattack())
 		return FALSE
-	var/obj/item/organ/heart/heart = getorganslot(ORGAN_SLOT_HEART)
+	var/obj/item/organ/heart/heart = getorganslot("heart")
 	if(istype(heart) && heart.beating)
 		return FALSE
 	return TRUE
@@ -327,7 +327,7 @@
 	if(!can_heartattack())
 		return FALSE
 
-	var/obj/item/organ/heart/heart = getorganslot(ORGAN_SLOT_HEART)
+	var/obj/item/organ/heart/heart = getorganslot("heart")
 	if(!istype(heart))
 		return
 
@@ -415,7 +415,7 @@ All effects don't start immediately, but rather get worse over time; the rate is
 		if(drunkenness >= 91)
 			adjustBrainLoss(0.4)
 			if(prob(20) && !stat)
-				if(SSshuttle.emergency.mode == SHUTTLE_DOCKED && (z in GLOB.station_z_levels)) //QoL mainly
+				if(SSshuttle.emergency.mode == SHUTTLE_DOCKED && z == ZLEVEL_STATION) //QoL mainly
 					to_chat(src, "<span class='warning'>You're so tired... but you can't miss that shuttle...</span>")
 				else
 					to_chat(src, "<span class='warning'>Just a quick nap...</span>")
