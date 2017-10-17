@@ -11,6 +11,9 @@
 	var/initial_icon_state
 	var/static/list/style_list_icons = list("standard" = 'icons/mob/augmentation/augments.dmi', "engineer" = 'icons/mob/augmentation/augments_engineer.dmi', "security" = 'icons/mob/augmentation/augments_security.dmi', "mining" = 'icons/mob/augmentation/augments_mining.dmi')
 
+/obj/machinery/aug_manipulator/examine(mob/user)
+	..()
+	to_chat(user, "<span class='notice'>Alt-click to eject the limb.</span>")
 
 /obj/machinery/aug_manipulator/Initialize()
     initial_icon_state = initial(icon_state)
@@ -70,8 +73,8 @@
 			O.add_fingerprint(user)
 			update_icon()
 
-	else if(istype(O, /obj/item/weapon/weldingtool) && user.a_intent != INTENT_HARM)
-		var/obj/item/weapon/weldingtool/WT = O
+	else if(istype(O, /obj/item/weldingtool) && user.a_intent != INTENT_HARM)
+		var/obj/item/weldingtool/WT = O
 		if(obj_integrity < max_integrity)
 			if(WT.remove_fuel(0,user))
 				user.visible_message("[user] begins repairing [src].", \
@@ -92,7 +95,7 @@
 		return ..()
 
 /obj/machinery/aug_manipulator/obj_break(damage_flag)
-	if(!(flags & NODECONSTRUCT))
+	if(!(flags_1 & NODECONSTRUCT_1))
 		if(!(stat & BROKEN))
 			stat |= BROKEN
 			update_icon()

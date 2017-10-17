@@ -57,6 +57,12 @@
 	unit_name = "lizard hide"
 	export_types = list(/obj/item/stack/sheet/animalhide/lizard)
 
+// Gondola hide. Mindbogglingly expensive.
+/datum/export/stack/skin/gondola
+	cost = 10000
+	unit_name = "gondola hide"
+	export_types = list(/obj/item/stack/sheet/animalhide/gondola)
+
 // Alien hide. Extremely expensive.
 /datum/export/stack/skin/xeno
 	cost = 3000
@@ -79,8 +85,7 @@
 	message = "of reinforced glass"
 	export_types = list(/obj/item/stack/sheet/rglass)
 
-// Bluespace Polycrystals. About as common on the asteroid as
-
+// Bluespace Polycrystals. Uncommon.
 /datum/export/stack/bscrystal
 	cost = 750
 	message = "of bluespace crystals"

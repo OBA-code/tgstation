@@ -16,12 +16,10 @@
 		queue_smooth(src)
 		queue_smooth_neighbors(src)
 		icon_state = ""
-	if(SSticker)
-		GLOB.cameranet.updateVisibility(src)
+	GLOB.cameranet.updateVisibility(src)
 
 /obj/structure/Destroy()
-	if(SSticker)
-		GLOB.cameranet.updateVisibility(src)
+	GLOB.cameranet.updateVisibility(src)
 	if(smooth)
 		queue_smooth_neighbors(src)
 	return ..()
@@ -33,7 +31,7 @@
 		user.changeNext_move(CLICK_CD_MELEE)
 		user.do_attack_animation(src)
 		structureclimber.Knockdown(40)
-		structureclimber.visible_message("<span class='warning'>[structureclimber.name] has been knocked off the [src]", "You're knocked off the [src]!", "You see [structureclimber.name] get knocked off the [src]</span>")
+		structureclimber.visible_message("<span class='warning'>[structureclimber] has been knocked off [src].", "You're knocked off [src]!", "You see [structureclimber] get knocked off [src].</span>")
 	interact(user)
 
 /obj/structure/interact(mob/user)
@@ -51,11 +49,11 @@
 		if(user.canmove)
 			climb_structure(user)
 			return
-	if ((!( istype(O, /obj/item/weapon) ) || user.get_active_held_item() != O))
+	if ((!( istype(O, /obj/item) ) || user.get_active_held_item() != O))
 		return
 	if(iscyborg(user))
 		return
-	if(!user.drop_item())
+	if(!user.drop_all_held_items())
 		return
 	if (O.loc != src.loc)
 		step(O, get_dir(O, src))

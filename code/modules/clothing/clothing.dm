@@ -6,7 +6,7 @@
 	var/damaged_clothes = 0 //similar to machine's BROKEN stat and structure's broken var
 	var/flash_protect = 0		//What level of bright light protection item has. 1 = Flashers, Flashes, & Flashbangs | 2 = Welding | -1 = OH GOD WELDING BURNT OUT MY RETINAS
 	var/tint = 0				//Sets the item's level of visual impairment tint, normally set to the same as flash_protect
-	var/up = 0					//but seperated to allow items to protect but not impair vision, like space helmets
+	var/up = 0					//but separated to allow items to protect but not impair vision, like space helmets
 	var/visor_flags = 0			//flags that are added/removed when an item is adjusted up/down
 	var/visor_flags_inv = 0		//same as visor_flags, but for flags_inv
 	var/visor_flags_cover = 0	//same as above, but for flags_cover
@@ -22,14 +22,13 @@
 	var/cooldown = 0
 	var/obj/item/device/flashlight/F = null
 	var/can_flashlight = 0
-	var/gang //Is this a gang outfit?
 	var/scan_reagents = 0 //Can the wearer see reagents while it's equipped?
 
 	//Var modification - PLEASE be careful with this I know who you are and where you live
 	var/list/user_vars_to_edit = list() //VARNAME = VARVALUE eg: "name" = "butts"
 	var/list/user_vars_remembered = list() //Auto built by the above + dropped() + equipped()
 
-	var/obj/item/weapon/storage/internal/pocket/pockets = null
+	var/obj/item/storage/internal/pocket/pockets = null
 
 	//These allow head/mask items to dynamically alter the user's hair
 	// and facial hair, checking hair_extensions.dmi and facialhair_extensions.dmi
@@ -49,7 +48,7 @@
 	if(pockets && over_object == M)
 		return pockets.MouseDrop(over_object)
 
-	if(istype(usr.loc, /obj/mecha)) // stops inventory actions in a mech
+	if(ismecha(M.loc)) // stops inventory actions in a mech
 		return
 
 	if(!M.incapacitated() && loc == M && istype(over_object, /obj/screen/inventory/hand))
@@ -145,15 +144,15 @@
 	if(pockets)
 		var/list/how_cool_are_your_threads = list("<span class='notice'>")
 		if(pockets.priority)
-			how_cool_are_your_threads += "Your [src]'s storage opens when clicked.\n"
+			how_cool_are_your_threads += "[src]'s storage opens when clicked.\n"
 		else
-			how_cool_are_your_threads += "Your [src]'s storage opens when dragged to yourself.\n"
-		how_cool_are_your_threads += "Your [src] can store [pockets.storage_slots] item[pockets.storage_slots > 1 ? "s" : ""].\n"
-		how_cool_are_your_threads += "Your [src] can store items that are [weightclass2text(pockets.max_w_class)] or smaller.\n"
+			how_cool_are_your_threads += "[src]'s storage opens when dragged to yourself.\n"
+		how_cool_are_your_threads += "[src] can store [pockets.storage_slots] item\s.\n"
+		how_cool_are_your_threads += "[src] can store items that are [weightclass2text(pockets.max_w_class)] or smaller.\n"
 		if(pockets.quickdraw)
-			how_cool_are_your_threads += "You can quickly remove an item from your [src] using Alt-Click.\n"
+			how_cool_are_your_threads += "You can quickly remove an item from [src] using Alt-Click.\n"
 		if(pockets.silent)
-			how_cool_are_your_threads += "Adding or Removing items from your [src] makes no noise.\n"
+			how_cool_are_your_threads += "Adding or removing items from [src] makes no noise.\n"
 		how_cool_are_your_threads += "</span>"
 		to_chat(user, how_cool_are_your_threads.Join())
 
@@ -162,7 +161,7 @@
 		update_clothes_damaged_state(TRUE)
 	if(ismob(loc)) //It's not important enough to warrant a message if nobody's wearing it
 		var/mob/M = loc
-		M.visible_message("<span class='warning'>[M]'s [name] starts to fall apart!", "<span class='warning'>Your [name] starts to fall apart!")
+		M.visible_message("<span class='warning'>[M]'s [name] starts to fall apart!", "<span class='warning'>Your [name] starts to fall apart!</span>")
 
 /obj/item/clothing/proc/update_clothes_damaged_state(damaging = TRUE)
 	var/index = "\ref[initial(icon)]-[initial(icon_state)]"
@@ -193,7 +192,6 @@
 	var/invis_view = SEE_INVISIBLE_LIVING
 	var/invis_override = 0 //Override to allow glasses to set higher than normal see_invis
 	var/lighting_alpha
-	var/emagged = FALSE
 	var/list/icon/current = list() //the current hud icons
 	var/vision_correction = 0 //does wearing these glasses correct some of our vision defects?
 	strip_delay = 20
@@ -216,7 +214,7 @@ BLIND     // can't see anything
 	gender = PLURAL //Carn: for grammarically correct text-parsing
 	w_class = WEIGHT_CLASS_SMALL
 	icon = 'icons/obj/clothing/gloves.dmi'
-	siemens_coefficient = 0.50
+	siemens_coefficient = 0.5
 	body_parts_covered = HANDS
 	slot_flags = SLOT_GLOVES
 	attack_verb = list("challenged")
@@ -253,6 +251,7 @@ BLIND     // can't see anything
 	slot_flags = SLOT_HEAD
 	var/blockTracking = 0 //For AI tracking
 	var/can_toggle = null
+	dynamic_hair_suffix = "+generic"
 
 /obj/item/clothing/head/Initialize()
 	. = ..()
@@ -273,17 +272,6 @@ BLIND     // can't see anything
 	if(ismob(loc))
 		var/mob/M = loc
 		M.update_inv_head()
-
-/obj/item/clothing/head/equipped(mob/user, slot)
-	..()
-	if(dynamic_hair_suffix)
-		user.update_hair()
-
-/obj/item/clothing/head/dropped(mob/user)
-	..()
-	if(dynamic_hair_suffix)
-		user.update_hair()
-
 
 //Neck
 /obj/item/clothing/neck
@@ -340,7 +328,7 @@ BLIND     // can't see anything
 		src.icon_state = initial(icon_state)
 		gas_transfer_coefficient = initial(gas_transfer_coefficient)
 		permeability_coefficient = initial(permeability_coefficient)
-		flags |= visor_flags
+		flags_1 |= visor_flags
 		flags_inv |= visor_flags_inv
 		flags_cover |= visor_flags_cover
 		to_chat(user, "<span class='notice'>You push \the [src] back into place.</span>")
@@ -350,7 +338,7 @@ BLIND     // can't see anything
 		to_chat(user, "<span class='notice'>You push \the [src] out of the way.</span>")
 		gas_transfer_coefficient = null
 		permeability_coefficient = null
-		flags &= ~visor_flags
+		flags_1 &= ~visor_flags
 		flags_inv &= ~visor_flags_inv
 		flags_cover &= ~visor_flags_cover
 		if(adjusted_flags)
@@ -373,7 +361,7 @@ BLIND     // can't see anything
 	body_parts_covered = FEET
 	slot_flags = SLOT_FEET
 
-	permeability_coefficient = 0.50
+	permeability_coefficient = 0.5
 	slowdown = SHOES_SLOWDOWN
 	var/blood_state = BLOOD_STATE_NOT_BLOODY
 	var/list/bloody_shoes = list(BLOOD_STATE_HUMAN = 0,BLOOD_STATE_XENO = 0, BLOOD_STATE_OIL = 0, BLOOD_STATE_NOT_BLOODY = 0)
@@ -434,7 +422,7 @@ BLIND     // can't see anything
 	icon = 'icons/obj/clothing/suits.dmi'
 	name = "suit"
 	var/fire_resist = T0C+100
-	allowed = list(/obj/item/weapon/tank/internals/emergency_oxygen)
+	allowed = list(/obj/item/tank/internals/emergency_oxygen)
 	armor = list(melee = 0, bullet = 0, laser = 0,energy = 0, bomb = 0, bio = 0, rad = 0, fire = 0, acid = 0)
 	slot_flags = SLOT_OCLOTHING
 	var/blood_overlay_type = "suit"
@@ -469,11 +457,13 @@ BLIND     // can't see anything
 	name = "space helmet"
 	icon_state = "spaceold"
 	desc = "A special helmet with solar UV shielding to protect your eyes from harmful rays."
-	flags = STOPSPRESSUREDMAGE | THICKMATERIAL
+	flags_1 = STOPSPRESSUREDMAGE_1 | THICKMATERIAL_1
 	item_state = "spaceold"
 	permeability_coefficient = 0.01
 	armor = list(melee = 0, bullet = 0, laser = 0,energy = 0, bomb = 0, bio = 100, rad = 50, fire = 80, acid = 70)
 	flags_inv = HIDEMASK|HIDEEARS|HIDEEYES|HIDEFACE|HIDEHAIR|HIDEFACIALHAIR
+	dynamic_hair_suffix = ""
+	dynamic_fhair_suffix = ""
 	cold_protection = HEAD
 	min_cold_protection_temperature = SPACE_HELM_MIN_TEMP_PROTECT
 	heat_protection = HEAD
@@ -483,6 +473,7 @@ BLIND     // can't see anything
 	equip_delay_other = 50
 	flags_cover = HEADCOVERSEYES | HEADCOVERSMOUTH
 	resistance_flags = 0
+	dog_fashion = null
 
 /obj/item/clothing/suit/space
 	name = "space suit"
@@ -492,9 +483,9 @@ BLIND     // can't see anything
 	w_class = WEIGHT_CLASS_BULKY
 	gas_transfer_coefficient = 0.01
 	permeability_coefficient = 0.02
-	flags = STOPSPRESSUREDMAGE | THICKMATERIAL
+	flags_1 = STOPSPRESSUREDMAGE_1 | THICKMATERIAL_1
 	body_parts_covered = CHEST|GROIN|LEGS|FEET|ARMS|HANDS
-	allowed = list(/obj/item/device/flashlight, /obj/item/weapon/tank/internals)
+	allowed = list(/obj/item/device/flashlight, /obj/item/tank/internals)
 	slowdown = 1
 	armor = list(melee = 0, bullet = 0, laser = 0,energy = 0, bomb = 0, bio = 100, rad = 50, fire = 80, acid = 70)
 	flags_inv = HIDEGLOVES|HIDESHOES|HIDEJUMPSUIT
@@ -512,7 +503,7 @@ BLIND     // can't see anything
 	icon = 'icons/obj/clothing/uniforms.dmi'
 	name = "under"
 	body_parts_covered = CHEST|GROIN|LEGS|ARMS
-	permeability_coefficient = 0.90
+	permeability_coefficient = 0.9
 	slot_flags = SLOT_ICLOTHING
 	armor = list(melee = 0, bullet = 0, laser = 0,energy = 0, bomb = 0, bio = 0, rad = 0, fire = 0, acid = 0)
 	var/fitted = FEMALE_UNIFORM_FULL // For use in alternate clothing styles for women
@@ -537,13 +528,15 @@ BLIND     // can't see anything
 		if(accessory_overlay)
 			. += accessory_overlay
 
-/obj/item/clothing/under/attackby(obj/item/W, mob/user, params)
-	if((has_sensor == BROKEN_SENSORS) && istype(W, /obj/item/stack/cable_coil))
-		var/obj/item/stack/cable_coil/C = W
+/obj/item/clothing/under/attackby(obj/item/I, mob/user, params)
+	if((has_sensor == BROKEN_SENSORS) && istype(I, /obj/item/stack/cable_coil))
+		var/obj/item/stack/cable_coil/C = I
 		C.use(1)
 		has_sensor = HAS_SENSORS
 		to_chat(user,"<span class='notice'>You repair the suit sensors on [src] with [C].</span>")
 		return 1
+	if(!attach_accessory(I, user))
+		return ..()
 
 /obj/item/clothing/under/update_clothes_damaged_state(damaging = TRUE)
 	..()
@@ -590,10 +583,6 @@ BLIND     // can't see anything
 
 	..()
 
-/obj/item/clothing/under/attackby(obj/item/I, mob/user, params)
-	if(!attach_accessory(I, user))
-		..()
-
 /obj/item/clothing/under/proc/attach_accessory(obj/item/I, mob/user, notifyAttach = 1)
 	. = FALSE
 	if(istype(I, /obj/item/clothing/accessory))
@@ -603,7 +592,7 @@ BLIND     // can't see anything
 				to_chat(user, "<span class='warning'>[src] already has an accessory.</span>")
 			return
 		else
-			if(user && !user.drop_item())
+			if(user && !user.temporarilyRemoveItemFromInventory(I))
 				return
 			if(!A.attach(src, user))
 				return
@@ -785,7 +774,7 @@ BLIND     // can't see anything
 
 /obj/item/clothing/proc/visor_toggling() //handles all the actual toggling of flags
 	up = !up
-	flags ^= visor_flags
+	flags_1 ^= visor_flags
 	flags_inv ^= visor_flags_inv
 	flags_cover ^= initial(flags_cover)
 	icon_state = "[initial(icon_state)][up ? "up" : ""]"

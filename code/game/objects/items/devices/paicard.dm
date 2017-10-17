@@ -3,6 +3,8 @@
 	icon = 'icons/obj/aicards.dmi'
 	icon_state = "pai"
 	item_state = "electronic"
+	lefthand_file = 'icons/mob/inhands/misc/devices_lefthand.dmi'
+	righthand_file = 'icons/mob/inhands/misc/devices_righthand.dmi'
 	w_class = WEIGHT_CLASS_SMALL
 	slot_flags = SLOT_BELT
 	origin_tech = "programming=2"
@@ -126,16 +128,26 @@
 	if(pai)
 		src.cut_overlays()
 		switch(emotion)
-			if(1) src.add_overlay("pai-happy")
-			if(2) src.add_overlay("pai-cat")
-			if(3) src.add_overlay("pai-extremely-happy")
-			if(4) src.add_overlay("pai-face")
-			if(5) src.add_overlay("pai-laugh")
-			if(6) src.add_overlay("pai-off")
-			if(7) src.add_overlay("pai-sad")
-			if(8) src.add_overlay("pai-angry")
-			if(9) src.add_overlay("pai-what")
-			if(10) src.add_overlay("pai-null")
+			if(1)
+				src.add_overlay("pai-happy")
+			if(2)
+				src.add_overlay("pai-cat")
+			if(3)
+				src.add_overlay("pai-extremely-happy")
+			if(4)
+				src.add_overlay("pai-face")
+			if(5)
+				src.add_overlay("pai-laugh")
+			if(6)
+				src.add_overlay("pai-off")
+			if(7)
+				src.add_overlay("pai-sad")
+			if(8)
+				src.add_overlay("pai-angry")
+			if(9)
+				src.add_overlay("pai-what")
+			if(10)
+				src.add_overlay("pai-null")
 
 /obj/item/device/paicard/proc/alertUpdate()
 	visible_message("<span class ='info'>[src] flashes a message across its screen, \"Additional personalities available for download.\"", "<span class='notice'>[src] bleeps electronically.</span>")

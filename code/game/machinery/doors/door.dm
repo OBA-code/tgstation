@@ -11,7 +11,7 @@
 	max_integrity = 350
 	armor = list(melee = 30, bullet = 30, laser = 20, energy = 20, bomb = 10, bio = 100, rad = 100, fire = 80, acid = 70)
 	CanAtmosPass = ATMOS_PASS_DENSITY
-	flags = PREVENT_CLICK_UNDER
+	flags_1 = PREVENT_CLICK_UNDER_1
 
 	var/secondsElectrified = 0
 	var/shockedby = list()
@@ -32,6 +32,10 @@
 	var/datum/effect_system/spark_spread/spark_system
 	var/damage_deflection = 10
 	var/real_explosion_block	//ignore this, just use explosion_block
+
+/obj/machinery/door/examine(mob/user)
+	..()
+	to_chat(user, "<span class='notice'>Its maintenance panel is <b>screwed</b> in place.</span>")
 
 /obj/machinery/door/New()
 	..()
@@ -79,7 +83,7 @@
 			bumpopen(M)
 			return
 
-	if(istype(AM, /obj/mecha))
+	if(ismecha(AM))
 		var/obj/mecha/mecha = AM
 		if(density)
 			if(mecha.occupant)
@@ -150,20 +154,20 @@
 		return TRUE
 	return ..()
 
-/obj/machinery/door/proc/try_to_weld(obj/item/weapon/weldingtool/W, mob/user)
+/obj/machinery/door/proc/try_to_weld(obj/item/weldingtool/W, mob/user)
 	return
 
 /obj/machinery/door/proc/try_to_crowbar(obj/item/I, mob/user)
 	return
 
 /obj/machinery/door/attackby(obj/item/I, mob/user, params)
-	if(user.a_intent != INTENT_HARM && (istype(I, /obj/item/weapon/crowbar) || istype(I, /obj/item/weapon/twohanded/fireaxe)))
+	if(user.a_intent != INTENT_HARM && (istype(I, /obj/item/crowbar) || istype(I, /obj/item/twohanded/fireaxe)))
 		try_to_crowbar(I, user)
 		return 1
-	else if(istype(I, /obj/item/weapon/weldingtool))
+	else if(istype(I, /obj/item/weldingtool))
 		try_to_weld(I, user)
 		return 1
-	else if(!(I.flags & NOBLUDGEON) && user.a_intent != INTENT_HARM)
+	else if(!(I.flags_1 & NOBLUDGEON_1) && user.a_intent != INTENT_HARM)
 		try_to_activate_door(user)
 		return 1
 	return ..()
@@ -327,8 +331,8 @@
 /obj/machinery/door/morgue
 	icon = 'icons/obj/doors/doormorgue.dmi'
 
-/obj/machinery/door/storage_contents_dump_act(obj/item/weapon/storage/src_object, mob/user)
-	return 0
+/obj/machinery/door/get_dumping_location(obj/item/storage/source,mob/user)
+	return null
 
 /obj/machinery/door/proc/lock()
 	return

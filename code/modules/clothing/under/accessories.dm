@@ -139,8 +139,10 @@
 							log_game("<b>[key_name(M)]</b> was given the following commendation by <b>[key_name(user)]</b>: [input]")
 							message_admins("<b>[key_name(M)]</b> was given the following commendation by <b>[key_name(user)]</b>: [input]")
 
-		else to_chat(user, "<span class='warning'>Medals can only be pinned on jumpsuits!</span>")
-	else ..()
+		else
+			to_chat(user, "<span class='warning'>Medals can only be pinned on jumpsuits!</span>")
+	else
+		..()
 
 /obj/item/clothing/accessory/medal/conduct
 	name = "distinguished conduct medal"
@@ -150,6 +152,16 @@
 	name = "bronze heart medal"
 	desc = "A bronze heart-shaped medal awarded for sacrifice. It is often awarded posthumously or for severe injury in the line of duty."
 	icon_state = "bronze_heart"
+
+/obj/item/clothing/accessory/medal/ribbon
+	name = "ribbon"
+	desc = "A ribbon"
+	icon_state = "cargo"
+	item_color = "cargo"
+
+/obj/item/clothing/accessory/medal/ribbon/cargo
+	name = "\"cargo tech of the shift\" award"
+	desc = "An award bestowed only upon those cargotechs who have exhibited devotion to their duty in keeping with the highest traditions of Cargonia."
 
 /obj/item/clothing/accessory/medal/silver
 	name = "silver medal"
@@ -182,7 +194,7 @@
 
 /obj/item/clothing/accessory/medal/gold/heroism
 	name = "medal of exceptional heroism"
-	desc = "An extremely rare golden medal awarded only by Centcom. To receive such a medal is the highest honor and as such, very few exist. This medal is almost never awarded to anybody but commanders."
+	desc = "An extremely rare golden medal awarded only by CentCom. To receive such a medal is the highest honor and as such, very few exist. This medal is almost never awarded to anybody but commanders."
 
 /obj/item/clothing/accessory/medal/plasma
 	name = "plasma medal"
@@ -283,13 +295,13 @@
 	desc = "Can protect your clothing from ink stains, but you'll look like a nerd if you're using one."
 	icon_state = "pocketprotector"
 	item_color = "pocketprotector"
-	pockets = /obj/item/weapon/storage/internal/pocket/pocketprotector
+	pockets = /obj/item/storage/internal/pocket/pocketprotector
 
 /obj/item/clothing/accessory/pocketprotector/full
-	pockets = /obj/item/weapon/storage/internal/pocket/pocketprotector/full
+	pockets = /obj/item/storage/internal/pocket/pocketprotector/full
 
 /obj/item/clothing/accessory/pocketprotector/cosmetology
-	pockets = /obj/item/weapon/storage/internal/pocket/pocketprotector/cosmetology
+	pockets = /obj/item/storage/internal/pocket/pocketprotector/cosmetology
 
 
 ////////////////

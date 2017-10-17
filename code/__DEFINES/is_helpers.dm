@@ -1,12 +1,18 @@
 // simple is_type and similar inline helpers
 
+#define isdatum(D) (istype(D, /datum))
+
 #define islist(L) (istype(L, /list))
 
 #define in_range(source, user) (get_dist(source, user) <= 1)
 
 #define ismovableatom(A) (istype(A, /atom/movable))
 
+#define isatom(A) (istype(A, /atom))
+
 //Turfs
+//#define isturf(A) (istype(A, /turf)) This is actually a byond built-in. Added here for completeness sake.
+
 #define isopenturf(A) (istype(A, /turf/open))
 
 #define isindestructiblefloor(A) (istype(A, /turf/open/indestructible))
@@ -23,7 +29,9 @@
 
 #define ismineralturf(A) (istype(A, /turf/closed/mineral))
 
-#define islava(A) (istype(A, /turf/open/floor/plating/lava))
+#define islava(A) (istype(A, /turf/open/lava))
+
+#define isplatingturf(A) (istype(A, /turf/open/floor/plating))
 
 //Mobs
 #define isliving(A) (istype(A, /mob/living))
@@ -125,20 +133,28 @@
 
 #define isovermind(A) (istype(A, /mob/camera/blob))
 
+#define iscameramob(A) (istype(A, /mob/camera))
+
 //Objects
 #define isobj(A) istype(A, /obj) //override the byond proc because it returns true on children of /atom/movable that aren't objs
 
 #define isitem(A) (istype(A, /obj/item))
+
+#define isstructure(A) (istype(A, /obj/structure))
+
+#define ismachinery(A) (istype(A, /obj/machinery))
+
+#define ismecha(A) (istype(A, /obj/mecha))
 
 #define is_cleanable(A) (istype(A, /obj/effect/decal/cleanable) || istype(A, /obj/effect/rune)) //if something is cleanable
 
 #define isorgan(A) (istype(A, /obj/item/organ))
 
 GLOBAL_LIST_INIT(pointed_types, typecacheof(list(
-	/obj/item/weapon/pen,
-	/obj/item/weapon/screwdriver,
-	/obj/item/weapon/reagent_containers/syringe,
-	/obj/item/weapon/kitchen/fork)))
+	/obj/item/pen,
+	/obj/item/screwdriver,
+	/obj/item/reagent_containers/syringe,
+	/obj/item/kitchen/fork)))
 
 #define is_pointed(W) (is_type_in_typecache(W, GLOB.pointed_types))
 
@@ -156,3 +172,11 @@ GLOBAL_LIST_INIT(pointed_types, typecacheof(list(
 #define issignaler(O) (istype(O, /obj/item/device/assembly/signaler))
 
 #define istimer(O) (istype(O, /obj/item/device/assembly/timer))
+
+GLOBAL_LIST_INIT(glass_sheet_types, typecacheof(list(
+	/obj/item/stack/sheet/glass,
+	/obj/item/stack/sheet/rglass,
+	/obj/item/stack/sheet/plasmaglass,
+	/obj/item/stack/sheet/plasmarglass)))
+
+#define is_glass_sheet(O) (is_type_in_typecache(O, GLOB.glass_sheet_types))

@@ -14,7 +14,8 @@
 		if(call(client.click_intercept, "InterceptClickOn")(src, params, A))
 			return
 
-	if(control_disabled || stat) return
+	if(control_disabled || incapacitated())
+		return
 
 	if(ismob(A))
 		ai_actual_track(A)
@@ -31,7 +32,7 @@
 		if(call(client.click_intercept, "InterceptClickOn")(src, params, A))
 			return
 
-	if(control_disabled || stat)
+	if(control_disabled || incapacitated())
 		return
 
 	var/turf/pixel_turf = get_turf_pixel(A)
@@ -149,7 +150,7 @@
 	if(emagged)
 		return
 	if(!secondsElectrified)
-		// permenant shock
+		// permanent shock
 		Topic("aiEnable=6", list("aiEnable"="6"), 1) // 1 meaning no window (consistency!)
 	else
 		// disable/6 is not in Topic; disable/5 disables both temporary and permenant shock

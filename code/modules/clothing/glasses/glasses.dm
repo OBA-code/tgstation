@@ -3,6 +3,11 @@
 	materials = list(MAT_GLASS = 250)
 	var/glass_colour_type = null //colors your vision when worn
 
+/obj/item/clothing/glasses/examine(mob/user)
+	..()
+	if(glass_colour_type && ishuman(user))
+		to_chat(user, "<span class='notice'>Alt-click to toggle its colors.</span>")
+
 /obj/item/clothing/glasses/visor_toggling()
 	..()
 	if(visor_vars_to_toggle & VISOR_VISIONFLAGS)
@@ -23,7 +28,7 @@
 		var/mob/living/carbon/human/H = src.loc
 		if(!(H.disabilities & BLIND))
 			if(H.glasses == src)
-				to_chat(H, "<span class='danger'>The [src] overloads and blinds you!</span>")
+				to_chat(H, "<span class='danger'>[src] overloads and blinds you!</span>")
 				H.flash_act(visual = 1)
 				H.blind_eyes(3)
 				H.blur_eyes(5)
@@ -85,6 +90,7 @@
 	item_state = "glasses"
 	origin_tech = "materials=4;magnets=4;plasmatech=4;engineering=4"
 	darkness_view = 8
+	vision_flags = SEE_BLACKNESS
 	lighting_alpha = LIGHTING_PLANE_ALPHA_MOSTLY_INVISIBLE
 	glass_colour_type = /datum/client_colour/glass_colour/green
 
@@ -280,7 +286,7 @@
 	name = "thermoncle"
 	desc = "Never before has seeing through walls felt so gentlepersonly."
 	icon_state = "thermoncle"
-	flags = null //doesn't protect eyes because it's a monocle, duh
+	flags_1 = null //doesn't protect eyes because it's a monocle, duh
 
 /obj/item/clothing/glasses/thermal/monocle/examine(mob/user) //Different examiners see a different description!
 	var/desk = desc
@@ -331,10 +337,10 @@
 	vision_flags = SEE_TURFS|SEE_MOBS|SEE_OBJS
 	darkness_view = 8
 	scan_reagents = 1
-	flags = NODROP
+	flags_1 = NODROP_1
 	lighting_alpha = LIGHTING_PLANE_ALPHA_MOSTLY_INVISIBLE
 
-/obj/item/clothing/glasses/godeye/attackby(obj/item/weapon/W as obj, mob/user as mob, params)
+/obj/item/clothing/glasses/godeye/attackby(obj/item/W as obj, mob/user as mob, params)
 	if(istype(W, src) && W != src && W.loc == user)
 		if(W.icon_state == "godeye")
 			W.icon_state = "doublegodeye"

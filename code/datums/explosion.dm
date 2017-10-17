@@ -61,7 +61,7 @@ GLOBAL_LIST_EMPTY(explosions)
 		flash_range = min(GLOB.MAX_EX_FLASH_RANGE, flash_range)
 		flame_range = min(GLOB.MAX_EX_FLAME_RANGE, flame_range)
 
-	//DO NOT REMOVE THIS SLEEP, IT BREAKS THINGS
+	//DO NOT REMOVE THIS STOPLAG, IT BREAKS THINGS
 	//not sleeping causes us to ex_act() the thing that triggered the explosion
 	//doing that might cause it to trigger another explosion
 	//this is bad
@@ -96,7 +96,9 @@ GLOBAL_LIST_EMPTY(explosions)
 
 	if(!silent)
 		var/frequency = get_rand_frequency()
-		var/ex_sound = get_sfx("explosion")
+		var/sound/explosion_sound = sound(get_sfx("explosion"))
+		var/sound/far_explosion_sound = sound('sound/effects/explosionfar.ogg')
+
 		for(var/mob/M in GLOB.player_list)
 			// Double check for client
 			var/turf/M_turf = get_turf(M)
@@ -104,12 +106,12 @@ GLOBAL_LIST_EMPTY(explosions)
 				var/dist = get_dist(M_turf, epicenter)
 				// If inside the blast radius + world.view - 2
 				if(dist <= round(max_range + world.view - 2, 1))
-					M.playsound_local(epicenter, ex_sound, 100, 1, frequency, falloff = 5)
+					M.playsound_local(epicenter, null, 100, 1, frequency, falloff = 5, S = explosion_sound)
 				// You hear a far explosion if you're outside the blast radius. Small bombs shouldn't be heard all over the station.
 				else if(dist <= far_dist)
 					var/far_volume = Clamp(far_dist, 30, 50) // Volume is based on explosion size and dist
 					far_volume += (dist <= far_dist * 0.5 ? 50 : 0) // add 50 volume if the mob is pretty close to the explosion
-					M.playsound_local(epicenter, 'sound/effects/explosionfar.ogg', far_volume, 1, frequency, falloff = 5)
+					M.playsound_local(epicenter, null, far_volume, 1, frequency, falloff = 5, S = far_explosion_sound)
 			EX_PREPROCESS_CHECK_TICK
 
 	//postpone processing for a bit
@@ -138,7 +140,7 @@ GLOBAL_LIST_EMPTY(explosions)
 	var/list/exploded_this_tick = list()	//open turfs that need to be blocked off while we sleep
 	var/list/affected_turfs = GatherSpiralTurfs(max_range, epicenter)
 
-	var/reactionary = config.reactionary_explosions
+	var/reactionary = CONFIG_GET(flag/reactionary_explosions)
 	var/list/cached_exp_block
 
 	if(reactionary)
@@ -174,6 +176,15 @@ GLOBAL_LIST_EMPTY(explosions)
 			dist = EXPLODE_NONE
 
 		//------- EX_ACT AND TURF FIRES -------
+
+		if(T == epicenter) // Ensures explosives detonating from bags trigger other explosives in that bag
+			var/list/items = list() 
+			for(var/I in T)
+				var/atom/A = I
+				items += A.GetAllContents()
+			for(var/O in items)
+				var/atom/A = O
+				A.ex_act(dist)
 
 		if(flame_dist && prob(40) && !isspaceturf(T) && !T.density)
 			new /obj/effect/hotspot(T) //Mostly for ambience!
@@ -273,7 +284,7 @@ GLOBAL_LIST_EMPTY(explosions)
 
 	. = list()
 	var/processed = 0
-	while(!stopped && running)
+	while(running)
 		var/I
 		for(I in (processed + 1) to affected_turfs.len) // we cache the explosion block rating of every turf in the explosion area
 			var/turf/T = affected_turfs[I]
@@ -363,10 +374,13 @@ GLOBAL_LIST_EMPTY(explosions)
 		else
 			continue
 
-	sleep(100)
-	for(var/turf/T in wipe_colours)
-		T.color = null
-		T.maptext = ""
+	addtimer(CALLBACK(GLOBAL_PROC, .proc/wipe_color_and_text, wipe_colours), 100)
+
+/proc/wipe_color_and_text(list/atom/wiping)
+	for(var/i in wiping)
+		var/atom/A = i
+		A.color = null
+		A.maptext = ""
 
 /proc/dyn_explosion(turf/epicenter, power, flash_range, adminlog = 1, ignorecap = 1, flame_range = 0 ,silent = 0, smoke = 1)
 	if(!power)

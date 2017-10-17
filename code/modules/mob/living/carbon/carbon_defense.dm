@@ -14,7 +14,7 @@
 		var/obj/item/clothing/mask/MFP = src.wear_mask
 		number += MFP.flash_protect
 
-	var/obj/item/organ/eyes/E = getorganslot("eye_sight")
+	var/obj/item/organ/eyes/E = getorganslot(ORGAN_SLOT_EYES)
 	if(!E)
 		number = INFINITY //Can't get flashed without eyes
 	else
@@ -24,11 +24,11 @@
 
 /mob/living/carbon/get_ear_protection()
 	var/number = ..()
-	if(ears && HAS_SECONDARY_FLAG(ears, BANG_PROTECT))
+	if(ears && (ears.flags_2 & BANG_PROTECT_2))
 		number += 1
-	if(head && HAS_SECONDARY_FLAG(head, BANG_PROTECT))
+	if(head && (head.flags_2 & BANG_PROTECT_2))
 		number += 1
-	var/obj/item/organ/ears/E = getorganslot("ears")
+	var/obj/item/organ/ears/E = getorganslot(ORGAN_SLOT_EARS)
 	if(!E)
 		number = INFINITY
 	else
@@ -68,13 +68,16 @@
 
 
 /mob/living/carbon/attacked_by(obj/item/I, mob/living/user)
-	var/obj/item/bodypart/affecting = get_bodypart(ran_zone(user.zone_selected))
+	var/obj/item/bodypart/affecting
+	if(user == src)
+		affecting = get_bodypart(check_zone(user.zone_selected)) //we're self-mutilating! yay!
+	else
+		affecting = get_bodypart(ran_zone(user.zone_selected))
 	if(!affecting) //missing limb? we select the first bodypart (you can never have zero, because of chest)
 		affecting = bodyparts[1]
 	send_item_attack_message(I, user, affecting.name)
 	if(I.force)
 		apply_damage(I.force, I.damtype, affecting)
-		damage_clothes(I.force, I.damtype, "melee", affecting.body_zone)
 		if(I.damtype == BRUTE && affecting.status == BODYPART_ORGANIC)
 			if(prob(33))
 				I.add_mob_blood(src)
@@ -109,13 +112,13 @@
 
 	for(var/thing in viruses)
 		var/datum/disease/D = thing
-		if(D.IsSpreadByTouch())
-			user.ContractDisease(D)
+		if(D.spread_flags & VIRUS_SPREAD_CONTACT_SKIN)
+			user.ContactContractDisease(D)
 
 	for(var/thing in user.viruses)
 		var/datum/disease/D = thing
-		if(D.IsSpreadByTouch())
-			ContractDisease(D)
+		if(D.spread_flags & VIRUS_SPREAD_CONTACT_SKIN)
+			ContactContractDisease(D)
 
 	if(lying && surgeries.len)
 		if(user.a_intent == INTENT_HELP)
@@ -128,13 +131,13 @@
 /mob/living/carbon/attack_paw(mob/living/carbon/monkey/M)
 	for(var/thing in viruses)
 		var/datum/disease/D = thing
-		if(D.IsSpreadByTouch())
-			M.ContractDisease(D)
+		if(D.spread_flags & VIRUS_SPREAD_CONTACT_SKIN)
+			M.ContactContractDisease(D)
 
 	for(var/thing in M.viruses)
 		var/datum/disease/D = thing
-		if(D.IsSpreadByTouch())
-			ContractDisease(D)
+		if(D.spread_flags & VIRUS_SPREAD_CONTACT_SKIN)
+			ContactContractDisease(D)
 
 	if(M.a_intent == INTENT_HELP)
 		help_shake_act(M)
@@ -206,7 +209,7 @@
 	..()
 
 /mob/living/carbon/electrocute_act(shock_damage, obj/source, siemens_coeff = 1, safety = 0, override = 0, tesla_shock = 0, illusion = 0, stun = TRUE)
-	if(tesla_shock && HAS_SECONDARY_FLAG(src, TESLA_IGNORE))
+	if(tesla_shock && (flags_2 & TESLA_IGNORE_2))
 		return FALSE
 	shock_damage *= siemens_coeff
 	if(dna && dna.species)
@@ -240,12 +243,15 @@
 
 /mob/living/carbon/proc/help_shake_act(mob/living/carbon/M)
 	if(on_fire)
-		to_chat(M, "<span class='warning'>You can't put them out with just your bare hands!")
+		to_chat(M, "<span class='warning'>You can't put them out with just your bare hands!</span>")
 		return
 
 	if(health >= 0 && !(status_flags & FAKEDEATH))
 
 		if(lying)
+			if(buckled)
+				to_chat(M, "<span class='warning'>You need to unbuckle [src] first to do that!")
+				return
 			M.visible_message("<span class='notice'>[M] shakes [src] trying to get [p_them()] up!</span>", \
 							"<span class='notice'>You shake [src] trying to get [p_them()] up!</span>")
 		else
@@ -267,7 +273,7 @@
 
 	var/damage = intensity - get_eye_protection()
 	if(.) // we've been flashed
-		var/obj/item/organ/eyes/eyes = getorganslot("eyes_sight")
+		var/obj/item/organ/eyes/eyes = getorganslot(ORGAN_SLOT_EYES)
 		if (!eyes)
 			return
 		if(visual)
@@ -311,7 +317,7 @@
 
 /mob/living/carbon/soundbang_act(intensity = 1, stun_pwr = 20, damage_pwr = 5, deafen_pwr = 15)
 	var/ear_safety = get_ear_protection()
-	var/obj/item/organ/ears/ears = getorganslot("ears")
+	var/obj/item/organ/ears/ears = getorganslot(ORGAN_SLOT_EARS)
 	var/effect_amount = intensity - ear_safety
 	if(effect_amount > 0)
 		if(stun_pwr)
@@ -330,7 +336,7 @@
 					// you need earmuffs, inacusiate, or replacement
 			else if(ears.ear_damage >= 5)
 				to_chat(src, "<span class='warning'>Your ears start to ring!</span>")
-			src << sound('sound/weapons/flash_ring.ogg',0,1,0,250)
+			SEND_SOUND(src, sound('sound/weapons/flash_ring.ogg',0,1,0,250))
 		return effect_amount //how soundbanged we are
 
 
@@ -351,6 +357,6 @@
 
 /mob/living/carbon/can_hear()
 	. = FALSE
-	var/obj/item/organ/ears/ears = getorganslot("ears")
+	var/obj/item/organ/ears/ears = getorganslot(ORGAN_SLOT_EARS)
 	if(istype(ears) && !ears.deaf)
 		. = TRUE

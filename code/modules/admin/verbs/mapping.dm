@@ -34,7 +34,8 @@ GLOBAL_LIST_INIT(admin_verbs_debug_mapping, list(
 	/client/proc/startSinglo,
 	/client/proc/set_server_fps,	//allows you to set the ticklag.
 	/client/proc/cmd_admin_grantfullaccess,
-	/client/proc/cmd_admin_areatest,
+	/client/proc/cmd_admin_areatest_all,
+	/client/proc/cmd_admin_areatest_station,
 	/client/proc/cmd_admin_rejuvenate,
 	/datum/admins/proc/show_traitor_panel,
 	/client/proc/disable_communication,
@@ -193,15 +194,20 @@ GLOBAL_LIST_INIT(admin_verbs_debug_mapping, list(
 	set category = "Mapping"
 	set name = "Count Objects On Level"
 	var/level = input("Which z-level?","Level?") as text
-	if(!level) return
+	if(!level)
+		return
 	var/num_level = text2num(level)
-	if(!num_level) return
-	if(!isnum(num_level)) return
+	if(!num_level)
+		return
+	if(!isnum(num_level))
+		return
 
 	var/type_text = input("Which type path?","Path?") as text
-	if(!type_text) return
+	if(!type_text)
+		return
 	var/type_path = text2path(type_text)
-	if(!type_path) return
+	if(!type_path)
+		return
 
 	var/count = 0
 
@@ -237,9 +243,11 @@ GLOBAL_LIST_INIT(admin_verbs_debug_mapping, list(
 	set name = "Count Objects All"
 
 	var/type_text = input("Which type path?","") as text
-	if(!type_text) return
+	if(!type_text)
+		return
 	var/type_path = text2path(type_text)
-	if(!type_path) return
+	if(!type_path)
+		return
 
 	var/count = 0
 

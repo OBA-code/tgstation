@@ -18,19 +18,23 @@ Bonus
 /datum/symptom/visionloss
 
 	name = "Hyphema"
+	desc = "The virus causes inflammation of the retina, leading to eye damage and eventually blindness."
 	stealth = -1
 	resistance = -4
 	stage_speed = -4
 	transmittable = -3
 	level = 5
-	severity = 4
+	severity = 5
 	base_message_chance = 50
 	symptom_delay_min = 25
 	symptom_delay_max = 80
 	var/remove_eyes = FALSE
+	threshold_desc = "<b>Resistance 12:</b> Weakens extraocular muscles, eventually leading to complete detachment of the eyes.<br>\
+					  <b>Stealth 4:</b> The symptom remains hidden until active."
 
 /datum/symptom/visionloss/Start(datum/disease/advance/A)
-	..()
+	if(!..())
+		return
 	if(A.properties["stealth"] >= 4)
 		suppress_warning = TRUE
 	if(A.properties["resistance"] >= 12) //goodbye eyes
@@ -40,7 +44,7 @@ Bonus
 	if(!..())
 		return
 	var/mob/living/carbon/M = A.affected_mob
-	var/obj/item/organ/eyes/eyes = M.getorganslot("eye_sight")
+	var/obj/item/organ/eyes/eyes = M.getorganslot(ORGAN_SLOT_EYES)
 	if(istype(eyes))
 		switch(A.stage)
 			if(1, 2)
@@ -88,6 +92,7 @@ Bonus
 /datum/symptom/visionaid
 
 	name = "Ocular Restoration"
+	desc = "The virus stimulates the production and replacement of eye cells, causing the host to regenerate its eyes when damaged."
 	stealth = -1
 	resistance = -3
 	stage_speed = -2
@@ -101,7 +106,7 @@ Bonus
 	if(!..())
 		return
 	var/mob/living/M = A.affected_mob
-	var/obj/item/organ/eyes/eyes = M.getorganslot("eyes_sight")
+	var/obj/item/organ/eyes/eyes = M.getorganslot(ORGAN_SLOT_EYES)
 	if (!eyes)
 		return
 	switch(A.stage)

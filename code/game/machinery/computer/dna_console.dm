@@ -9,7 +9,7 @@
 #define RADIATION_DURATION_MAX 30
 #define RADIATION_ACCURACY_MULTIPLIER 3			//larger is less accurate
 
-#define RADIATION_IRRADIATION_MULTIPLIER 0.2	//multiplier for how much radiation a test subject recieves
+#define RADIATION_IRRADIATION_MULTIPLIER 10		//multiplier for how much radiation a test subject recieves
 
 #define SCANNER_ACTION_SE 1
 #define SCANNER_ACTION_UI 2
@@ -22,7 +22,7 @@
 	icon_screen = "dna"
 	icon_keyboard = "med_key"
 	density = TRUE
-	circuit = /obj/item/weapon/circuitboard/computer/scan_consolenew
+	circuit = /obj/item/circuitboard/computer/scan_consolenew
 	var/radduration = 2
 	var/radstrength = 1
 
@@ -31,7 +31,7 @@
 	var/injectorready = 0	//world timer cooldown var
 	var/current_screen = "mainmenu"
 	var/obj/machinery/dna_scannernew/connected = null
-	var/obj/item/weapon/disk/data/diskette = null
+	var/obj/item/disk/data/diskette = null
 	var/list/delayed_action = null
 	anchored = TRUE
 	use_power = IDLE_POWER_USE
@@ -41,11 +41,10 @@
 	light_color = LIGHT_COLOR_BLUE
 
 /obj/machinery/computer/scan_consolenew/attackby(obj/item/I, mob/user, params)
-	if (istype(I, /obj/item/weapon/disk/data)) //INSERT SOME DISKETTES
+	if (istype(I, /obj/item/disk/data)) //INSERT SOME DISKETTES
 		if (!src.diskette)
-			if(!user.drop_item())
+			if (!user.transferItemToLoc(I,src))
 				return
-			I.loc = src
 			src.diskette = I
 			to_chat(user, "<span class='notice'>You insert [I].</span>")
 			src.updateUsrDialog()
@@ -53,17 +52,13 @@
 	else
 		return ..()
 
-/obj/machinery/computer/scan_consolenew/New()
-	..()
-
-	spawn(5)
-		for(dir in list(NORTH,EAST,SOUTH,WEST))
-			connected = locate(/obj/machinery/dna_scannernew, get_step(src, dir))
-			if(!isnull(connected))
-				break
-		injectorready = world.time + INJECTOR_TIMEOUT
-		return
-	return
+/obj/machinery/computer/scan_consolenew/Initialize()
+	. = ..()
+	for(dir in list(NORTH,EAST,SOUTH,WEST))
+		connected = locate(/obj/machinery/dna_scannernew, get_step(src, dir))
+		if(!isnull(connected))
+			break
+	injectorready = world.time + INJECTOR_TIMEOUT
 
 /obj/machinery/computer/scan_consolenew/attack_hand(mob/user)
 	if(..())
@@ -71,7 +66,8 @@
 	ShowInterface(user)
 
 /obj/machinery/computer/scan_consolenew/proc/ShowInterface(mob/user, last_change)
-	if(!user) return
+	if(!user)
+		return
 	var/datum/browser/popup = new(user, "scannernew", "DNA Modifier Console", 800, 630) // Set up the popup browser window
 	if(!(in_range(src, user) || issilicon(user)))
 		popup.close()
@@ -96,7 +92,7 @@
 						occupant_status += "<span class='bad'>DEAD</span>"
 				occupant_status += "</div></div>"
 				occupant_status += "<div class='line'><div class='statusLabel'>Health:</div><div class='progressBar'><div style='width: [viable_occupant.health]%;' class='progressFill good'></div></div><div class='statusValue'>[viable_occupant.health] %</div></div>"
-				occupant_status += "<div class='line'><div class='statusLabel'>Radiation Level:</div><div class='progressBar'><div style='width: [viable_occupant.radiation]%;' class='progressFill bad'></div></div><div class='statusValue'>[viable_occupant.radiation] %</div></div>"
+				occupant_status += "<div class='line'><div class='statusLabel'>Radiation Level:</div><div class='progressBar'><div style='width: [viable_occupant.radiation/(RAD_MOB_SAFE/100)]%;' class='progressFill bad'></div></div><div class='statusValue'>[viable_occupant.radiation/(RAD_MOB_SAFE/100)] %</div></div>"
 				var/rejuvenators = viable_occupant.reagents.get_reagent_amount("potass_iodide")
 				occupant_status += "<div class='line'><div class='statusLabel'>Rejuvenators:</div><div class='progressBar'><div style='width: [round((rejuvenators / REJUVENATORS_MAX) * 100)]%;' class='progressFill highlight'></div></div><div class='statusValue'>[rejuvenators] units</div></div>"
 				occupant_status += "<div class='line'><div class='statusLabel'>Unique Enzymes :</div><div class='statusValue'><span class='highlight'>[viable_occupant.dna.unique_enzymes]</span></div></div>"
@@ -173,7 +169,7 @@
 		if("working")
 			temp_html += status
 			temp_html += "<h1>System Busy</h1>"
-			temp_html += "Working ... Please wait ([radduration] Seconds)"
+			temp_html += "Working ... Please wait ([DisplayTimeText(radduration*10)])"
 		if("buffer")
 			temp_html += status
 			temp_html += buttons
@@ -394,11 +390,11 @@
 				num = Clamp(num, 1, NUMBER_OF_BUFFERS)
 				var/list/buffer_slot = buffer[num]
 				if(istype(buffer_slot))
-					var/obj/item/weapon/dnainjector/timed/I
+					var/obj/item/dnainjector/timed/I
 					switch(href_list["text"])
 						if("se")
 							if(buffer_slot["SE"])
-								I = new /obj/item/weapon/dnainjector/timed(loc)
+								I = new /obj/item/dnainjector/timed(loc)
 								var/powers = 0
 								for(var/datum/mutation/human/HM in GLOB.good_mutations + GLOB.bad_mutations + GLOB.not_good_mutations)
 									if(HM.check_block_string(buffer_slot["SE"]))
@@ -421,19 +417,19 @@
 									I.damage_coeff  = connected.damage_coeff
 						if("ui")
 							if(buffer_slot["UI"])
-								I = new /obj/item/weapon/dnainjector/timed(loc)
+								I = new /obj/item/dnainjector/timed(loc)
 								I.fields = list("UI"=buffer_slot["UI"])
 								if(connected)
 									I.damage_coeff = connected.damage_coeff
 						if("ue")
 							if(buffer_slot["name"] && buffer_slot["UE"] && buffer_slot["blood_type"])
-								I = new /obj/item/weapon/dnainjector/timed(loc)
+								I = new /obj/item/dnainjector/timed(loc)
 								I.fields = list("name"=buffer_slot["name"], "UE"=buffer_slot["UE"], "blood_type"=buffer_slot["blood_type"])
 								if(connected)
 									I.damage_coeff  = connected.damage_coeff
 						if("mixed")
 							if(buffer_slot["UI"] && buffer_slot["name"] && buffer_slot["UE"] && buffer_slot["blood_type"])
-								I = new /obj/item/weapon/dnainjector/timed(loc)
+								I = new /obj/item/dnainjector/timed(loc)
 								I.fields = list("UI"=buffer_slot["UI"],"name"=buffer_slot["name"], "UE"=buffer_slot["UE"], "blood_type"=buffer_slot["blood_type"])
 								if(connected)
 									I.damage_coeff = connected.damage_coeff
@@ -452,7 +448,7 @@
 					diskette.fields = buffer_slot.Copy()
 		if("ejectdisk")
 			if(diskette)
-				diskette.loc = get_turf(src)
+				diskette.forceMove(drop_location())
 				diskette = null
 		if("setdelayed")
 			if(num)
@@ -541,7 +537,7 @@
 	var/list/buffer_slot = buffer[buffer_num]
 	var/mob/living/carbon/viable_occupant = get_viable_occupant()
 	if(istype(buffer_slot))
-		viable_occupant.radiation += rand(10/(connected.damage_coeff ** 2),25/(connected.damage_coeff ** 2))
+		viable_occupant.radiation += rand(100/(connected.damage_coeff ** 2),250/(connected.damage_coeff ** 2))
 		//15 and 40 are just magic numbers that were here before so i didnt touch them, they are initial boundaries of damage
 		//Each laser level reduces damage by lvl^2, so no effect on 1 lvl, 4 times less damage on 2 and 9 times less damage on 3
 		//Numbers are this high because other way upgrading laser is just not worth the hassle, and i cant think of anything better to inmrove

@@ -8,7 +8,7 @@
 	max_integrity = 70
 	integrity_failure = 0
 	can_weld_shut = 0
-	cutting_tool = /obj/item/weapon/wirecutters
+	cutting_tool = /obj/item/wirecutters
 	open_sound = "rustle"
 	cutting_sound = 'sound/items/poster_ripped.ogg'
 	material_drop = /obj/item/stack/sheet/cardboard
@@ -23,7 +23,7 @@
 		return
 	move_delay = 1
 	if(step(src, direction))
-		spawn(config.walk_speed*move_speed_multiplier)
+		spawn(CONFIG_GET(number/walk_delay) * move_speed_multiplier)
 			move_delay = 0
 	else
 		move_delay = 0
@@ -64,7 +64,7 @@
 	mob_storage_capacity = 5
 	resistance_flags = 0
 	move_speed_multiplier = 2
-	cutting_tool = /obj/item/weapon/weldingtool
+	cutting_tool = /obj/item/weldingtool
 	open_sound = 'sound/machines/click.ogg'
 	cutting_sound = 'sound/items/welder.ogg'
 	material_drop = /obj/item/stack/sheet/plasteel

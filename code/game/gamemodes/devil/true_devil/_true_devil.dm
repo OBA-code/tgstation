@@ -61,15 +61,15 @@
 
 
 /mob/living/carbon/true_devil/examine(mob/user)
-	var/msg = "<span class='info'>*---------*\nThis is [bicon(src)] <b>[src]</b>!\n"
+	var/msg = "<span class='info'>*---------*\nThis is [icon2html(src, user)] <b>[src]</b>!\n"
 
 	//Left hand items
 	for(var/obj/item/I in held_items)
-		if(!(I.flags & ABSTRACT))
+		if(!(I.flags_1 & ABSTRACT_1))
 			if(I.blood_DNA)
-				msg += "<span class='warning'>It is holding [bicon(I)] [I.gender==PLURAL?"some":"a"] blood-stained [I.name] in its [get_held_index_name(get_held_index_of_item(I))]!</span>\n"
+				msg += "<span class='warning'>It is holding [icon2html(I, user)] [I.gender==PLURAL?"some":"a"] blood-stained [I.name] in its [get_held_index_name(get_held_index_of_item(I))]!</span>\n"
 			else
-				msg += "It is holding [bicon(I)] \a [I] in its [get_held_index_name(get_held_index_of_item(I))].\n"
+				msg += "It is holding [icon2html(I, user)] \a [I] in its [get_held_index_name(get_held_index_of_item(I))].\n"
 
 	//Braindead
 	if(!client && stat != DEAD)
@@ -184,7 +184,7 @@
 							"<span class='userdanger'>[M] has pushed down [src]!</span>")
 					else
 						if (prob(25))
-							drop_item()
+							dropItemToGround(get_active_held_item())
 							playsound(loc, 'sound/weapons/thudswoosh.ogg', 50, 1, -1)
 							visible_message("<span class='danger'>[M] has disarmed [src]!</span>", \
 							"<span class='userdanger'>[M] has disarmed [src]!</span>")

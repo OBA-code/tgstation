@@ -21,8 +21,12 @@
 	var/buildstacktype = /obj/item/stack/sheet/metal
 	var/buildstackamount = 2
 
+/obj/structure/bed/examine(mob/user)
+	..()
+	to_chat(user, "<span class='notice'>It's held together by a couple of <b>bolts</b>.</span>")
+
 /obj/structure/bed/deconstruct(disassembled = TRUE)
-	if(!(flags & NODECONSTRUCT))
+	if(!(flags_1 & NODECONSTRUCT_1))
 		if(buildstacktype)
 			new buildstacktype(loc,buildstackamount)
 	..()
@@ -30,8 +34,8 @@
 /obj/structure/bed/attack_paw(mob/user)
 	return attack_hand(user)
 
-/obj/structure/bed/attackby(obj/item/weapon/W, mob/user, params)
-	if(istype(W, /obj/item/weapon/wrench) && !(flags&NODECONSTRUCT))
+/obj/structure/bed/attackby(obj/item/W, mob/user, params)
+	if(istype(W, /obj/item/wrench) && !(flags_1&NODECONSTRUCT_1))
 		playsound(src.loc, W.usesound, 50, 1)
 		deconstruct(TRUE)
 	else
@@ -48,7 +52,7 @@
 	resistance_flags = 0
 	var/foldabletype = /obj/item/roller
 
-/obj/structure/bed/roller/attackby(obj/item/weapon/W, mob/user, params)
+/obj/structure/bed/roller/attackby(obj/item/W, mob/user, params)
 	if(istype(W, /obj/item/roller/robo))
 		var/obj/item/roller/robo/R = W
 		if(R.loaded)
@@ -113,7 +117,8 @@
 		R.loaded = new/obj/structure/bed/roller(R)
 		qdel(src) //"Load"
 		return
-	else return ..()
+	else
+		return ..()
 
 /obj/item/roller/attack_self(mob/user)
 	deploy_roller(user, user.loc)
@@ -140,7 +145,7 @@
 
 /obj/item/roller/robo/examine(mob/user)
 	..()
-	to_chat(user, "The dock is [loaded ? "loaded" : "empty"]")
+	to_chat(user, "The dock is [loaded ? "loaded" : "empty"].")
 
 /obj/item/roller/robo/deploy_roller(mob/user, atom/location)
 	if(loaded)
@@ -193,5 +198,5 @@
 
 /obj/structure/bed/alien
 	name = "resting contraption"
-	desc = "This looks similar to contraptions from earth. Could aliens be stealing our technology?"
+	desc = "This looks similar to contraptions from Earth. Could aliens be stealing our technology?"
 	icon_state = "abed"

@@ -31,8 +31,6 @@
 		imap += icon('icons/misc/imap.dmi', "blank")
 		imap += icon('icons/misc/imap.dmi', "blank")
 
-	//to_chat(world, "[icount] images in list")
-
 
 	for(var/wx = 1 ; wx <= world.maxx; wx++)
 
@@ -96,7 +94,8 @@
 								colour2 = rgb(255,128,0)
 
 						if(ismob(AM))
-							if(AM:client)
+							var/mob/M = AM
+							if(M.client)
 								colour = rgb(255,0,0)
 							else
 								colour = rgb(255,128,128)
@@ -141,12 +140,9 @@
 			var/rx = ((wx*2+xoff)%32) + 1
 			var/ry = ((wy*2+yoff)%32) + 1
 
-			//to_chat(world, "trying [ix],[iy] : [ix+icx*iy]")
 			var/icon/I = imap[1+(ix + icx*iy)*2]
 			var/icon/I2 = imap[2+(ix + icx*iy)*2]
 
-
-			//to_chat(world, "icon: [bicon(I)]")
 
 			I.DrawBox(colour, rx, ry, rx+1, ry+1)
 
@@ -162,8 +158,6 @@
 		var/obj/screen/H = new /obj/screen()
 
 		H.screen_loc = "[5 + i%icx],[6+ round(i/icx)]"
-
-		//to_chat(world, "[bicon(I)] at [H.screen_loc]")
 
 		H.name = (i==0)?"maprefresh":"map"
 
@@ -242,7 +236,8 @@
 								colour = rgb(255,255,0)
 
 						if(ismob(AM))
-							if(AM:client)
+							var/mob/M = AM
+							if(M.client)
 								colour = rgb(255,0,0)
 							else
 								colour = rgb(255,128,128)
@@ -270,11 +265,7 @@
 			var/rx = ((wx*2+xoff)%32) + 1
 			var/ry = ((wy*2+yoff)%32) + 1
 
-			//to_chat(world, "trying [ix],[iy] : [ix+icx*iy]")
 			var/icon/I = imap[1+(ix + icx*iy)]
-
-
-			//to_chat(world, "icon: [bicon(I)]")
 
 			I.DrawBox(colour, rx, ry, rx, ry)
 
@@ -288,8 +279,6 @@
 		var/obj/screen/H = new /obj/screen()
 
 		H.screen_loc = "[5 + i%icx],[6+ round(i/icx)]"
-
-		//to_chat(world, "[bicon(I)] at [H.screen_loc]")
 
 		H.name = (i==0)?"maprefresh":"map"
 

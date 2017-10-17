@@ -8,7 +8,7 @@
 	density = TRUE
 	opacity = 0
 	var/case_type = ""
-	var/gun_category = /obj/item/weapon/gun
+	var/gun_category = /obj/item/gun
 	var/open = TRUE
 	var/capacity = 4
 
@@ -39,9 +39,8 @@
 		return
 	if(istype(I, gun_category) && open)
 		if(LAZYLEN(contents) < capacity)
-			if(!user.drop_item())
+			if(!user.transferItemToLoc(I, src))
 				return
-			I.forceMove(src)
 			to_chat(user, "<span class='notice'>You place [I] in [src].</span>")
 			update_icon()
 		else
@@ -101,11 +100,11 @@
 	name = "shotgun locker"
 	desc = "A locker that holds shotguns."
 	case_type = "shotgun"
-	gun_category = /obj/item/weapon/gun/ballistic/shotgun
+	gun_category = /obj/item/gun/ballistic/shotgun
 
 /obj/structure/guncase/ecase
 	name = "energy gun locker"
 	desc = "A locker that holds energy guns."
 	icon_state = "ecase"
 	case_type = "egun"
-	gun_category = /obj/item/weapon/gun/energy/e_gun
+	gun_category = /obj/item/gun/energy/e_gun

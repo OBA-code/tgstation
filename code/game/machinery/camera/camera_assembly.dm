@@ -39,14 +39,14 @@
 	switch(state)
 		if(1)
 			// State 1
-			if(istype(W, /obj/item/weapon/weldingtool))
+			if(istype(W, /obj/item/weldingtool))
 				if(weld(W, user))
 					to_chat(user, "<span class='notice'>You weld the assembly securely into place.</span>")
 					anchored = TRUE
 					state = 2
 				return
 
-			else if(istype(W, /obj/item/weapon/wrench))
+			else if(istype(W, /obj/item/wrench))
 				playsound(src.loc, W.usesound, 50, 1)
 				to_chat(user, "<span class='notice'>You unattach the assembly from its place.</span>")
 				new /obj/item/wallframe/camera(get_turf(src))
@@ -65,7 +65,7 @@
 					return
 				return
 
-			else if(istype(W, /obj/item/weapon/weldingtool))
+			else if(istype(W, /obj/item/weldingtool))
 
 				if(weld(W, user))
 					to_chat(user, "<span class='notice'>You unweld the assembly from its place.</span>")
@@ -76,10 +76,10 @@
 
 		if(3)
 			// State 3
-			if(istype(W, /obj/item/weapon/screwdriver))
+			if(istype(W, /obj/item/screwdriver))
 				playsound(src.loc, W.usesound, 50, 1)
 
-				var/input = stripped_input(user, "Which networks would you like to connect this camera to? Seperate networks with a comma. No Spaces!\nFor example: SS13,Security,Secret ", "Set Network", "SS13")
+				var/input = stripped_input(user, "Which networks would you like to connect this camera to? Separate networks with a comma. No Spaces!\nFor example: SS13,Security,Secret ", "Set Network", "SS13")
 				if(!input)
 					to_chat(user, "<span class='warning'>No input found, please hang up and try your call again!</span>")
 					return
@@ -91,7 +91,7 @@
 
 				state = 4
 				var/obj/machinery/camera/C = new(src.loc)
-				src.loc = C
+				forceMove(C)
 				C.assembly = src
 				C.setDir(src.dir)
 
@@ -100,7 +100,7 @@
 				C.c_tag = "[A.name] ([rand(1, 999)])"
 
 
-			else if(istype(W, /obj/item/weapon/wirecutters))
+			else if(istype(W, /obj/item/wirecutters))
 				new/obj/item/stack/cable_coil(get_turf(src), 2)
 				playsound(src.loc, W.usesound, 50, 1)
 				to_chat(user, "<span class='notice'>You cut the wires from the circuits.</span>")
@@ -109,26 +109,25 @@
 
 	// Upgrades!
 	if(is_type_in_typecache(W, possible_upgrades) && !is_type_in_list(W, upgrades)) // Is a possible upgrade and isn't in the camera already.
-		if(!user.drop_item(W))
+		if(!user.transferItemToLoc(W, src))
 			return
 		to_chat(user, "<span class='notice'>You attach \the [W] into the assembly inner circuits.</span>")
 		upgrades += W
-		W.forceMove(src)
 		return
 
 	// Taking out upgrades
-	else if(istype(W, /obj/item/weapon/crowbar) && upgrades.len)
+	else if(istype(W, /obj/item/crowbar) && upgrades.len)
 		var/obj/U = locate(/obj) in upgrades
 		if(U)
 			to_chat(user, "<span class='notice'>You unattach an upgrade from the assembly.</span>")
 			playsound(src.loc, W.usesound, 50, 1)
-			U.loc = get_turf(src)
+			U.forceMove(drop_location())
 			upgrades -= U
 		return
 
 	return ..()
 
-/obj/structure/camera_assembly/proc/weld(obj/item/weapon/weldingtool/WT, mob/living/user)
+/obj/structure/camera_assembly/proc/weld(obj/item/weldingtool/WT, mob/living/user)
 	if(!WT.remove_fuel(0, user))
 		return 0
 	to_chat(user, "<span class='notice'>You start to weld \the [src]...</span>")
@@ -140,6 +139,6 @@
 	return 0
 
 /obj/structure/camera_assembly/deconstruct(disassembled = TRUE)
-	if(!(flags & NODECONSTRUCT))
+	if(!(flags_1 & NODECONSTRUCT_1))
 		new /obj/item/stack/sheet/metal(loc)
 	qdel(src)
