@@ -36,7 +36,7 @@
 	head.flash2 = new(head)
 	chest = new(src)
 	chest.wired = TRUE
-	chest.cell = new /obj/item/weapon/stock_parts/cell/high/plus(chest)
+	chest.cell = new /obj/item/stock_parts/cell/high/plus(chest)
 	..()
 
 /obj/item/robot_suit/proc/updateicon()
@@ -68,7 +68,7 @@
 		var/obj/item/stack/sheet/metal/M = W
 		if(!l_arm && !r_arm && !l_leg && !r_leg && !chest && !head)
 			if (M.use(1))
-				var/obj/item/weapon/ed209_assembly/B = new /obj/item/weapon/ed209_assembly
+				var/obj/item/ed209_assembly/B = new /obj/item/ed209_assembly
 				B.loc = get_turf(src)
 				to_chat(user, "<span class='notice'>You arm the robot frame.</span>")
 				var/holding_this = user.get_inactive_held_item()==src
@@ -254,7 +254,7 @@
 			if(!isturf(loc))
 				to_chat(user, "<span class='warning'>You cannot install[M], the frame has to be standing on the ground to be perfectly precise!</span>")
 				return
-			if(!user.drop_item())
+			if(!user.temporarilyRemoveItemFromInventory(M))
 				to_chat(user, "<span class='warning'>[M] is stuck to your hand!</span>")
 				return
 			qdel(M)
@@ -283,7 +283,7 @@
 				O.lockcharge = TRUE
 				O.update_canmove()
 
-	else if(istype(W, /obj/item/weapon/pen))
+	else if(istype(W, /obj/item/pen))
 		to_chat(user, "<span class='warning'>You need to use a multitool to name [src]!</span>")
 	else
 		return ..()

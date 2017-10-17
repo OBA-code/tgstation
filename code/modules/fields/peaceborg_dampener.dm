@@ -5,6 +5,7 @@
 	name = "\improper Hyperkinetic Dampener Field"
 	setup_edge_turfs = TRUE
 	setup_field_turfs = TRUE
+	requires_processing = TRUE
 	field_shape = FIELD_SHAPE_RADIUS_SQUARE
 	var/static/image/edgeturf_south = image('icons/effects/fields.dmi', icon_state = "projectile_dampen_south")
 	var/static/image/edgeturf_north = image('icons/effects/fields.dmi', icon_state = "projectile_dampen_north")
@@ -21,13 +22,11 @@
 	use_host_turf = TRUE
 
 /datum/proximity_monitor/advanced/peaceborg_dampener/New()
-	START_PROCESSING(SSfields, src)
 	tracked = list()
 	staging = list()
 	..()
 
 /datum/proximity_monitor/advanced/peaceborg_dampener/Destroy()
-	STOP_PROCESSING(SSfields, src)
 	return ..()
 
 /datum/proximity_monitor/advanced/peaceborg_dampener/process()
@@ -54,7 +53,7 @@
 	var/obj/effect/abstract/proximity_checker/advanced/F = edge_turfs[T]
 	F.appearance = I.appearance
 	F.invisibility = 0
-	F.mouse_opacity = 0
+	F.mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	F.layer = 5
 
 /datum/proximity_monitor/advanced/peaceborg_dampener/cleanup_edge_turf(turf/T)

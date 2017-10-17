@@ -6,7 +6,7 @@
 	duration = 25
 
 /obj/effect/temp_visual/point/Initialize(mapload, set_invis = 0)
-	..()
+	. = ..()
 	var/atom/old_loc = loc
 	loc = get_turf(src)
 	pixel_x = old_loc.pixel_x
@@ -19,12 +19,6 @@
 	icon = 'icons/obj/chempuff.dmi'
 	pass_flags = PASSTABLE | PASSGRILLE
 	layer = FLY_LAYER
-
-/obj/effect/decal/sandeffect
-	name = "sandy tile"
-	icon = 'icons/turf/floors.dmi'
-	icon_state = "sandeffect"
-	layer = ABOVE_OPEN_TURF_LAYER
 
 /obj/effect/decal/fakelattice
 	name = "lattice"

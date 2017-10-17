@@ -15,6 +15,10 @@
 	var/tomail = 0 //changes if contains wrapped package
 	var/hasmob = 0 //If it contains a mob
 
+/obj/structure/disposalholder/ComponentInitialize()
+	. = ..()
+	AddComponent(/datum/component/rad_insulation, RAD_NO_INSULATION)
+
 /obj/structure/disposalholder/Destroy()
 	qdel(gas)
 	active = 0
@@ -97,7 +101,7 @@
 	return null
 
 // merge two holder objects
-// used when a a holder meets a stuck holder
+// used when a holder meets a stuck holder
 /obj/structure/disposalholder/proc/merge(obj/structure/disposalholder/other)
 	for(var/atom/movable/AM in other)
 		AM.loc = src		// move everything in other holder to this one
@@ -121,8 +125,8 @@
 	T.assume_air(gas)
 	T.air_update_turf()
 
-/obj/structure/disposalholder/allow_drop()
-	return 1
+/obj/structure/disposalholder/AllowDrop()
+	return TRUE
 
 /obj/structure/disposalholder/ex_act(severity, target)
 	return
@@ -176,6 +180,9 @@
 			if("pipe-j2s")
 				stored.ptype = DISP_SORTJUNCTION_FLIP
 
+/obj/structure/disposalpipe/ComponentInitialize()
+	. = ..()
+	AddComponent(/datum/component/rad_insulation, RAD_NO_INSULATION)
 
 	// pipe is deleted
 	// ensure if holder is present, it is expelled
@@ -296,15 +303,16 @@
 	if(T.intact)
 		return		// prevent interaction with T-scanner revealed pipes
 	add_fingerprint(user)
-	if(istype(I, /obj/item/weapon/weldingtool))
-		var/obj/item/weapon/weldingtool/W = I
+	if(istype(I, /obj/item/weldingtool))
+		var/obj/item/weldingtool/W = I
 		if(can_be_deconstructed(user))
 			if(W.remove_fuel(0,user))
 				playsound(src.loc, 'sound/items/welder2.ogg', 100, 1)
 				to_chat(user, "<span class='notice'>You start slicing the disposal pipe...</span>")
 				// check if anything changed over 2 seconds
 				if(do_after(user,30, target = src))
-					if(!src || !W.isOn()) return
+					if(!src || !W.isOn())
+						return
 					deconstruct()
 					to_chat(user, "<span class='notice'>You slice the disposal pipe.</span>")
 	else
@@ -316,7 +324,7 @@
 
 // called when pipe is cut with welder
 /obj/structure/disposalpipe/deconstruct(disassembled = TRUE)
-	if(!(flags & NODECONSTRUCT))
+	if(!(flags_1 & NODECONSTRUCT_1))
 		if(disassembled)
 			if(stored)
 				var/turf/T = loc
@@ -335,18 +343,9 @@
 
 
 /obj/structure/disposalpipe/singularity_pull(S, current_size)
+	..()
 	if(current_size >= STAGE_FIVE)
 		deconstruct()
-
-//Fixes dpdir on shuttle rotation
-/obj/structure/disposalpipe/shuttleRotate(rotation)
-	..()
-	var/new_dpdir = 0
-	for(var/D in GLOB.cardinals)
-		if(dpdir & D)
-			new_dpdir = new_dpdir | angle2dir(rotation+dir2angle(D))
-	dpdir = new_dpdir
-
 
 // *** TEST verb
 //client/verb/dispstop()
@@ -431,7 +430,7 @@
 	if(sortTypes.len>0)
 		to_chat(user, "It is tagged with the following tags:")
 		for(var/t in sortTypes)
-			to_chat(user, GLOB.TAGGERLOCATIONS[t])
+			to_chat(user, "\t[GLOB.TAGGERLOCATIONS[t]].")
 	else
 		to_chat(user, "It has no sorting tags set.")
 
@@ -648,6 +647,7 @@
 
 /obj/structure/disposaloutlet/Initialize(mapload, obj/structure/disposalconstruct/make_from)
 	. = ..()
+	
 	if(make_from)
 		setDir(make_from.dir)
 		make_from.loc = src
@@ -660,6 +660,10 @@
 	trunk = locate() in loc
 	if(trunk)
 		trunk.linked = src	// link the pipe trunk to self
+
+/obj/structure/disposaloutlet/ComponentInitialize()
+	. = ..()
+	AddComponent(/datum/component/rad_insulation, RAD_NO_INSULATION)
 
 /obj/structure/disposaloutlet/Destroy()
 	if(trunk)
@@ -690,7 +694,7 @@
 
 /obj/structure/disposaloutlet/attackby(obj/item/I, mob/user, params)
 	add_fingerprint(user)
-	if(istype(I, /obj/item/weapon/screwdriver))
+	if(istype(I, /obj/item/screwdriver))
 		if(mode==0)
 			mode=1
 			playsound(src.loc, I.usesound, 50, 1)
@@ -700,13 +704,14 @@
 			playsound(src.loc, I.usesound, 50, 1)
 			to_chat(user, "<span class='notice'>You attach the screws around the power connection.</span>")
 
-	else if(istype(I, /obj/item/weapon/weldingtool) && mode==1)
-		var/obj/item/weapon/weldingtool/W = I
+	else if(istype(I, /obj/item/weldingtool) && mode==1)
+		var/obj/item/weldingtool/W = I
 		if(W.remove_fuel(0,user))
 			playsound(src.loc, 'sound/items/welder2.ogg', 100, 1)
 			to_chat(user, "<span class='notice'>You start slicing the floorweld off \the [src]...</span>")
 			if(do_after(user,20*I.toolspeed, target = src))
-				if(!src || !W.isOn()) return
+				if(!src || !W.isOn())
+					return
 				to_chat(user, "<span class='notice'>You slice the floorweld off \the [src].</span>")
 				stored.loc = loc
 				src.transfer_fingerprints_to(stored)

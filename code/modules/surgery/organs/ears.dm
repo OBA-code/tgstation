@@ -3,7 +3,7 @@
 	icon_state = "ears"
 	desc = "There are three parts to the ear. Inner, middle and outer. Only one of these parts should be normally visible."
 	zone = "head"
-	slot = "ears"
+	slot = ORGAN_SLOT_EARS
 	gender = PLURAL
 
 	// `deaf` measures "ticks" of deafness. While > 0, the person is unable
@@ -25,9 +25,9 @@
 	if(C.disabilities & DEAF)
 		deaf = max(deaf, 1)
 	else
-		if(C.ears && HAS_SECONDARY_FLAG(C.ears, HEALS_EARS))
+		if(C.ears && (C.ears.flags_2 & HEALS_EARS_2))
 			deaf = max(deaf - 1, 1)
-			ear_damage = max(ear_damage - 0.10, 0)
+			ear_damage = max(ear_damage - 0.1, 0)
 		// if higher than UNHEALING_EAR_DAMAGE, no natural healing occurs.
 		if(ear_damage < UNHEALING_EAR_DAMAGE)
 			ear_damage = max(ear_damage - 0.05, 0)

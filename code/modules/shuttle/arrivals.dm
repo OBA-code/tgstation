@@ -6,7 +6,7 @@
 	width = 7
 	height = 15
 	dir = WEST
-	port_angle = 180
+	port_direction = SOUTH
 
 	callTime = INFINITY
 	ignitionTime = 50
@@ -124,13 +124,13 @@
 	return FALSE
 
 /obj/docking_port/mobile/arrivals/proc/NukeDiskCheck()
-	for (var/obj/item/weapon/disk/nuclear/N in GLOB.poi_list)
+	for (var/obj/item/disk/nuclear/N in GLOB.poi_list)
 		if (get_area(N) in areas)
 			return TRUE
 	return FALSE
 
 /obj/docking_port/mobile/arrivals/proc/SendToStation()
-	var/dockTime = config.arrivals_shuttle_dock_window
+	var/dockTime = CONFIG_GET(number/arrivals_shuttle_dock_window)
 	if(mode == SHUTTLE_CALL && timeLeft(1) > dockTime)
 		if(console)
 			console.say(damaged ? "Initiating emergency docking for repairs!" : "Now approaching: [station_name()].")

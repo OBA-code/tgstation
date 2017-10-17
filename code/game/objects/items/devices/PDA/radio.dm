@@ -25,13 +25,12 @@
 	var/datum/radio_frequency/radio_connection
 
 /obj/item/radio/integrated/signal/Destroy()
-	if(SSradio)
-		SSradio.remove_object(src, frequency)
+	SSradio.remove_object(src, frequency)
 	radio_connection = null
 	return ..()
 
 /obj/item/radio/integrated/signal/Initialize()
-	..()
+	. = ..()
 	if (src.frequency < 1200 || src.frequency > 1600)
 		src.frequency = sanitize_frequency(src.frequency)
 

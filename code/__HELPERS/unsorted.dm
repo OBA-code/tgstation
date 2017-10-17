@@ -48,7 +48,7 @@ Location where the teleport begins, target that will teleport, distance to go, d
 Random error in tile placement x, error in tile placement y, and block offset.
 Block offset tells the proc how to place the box. Behind teleport location, relative to starting location, forward, etc.
 Negative values for offset are accepted, think of it in relation to North, -x is west, -y is south. Error defaults to positive.
-Turf and target are seperate in case you want to teleport some distance from a turf the target is not standing on or something.
+Turf and target are separate in case you want to teleport some distance from a turf the target is not standing on or something.
 */
 
 	var/dirx = 0//Generic location finding variable.
@@ -137,7 +137,8 @@ Turf and target are seperate in case you want to teleport some distance from a t
 				return
 			if(destination.y>world.maxy || destination.y<1)
 				return
-	else	return
+	else
+		return
 
 	return destination
 
@@ -289,7 +290,7 @@ Turf and target are seperate in case you want to teleport some distance from a t
 	var/list/pois = list()
 	for(var/mob/M in mobs)
 		if(skip_mindless && (!M.mind && !M.ckey))
-			if(!isbot(M) && !istype(M, /mob/camera/))
+			if(!isbot(M) && !iscameramob(M) && !ismegafauna(M))
 				continue
 		if(M.client && M.client.holder && M.client.holder.fakekey) //stealthmins
 			continue
@@ -356,6 +357,17 @@ Turf and target are seperate in case you want to teleport some distance from a t
 /proc/convert2mass(E)
 	var/M = E/(SPEED_OF_LIGHT_SQ)
 	return M
+
+//Takes the value of energy used/produced/ect.
+//Returns a text value of that number in W, kW, MW, or GW.
+/proc/DisplayPower(var/powerused)
+	if(powerused < 1000) //Less than a kW
+		return "[powerused] W"
+	else if(powerused < 1000000) //Less than a MW
+		return "[round((powerused * 0.001),0.01)] kW"
+	else if(powerused < 1000000000) //Less than a GW
+		return "[round((powerused * 0.000001),0.001)] MW"
+	return "[round((powerused * 0.000000001),0.0001)] GW"
 
 /proc/key_name(whom, include_link = null, include_name = 1)
 	var/mob/M
@@ -491,19 +503,19 @@ Turf and target are seperate in case you want to teleport some distance from a t
 	var/y=arcsin(x/sqrt(1+x*x))
 	return y
 
-/atom/proc/GetAllContents()
-	var/list/processing_list = list(src)
-	var/list/assembled = list()
+/*
+Recursively gets all contents of contents and returns them all in a list.
 
-	while(processing_list.len)
-		var/atom/A = processing_list[1]
-		processing_list -= A
-
-		processing_list |= (A.contents - assembled)
-
-		assembled |= A
-
-	return assembled
+recursive_depth is useful if you only want a turf and everything on it (recursive_depth=1)
+*/
+/atom/proc/GetAllContents(list/output=list(), recursive_depth=INFINITY)
+	. = output
+	output += src 
+	if(!recursive_depth)
+		return
+	for(var/i in 1 to contents.len) 
+		var/atom/thing = contents[i] 
+		thing.GetAllContents(output, recursive_depth-1) 
 
 //Step-towards method of determining whether one atom can see another. Similar to viewers()
 /proc/can_see(atom/source, atom/target, length=5) // I couldnt be arsed to do actual raycasting :I This is horribly inaccurate.
@@ -595,6 +607,18 @@ Turf and target are seperate in case you want to teleport some distance from a t
 /area/proc/addSorted()
 	GLOB.sortedAreas.Add(src)
 	sortTim(GLOB.sortedAreas, /proc/cmp_name_asc)
+
+//Takes: Area type as a text string from a variable.
+//Returns: Instance for the area in the world.
+/proc/get_area_instance_from_text(areatext)
+	var/areainstance = null
+	if(istext(areatext))
+		areatext = text2path(areatext)
+	for(var/V in GLOB.sortedAreas)
+		var/area/A = V
+		if(A.type == areatext)
+			areainstance = V
+	return areainstance
 
 //Takes: Area type as text string or as typepath OR an instance of the area.
 //Returns: A list of all areas of that type in the world.
@@ -780,7 +804,7 @@ GLOBAL_LIST_INIT(can_embed_types, typecacheof(list(
 
 
 /*
-Checks if that loc and dir has a item on the wall
+Checks if that loc and dir has an item on the wall
 */
 GLOBAL_LIST_INIT(WALLITEMS, typecacheof(list(
 	/obj/machinery/power/apc, /obj/machinery/airalarm, /obj/item/device/radio/intercom,
@@ -788,7 +812,7 @@ GLOBAL_LIST_INIT(WALLITEMS, typecacheof(list(
 	/obj/machinery/status_display, /obj/machinery/requests_console, /obj/machinery/light_switch, /obj/structure/sign,
 	/obj/machinery/newscaster, /obj/machinery/firealarm, /obj/structure/noticeboard, /obj/machinery/button,
 	/obj/machinery/computer/security/telescreen, /obj/machinery/embedded_controller/radio/simple_vent_controller,
-	/obj/item/weapon/storage/secure/safe, /obj/machinery/door_timer, /obj/machinery/flasher, /obj/machinery/keycard_auth,
+	/obj/item/storage/secure/safe, /obj/machinery/door_timer, /obj/machinery/flasher, /obj/machinery/keycard_auth,
 	/obj/structure/mirror, /obj/structure/fireaxecabinet, /obj/machinery/computer/security/telescreen/entertainment,
 	/obj/structure/sign/picture_frame
 	)))
@@ -836,11 +860,11 @@ GLOBAL_LIST_INIT(WALLITEMS_INVERSE, typecacheof(list(
 
 /obj/proc/atmosanalyzer_scan(datum/gas_mixture/air_contents, mob/user, obj/target = src)
 	var/obj/icon = target
-	user.visible_message("[user] has used the analyzer on [bicon(icon)] [target].", "<span class='notice'>You use the analyzer on [bicon(icon)] [target].</span>")
+	user.visible_message("[user] has used the analyzer on [icon2html(icon, viewers(src))] [target].", "<span class='notice'>You use the analyzer on [icon2html(icon, user)] [target].</span>")
 	var/pressure = air_contents.return_pressure()
 	var/total_moles = air_contents.total_moles()
 
-	to_chat(user, "<span class='notice'>Results of analysis of [bicon(icon)] [target].</span>")
+	to_chat(user, "<span class='notice'>Results of analysis of [icon2html(icon, user)] [target].</span>")
 	if(total_moles>0)
 		to_chat(user, "<span class='notice'>Pressure: [round(pressure,0.1)] kPa</span>")
 
@@ -1205,23 +1229,29 @@ proc/pick_closest_path(value, list/matches = get_fancy_list_of_atom_types())
 /proc/stack_trace(msg)
 	CRASH(msg)
 
+/datum/proc/stack_trace(msg)
+	CRASH(msg)
+
 //Key thing that stops lag. Cornerstone of performance in ss13, Just sitting here, in unsorted.dm.
 
 //Increases delay as the server gets more overloaded,
 //as sleeps aren't cheap and sleeping only to wake up and sleep again is wasteful
-#define DELTA_CALC max(((max(world.tick_usage, world.cpu) / 100) * max(Master.sleep_delta,1)), 1)
+#define DELTA_CALC max(((max(TICK_USAGE, world.cpu) / 100) * max(Master.sleep_delta-1,1)), 1)
 
-/proc/stoplag()
+//returns the number of ticks slept
+/proc/stoplag(initial_delay)
 	if (!Master || !(Master.current_runlevel & RUNLEVELS_DEFAULT))
 		sleep(world.tick_lag)
 		return 1
+	if (!initial_delay)
+		initial_delay = world.tick_lag
 	. = 0
-	var/i = 1
+	var/i = DS2TICKS(initial_delay)
 	do
-		. += round(i*DELTA_CALC)
+		. += Ceiling(i*DELTA_CALC)
 		sleep(i*world.tick_lag*DELTA_CALC)
 		i *= 2
-	while (world.tick_usage > min(TICK_LIMIT_TO_RUN, Master.current_ticklimit))
+	while (TICK_USAGE > min(TICK_LIMIT_TO_RUN, Master.current_ticklimit))
 
 #undef DELTA_CALC
 
@@ -1245,11 +1275,12 @@ proc/pick_closest_path(value, list/matches = get_fancy_list_of_atom_types())
 #define RANDOM_COLOUR (rgb(rand(0,255),rand(0,255),rand(0,255)))
 
 #define QDEL_IN(item, time) addtimer(CALLBACK(GLOBAL_PROC, .proc/qdel, item), time, TIMER_STOPPABLE)
+#define QDEL_IN_CLIENT_TIME(item, time) addtimer(CALLBACK(GLOBAL_PROC, .proc/qdel, item), time, TIMER_STOPPABLE | TIMER_CLIENT_TIME)
 #define QDEL_NULL(item) qdel(item); item = null
 #define QDEL_LIST(L) if(L) { for(var/I in L) qdel(I); L.Cut(); }
 #define QDEL_LIST_IN(L, time) addtimer(CALLBACK(GLOBAL_PROC, .proc/______qdel_list_wrapper, L), time, TIMER_STOPPABLE)
 #define QDEL_LIST_ASSOC(L) if(L) { for(var/I in L) { qdel(L[I]); qdel(I); } L.Cut(); }
-#define QDEL_LIST_ASSOC_VAL(L) if(L) { for(var/I in L) qel(L[I]); L.Cut(); }
+#define QDEL_LIST_ASSOC_VAL(L) if(L) { for(var/I in L) qdel(L[I]); L.Cut(); }
 
 /proc/______qdel_list_wrapper(list/L) //the underscores are to encourage people not to use this directly.
 	QDEL_LIST(L)
@@ -1347,63 +1378,6 @@ GLOBAL_DATUM_INIT(dview_mob, /mob/dview, new)
 				return FALSE
 	return TRUE
 
-//WHATEVER YOU USE THIS FOR MUST BE SANITIZED TO SHIT, IT USES SHELL
-//It also sleeps
-
-//Set this to TRUE before calling
-//This prevents RCEs from badmins
-//kevinz000 if you touch this I will hunt you down
-GLOBAL_VAR_INIT(valid_HTTPSGet, FALSE)
-GLOBAL_PROTECT(valid_HTTPSGet)
-/proc/HTTPSGet(url)	//tgs2 support
-	if(findtext(url, "\""))
-		GLOB.valid_HTTPSGet = FALSE
-
-	if(!GLOB.valid_HTTPSGet)
-		if(usr)
-			CRASH("[usr.ckey]([usr]) just attempted an invalid HTTPSGet on: [url]!")
-		else
-			CRASH("Invalid HTTPSGet call on: [url]")
-	GLOB.valid_HTTPSGet = FALSE
-
-	//"This has got to be the ugliest hack I have ever done"
-	//warning, here be dragons
-	/*
-						|  @___oo
-				/\  /\   / (__,,,,|
-				) /^\) ^\/ _)
-				)   /^\/   _)
-				)   _ /  / _)
-			/\  )/\/ ||  | )_)
-		<  >      |(,,) )__)
-			||      /    \)___)\
-			| \____(      )___) )___
-			\______(_______;;; __;;;
-		*/
-	var/temp_file = "data/HTTPSGetOutput.txt"
-	var/command
-	if(world.system_type == MS_WINDOWS)
-		command = "powershell -Command \"wget [url] -OutFile [temp_file]\""
-	else if(world.system_type == UNIX)
-		command = "wget -O [temp_file] [url]"
-	else
-		CRASH("Invalid world.system_type ([world.system_type])? Yell at Lummox.")
-
-	log_world("HTTPSGet: [url]")
-	var/result = shell(command)
-	if(result != 0)
-		log_world("Download failed: shell exited with code: [result]")
-		return
-
-	var/f = file(temp_file)
-	if(!f)
-		log_world("Download failed: Temp file not found")
-		return
-
-	. = file2text(f)
-	f = null
-	fdel(temp_file)
-
 #define UNTIL(X) while(!(X)) stoplag()
 
 /proc/pass()
@@ -1432,3 +1406,7 @@ GLOBAL_PROTECT(valid_HTTPSGet)
 	var/temp = bitfield - ((bitfield>>1)&46811) - ((bitfield>>2)&37449) //0133333 and 0111111 respectively
 	temp = ((temp + (temp>>3))&29127) % 63	//070707
 	return temp
+
+//checks if a turf is in the planet z list.
+/proc/turf_z_is_planet(turf/T)
+	return GLOB.z_is_planet["[T.z]"]

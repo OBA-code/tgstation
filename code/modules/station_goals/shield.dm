@@ -31,20 +31,15 @@
 /datum/station_goal/proc/get_coverage()
 	var/list/coverage = list()
 	for(var/obj/machinery/satellite/meteor_shield/A in GLOB.machines)
-		if(!A.active || A.z != ZLEVEL_STATION)
+		if(!A.active || !(A.z in GLOB.station_z_levels))
 			continue
 		coverage |= view(A.kill_range,A)
 	return coverage.len
 
-/obj/item/weapon/circuitboard/machine/computer/sat_control
-	name = "Satellite Network Control (Computer Board)"
-	build_path = /obj/machinery/computer/sat_control
-	origin_tech = "engineering=3"
-
 /obj/machinery/computer/sat_control
 	name = "satellite control"
 	desc = "Used to control the satellite network."
-	circuit = /obj/item/weapon/circuitboard/machine/computer/sat_control
+	circuit = /obj/item/circuitboard/computer/sat_control
 	var/notice
 
 /obj/machinery/computer/sat_control/ui_interact(mob/user, ui_key = "main", datum/tgui/ui = null, force_open = FALSE, datum/tgui/master_ui = null, datum/ui_state/state = GLOB.default_state)
@@ -88,7 +83,7 @@
 
 
 /obj/machinery/satellite
-	name = "Defunct Satellite"
+	name = "\improper Defunct Satellite"
 	desc = ""
 	icon = 'icons/obj/machines/satellite.dmi'
 	icon_state = "sat_inactive"
@@ -109,10 +104,10 @@
 /obj/machinery/satellite/proc/toggle(mob/user)
 	if(!active && !isinspace())
 		if(user)
-			to_chat(user, "<span class='warning'>You can only active the [src] in space.</span>")
+			to_chat(user, "<span class='warning'>You can only activate [src] in space.</span>")
 		return FALSE
 	if(user)
-		to_chat(user, "<span class='notice'>You [active ? "deactivate": "activate"] the [src]</span>")
+		to_chat(user, "<span class='notice'>You [active ? "deactivate": "activate"] [src].</span>")
 	active = !active
 	if(active)
 		animate(src, pixel_y = 2, time = 10, loop = -1)
@@ -132,8 +127,8 @@
 		return ..()
 
 /obj/machinery/satellite/meteor_shield
-	name = "Meteor Shield Satellite"
-	desc = "Meteor Point Defense Satellite"
+	name = "\improper Meteor Shield Satellite"
+	desc = "A meteor point-defense satellite."
 	mode = "M-SHIELD"
 	speed_process = TRUE
 	var/kill_range = 14

@@ -150,11 +150,10 @@
 	begin_month = APRIL
 
 /datum/holiday/april_fools/celebrate()
-	if(SSticker)
-		SSticker.login_music = 'sound/ambience/clown.ogg'
-		for(var/mob/dead/new_player/P in GLOB.mob_list)
-			if(P.client)
-				P.client.playtitlemusic()
+	SSticker.login_music = 'sound/ambience/clown.ogg'
+	for(var/mob/dead/new_player/P in GLOB.mob_list)
+		if(P.client)
+			P.client.playtitlemusic()
 
 /datum/holiday/fourtwenty
 	name = "Four-Twenty"
@@ -486,10 +485,9 @@ Since Ramadan is an entire month that lasts 29.5 days on average, the start and 
 				begin_day += 31
 				begin_month-- //begins in march, ends in april
 
-//	to_chat(world, "Easter calculates to be on [begin_day] of [begin_month] ([days_early] early) to [end_day] of [end_month] ([days_extra] extra) for 20[yy]")
 	return ..()
 
 /datum/holiday/easter/celebrate()
 	GLOB.maintenance_loot += list(
-		/obj/item/weapon/reagent_containers/food/snacks/egg/loaded = 15,
-		/obj/item/weapon/storage/bag/easterbasket = 15)
+		/obj/item/reagent_containers/food/snacks/egg/loaded = 15,
+		/obj/item/storage/bag/easterbasket = 15)

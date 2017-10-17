@@ -10,6 +10,8 @@
 	var/slot
 	// DO NOT add slots with matching names to different zones - it will break internal_organs_slot list!
 	var/vital = 0
+	//Was this organ implanted/inserted/etc, if true will not be removed during species change.
+	var/external = FALSE
 
 
 /obj/item/organ/proc/Insert(mob/living/carbon/M, special = 0, drop_if_replaced = TRUE)
@@ -59,7 +61,7 @@
 
 
 /obj/item/organ/proc/prepare_eat()
-	var/obj/item/weapon/reagent_containers/food/snacks/organ/S = new
+	var/obj/item/reagent_containers/food/snacks/organ/S = new
 	S.name = name
 	S.desc = desc
 	S.icon = icon
@@ -69,11 +71,12 @@
 
 	return S
 
-/obj/item/weapon/reagent_containers/food/snacks/organ
+/obj/item/reagent_containers/food/snacks/organ
 	name = "appendix"
 	icon_state = "appendix"
 	icon = 'icons/obj/surgery.dmi'
 	list_reagents = list("nutriment" = 5)
+	foodtype = RAW | MEAT | GROSS
 
 
 /obj/item/organ/Destroy()
@@ -87,12 +90,11 @@
 	if(M == user && ishuman(user))
 		var/mob/living/carbon/human/H = user
 		if(status == ORGAN_ORGANIC)
-			var/obj/item/weapon/reagent_containers/food/snacks/S = prepare_eat()
+			var/obj/item/reagent_containers/food/snacks/S = prepare_eat()
 			if(S)
-				H.drop_item()
-				H.put_in_active_hand(S)
-				S.attack(H, H)
 				qdel(src)
+				if(H.put_in_active_hand(S))
+					S.attack(H, H)
 	else
 		..()
 
@@ -116,7 +118,7 @@
 		var/has_liver = (!(NOLIVER in dna.species.species_traits))
 		var/has_stomach = (!(NOSTOMACH in dna.species.species_traits))
 
-		if(has_liver && !getorganslot("liver"))
+		if(has_liver && !getorganslot(ORGAN_SLOT_LIVER))
 			var/obj/item/organ/liver/LI
 
 			if(dna.species.mutantliver)
@@ -125,7 +127,7 @@
 				LI = new()
 			LI.Insert(src)
 
-		if(has_stomach && !getorganslot("stomach"))
+		if(has_stomach && !getorganslot(ORGAN_SLOT_STOMACH))
 			var/obj/item/organ/stomach/S
 
 			if(dna.species.mutantstomach)
@@ -134,15 +136,15 @@
 				S = new()
 			S.Insert(src)
 
-	if(breathes && !getorganslot("lungs"))
+	if(breathes && !getorganslot(ORGAN_SLOT_LUNGS))
 		var/obj/item/organ/lungs/L = new()
 		L.Insert(src)
 
-	if(blooded && !getorganslot("heart"))
+	if(blooded && !getorganslot(ORGAN_SLOT_HEART))
 		var/obj/item/organ/heart/H = new()
 		H.Insert(src)
 
-	if(!getorganslot("tongue"))
+	if(!getorganslot(ORGAN_SLOT_TONGUE))
 		var/obj/item/organ/tongue/T
 
 		if(dna && dna.species && dna.species.mutanttongue)
@@ -153,7 +155,7 @@
 		// if they have no mutant tongues, give them a regular one
 		T.Insert(src)
 
-	if(!getorganslot("eye_sight"))
+	if(!getorganslot(ORGAN_SLOT_EYES))
 		var/obj/item/organ/eyes/E
 
 		if(dna && dna.species && dna.species.mutanteyes)
@@ -163,7 +165,7 @@
 			E = new()
 		E.Insert(src)
 
-	if(!getorganslot("ears"))
+	if(!getorganslot(ORGAN_SLOT_EARS))
 		var/obj/item/organ/ears/ears
 		if(dna && dna.species && dna.species.mutantears)
 			ears = new dna.species.mutantears

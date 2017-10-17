@@ -1,6 +1,9 @@
 /*
 	Station Airlocks Regular
 */
+/obj/machinery/door/airlock/abandoned
+	abandoned = TRUE
+
 /obj/machinery/door/airlock/command
 	icon = 'icons/obj/doors/airlocks/station/command.dmi'
 	assemblytype = /obj/structure/door_assembly/door_assembly_com
@@ -14,6 +17,9 @@
 /obj/machinery/door/airlock/engineering
 	icon = 'icons/obj/doors/airlocks/station/engineering.dmi'
 	assemblytype = /obj/structure/door_assembly/door_assembly_eng
+	
+/obj/machinery/door/airlock/engineering/abandoned
+	abandoned = TRUE
 
 /obj/machinery/door/airlock/medical
 	icon = 'icons/obj/doors/airlocks/station/medical.dmi'
@@ -24,6 +30,9 @@
 	icon = 'icons/obj/doors/airlocks/station/maintenance.dmi'
 	assemblytype = /obj/structure/door_assembly/door_assembly_mai
 	normal_integrity = 250
+
+/obj/machinery/door/airlock/maintenance/abandoned
+	abandoned = TRUE
 
 /obj/machinery/door/airlock/maintenance/external
 	name = "external airlock access"
@@ -40,6 +49,9 @@
 	name = "atmospherics airlock"
 	icon = 'icons/obj/doors/airlocks/station/atmos.dmi'
 	assemblytype = /obj/structure/door_assembly/door_assembly_atmo
+
+/obj/machinery/door/airlock/atmos/abandoned
+	abandoned = TRUE
 
 /obj/machinery/door/airlock/research
 	icon = 'icons/obj/doors/airlocks/station/research.dmi'
@@ -82,6 +94,9 @@
 	assemblytype = /obj/structure/door_assembly/door_assembly_sec/glass
 	glass = TRUE
 	normal_integrity = 400
+
+/obj/machinery/door/airlock/glass_security/abandoned
+	abandoned = TRUE
 
 /obj/machinery/door/airlock/glass_medical
 	icon = 'icons/obj/doors/airlocks/station/medical.dmi'
@@ -165,7 +180,7 @@
 	..()
 
 /obj/machinery/door/airlock/uranium/proc/radiate()
-	radiation_pulse(get_turf(src), 3, 3, 15, 0)
+	radiation_pulse(get_turf(src), 150)
 	return
 
 /obj/machinery/door/airlock/plasma
@@ -266,18 +281,20 @@
 
 //////////////////////////////////
 /*
-	Centcom Airlocks
+	CentCom Airlocks
 */
 
 /obj/machinery/door/airlock/centcom
 	icon = 'icons/obj/doors/airlocks/centcom/centcom.dmi'
 	overlays_file = 'icons/obj/doors/airlocks/centcom/overlays.dmi'
-	note_overlay_file = 'icons/obj/doors/airlocks/centcom/overlays.dmi'
 	opacity = 1
 	assemblytype = /obj/structure/door_assembly/door_assembly_centcom
 	normal_integrity = 1000
 	security_level = 6
 	explosion_block = 2
+
+/obj/machinery/door/airlock/centcom/abandoned
+	abandoned = TRUE
 
 //////////////////////////////////
 /*
@@ -288,7 +305,6 @@
 	name = "vault door"
 	icon = 'icons/obj/doors/airlocks/vault/vault.dmi'
 	overlays_file = 'icons/obj/doors/airlocks/vault/overlays.dmi'
-	note_overlay_file = 'icons/obj/doors/airlocks/vault/overlays.dmi'
 	opacity = 1
 	assemblytype = /obj/structure/door_assembly/door_assembly_vault
 	explosion_block = 2
@@ -315,6 +331,9 @@
 	note_overlay_file = 'icons/obj/doors/airlocks/hatch/overlays.dmi'
 	opacity = 1
 	assemblytype = /obj/structure/door_assembly/door_assembly_mhatch
+
+/obj/machinery/door/airlock/maintenance_hatch/abandoned
+	abandoned = TRUE
 
 //////////////////////////////////
 /*
@@ -347,8 +366,8 @@
 	desc = "With humanity's current technological level, it could take years to hack this advanced airlock... or maybe we should give a screwdriver a try?"
 	icon = 'icons/obj/doors/airlocks/abductor/abductor_airlock.dmi'
 	overlays_file = 'icons/obj/doors/airlocks/abductor/overlays.dmi'
-	note_overlay_file = 'icons/obj/doors/airlocks/abductor/overlays.dmi'
 	assemblytype = /obj/structure/door_assembly/door_assembly_abductor
+	note_overlay_file = 'icons/obj/doors/airlocks/external/overlays.dmi'
 	damage_deflection = 30
 	opacity = 1
 	explosion_block = 3
@@ -368,13 +387,14 @@
 	overlays_file = 'icons/obj/doors/airlocks/cult/runed/overlays.dmi'
 	assemblytype = /obj/structure/door_assembly/door_assembly_cult
 	hackProof = TRUE
-	aiControlDisabled = 1
+	aiControlDisabled = TRUE
+	req_access = list(ACCESS_BLOODCULT)
 	var/openingoverlaytype = /obj/effect/temp_visual/cult/door
 	var/friendly = FALSE
 
-/obj/machinery/door/airlock/cult/New()
-	..()
-	new openingoverlaytype(src.loc)
+/obj/machinery/door/airlock/cult/Initialize()
+	. = ..()
+	new openingoverlaytype(loc)
 
 /obj/machinery/door/airlock/cult/canAIControl(mob/user)
 	return (iscultist(user) && !isAllPowerCut())
@@ -389,7 +409,7 @@
 		new /obj/effect/temp_visual/cult/sac(loc)
 		var/atom/throwtarget
 		throwtarget = get_edge_target_turf(src, get_dir(src, get_step_away(L, src)))
-		L << pick(sound('sound/hallucinations/turn_around1.ogg',0,1,50), sound('sound/hallucinations/turn_around2.ogg',0,1,50))
+		SEND_SOUND(L, sound(pick('sound/hallucinations/turn_around1.ogg','sound/hallucinations/turn_around2.ogg'),0,1,50))
 		flash_color(L, flash_color="#960000", flash_time=20)
 		L.Knockdown(40)
 		L.throw_at(throwtarget, 5, 1,src)
@@ -435,17 +455,17 @@
 	opacity = 1
 	hackProof = TRUE
 	aiControlDisabled = TRUE
+	req_access = list(ACCESS_CLOCKCULT)
 	use_power = FALSE
 	resistance_flags = FIRE_PROOF | ACID_PROOF
 	damage_deflection = 30
 	normal_integrity = 240
 	var/construction_state = GEAR_SECURE //Pinion airlocks have custom deconstruction
 
-/obj/machinery/door/airlock/clockwork/New()
-	..()
-	var/turf/T = get_turf(src)
-	new /obj/effect/temp_visual/ratvar/door(T)
-	new /obj/effect/temp_visual/ratvar/beam/door(T)
+/obj/machinery/door/airlock/clockwork/Initialize()
+	. = ..()
+	new /obj/effect/temp_visual/ratvar/door(loc)
+	new /obj/effect/temp_visual/ratvar/beam/door(loc)
 	change_construction_value(5)
 
 /obj/machinery/door/airlock/clockwork/Destroy()
@@ -497,7 +517,7 @@
 
 /obj/machinery/door/airlock/clockwork/deconstruct(disassembled = TRUE)
 	playsound(src, 'sound/items/deconstruct.ogg', 50, 1)
-	if(!(flags & NODECONSTRUCT))
+	if(!(flags_1 & NODECONSTRUCT_1))
 		var/turf/T = get_turf(src)
 		if(disassembled)
 			new/obj/item/stack/tile/brass(T, 4)
@@ -509,7 +529,7 @@
 /obj/machinery/door/airlock/clockwork/proc/attempt_construction(obj/item/I, mob/living/user)
 	if(!I || !user || !user.canUseTopic(src))
 		return 0
-	else if(istype(I, /obj/item/weapon/wrench))
+	else if(istype(I, /obj/item/wrench))
 		if(construction_state == GEAR_SECURE)
 			user.visible_message("<span class='notice'>[user] begins loosening [src]'s cogwheel...</span>", "<span class='notice'>You begin loosening [src]'s cogwheel...</span>")
 			playsound(src, I.usesound, 50, 1)
@@ -527,7 +547,7 @@
 			playsound(src, 'sound/items/deconstruct.ogg', 50, 1)
 			construction_state = GEAR_SECURE
 		return 1
-	else if(istype(I, /obj/item/weapon/crowbar))
+	else if(istype(I, /obj/item/crowbar))
 		if(construction_state == GEAR_SECURE)
 			to_chat(user, "<span class='warning'>[src]'s cogwheel is too tightly secured! Your [I.name] can't reach under it!</span>")
 			return 1
@@ -555,7 +575,6 @@
 	name = "large glass airlock"
 	icon = 'icons/obj/doors/airlocks/glass_large/glass_large.dmi'
 	overlays_file = 'icons/obj/doors/airlocks/glass_large/overlays.dmi'
-	note_overlay_file = 'icons/obj/doors/airlocks/glass_large/overlays.dmi'
 	opacity = 0
 	assemblytype = null
 	glass = TRUE

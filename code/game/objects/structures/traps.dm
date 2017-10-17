@@ -1,6 +1,6 @@
 /obj/structure/trap
 	name = "IT'S A TRAP"
-	desc = "stepping on me is a guaranteed bad day"
+	desc = "Stepping on me is a guaranteed bad day."
 	icon = 'icons/obj/hand_of_god_structures.dmi'
 	icon_state = "trap"
 	density = FALSE
@@ -16,7 +16,7 @@
 	var/datum/effect_system/spark_spread/spark_system
 
 /obj/structure/trap/Initialize(mapload)
-	..()
+	. = ..()
 	spark_system = new
 	spark_system.set_up(4,1,src)
 	spark_system.attach(src)

@@ -30,7 +30,7 @@
 /obj/singularity/narsie/large/Initialize()
 	. = ..()
 	send_to_playing_players("<span class='narsie'>NAR-SIE HAS RISEN</span>")
-	sound_to_playing_players("im_here")
+	sound_to_playing_players('sound/creatures/narsie_rises.ogg')
 
 	var/area/A = get_area(src)
 	if(A)
@@ -44,23 +44,17 @@
 	var/souls = 0
 	var/resolved = FALSE
 
-/obj/singularity/narsie/large/cult/proc/resize(var/ratio)
-	var/matrix/ntransform = matrix(transform) //aka transform.Copy()
-	ntransform.Scale(ratio)
-	animate(src, transform = ntransform, time = 40, easing = EASE_IN|EASE_OUT)
-
 /obj/singularity/narsie/large/cult/Initialize()
 	. = ..()
 	GLOB.cult_narsie = src
 	deltimer(GLOB.blood_target_reset_timer)
 	GLOB.blood_target = src
-	resize(0.6)
 	for(var/datum/mind/cult_mind in SSticker.mode.cult)
 		if(isliving(cult_mind.current))
 			var/mob/living/L = cult_mind.current
 			L.narsie_act()
 	for(var/mob/living/player in GLOB.player_list)
-		if(player.stat != DEAD && player.loc.z == ZLEVEL_STATION && !iscultist(player))
+		if(player.stat != DEAD && (player.loc.z in GLOB.station_z_levels) && !iscultist(player))
 			souls_needed[player] = TRUE
 	soul_goal = round(1 + LAZYLEN(souls_needed) * 0.6)
 	INVOKE_ASYNC(src, .proc/begin_the_end)
@@ -77,9 +71,8 @@
 	sleep(1150)
 	if(resolved == FALSE)
 		resolved = TRUE
-		world << sound('sound/machines/alarm.ogg')
+		sound_to_playing_players('sound/machines/alarm.ogg')
 		addtimer(CALLBACK(GLOBAL_PROC, .proc/cult_ending_helper), 120)
-		addtimer(CALLBACK(GLOBAL_PROC, .proc/ending_helper), 220)
 
 /obj/singularity/narsie/large/cult/Destroy()
 	GLOB.cult_narsie = null
@@ -89,7 +82,7 @@
 	SSticker.force_ending = 1
 
 /proc/cult_ending_helper(var/no_explosion = 0)
-	SSticker.station_explosion_cinematic(no_explosion, "cult", null)
+	Cinematic(CINEMATIC_CULT,world,CALLBACK(GLOBAL_PROC,.ending_helper))
 
 
 /obj/singularity/narsie/large/attack_ghost(mob/dead/observer/user as mob)

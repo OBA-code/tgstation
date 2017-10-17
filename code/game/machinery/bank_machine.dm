@@ -9,8 +9,8 @@
 	var/radio_channel = "Common"
 	var/minimum_time_between_warnings = 400
 
-/obj/machinery/computer/bank_machine/Initialize(mapload)
-	..()
+/obj/machinery/computer/bank_machine/Initialize()
+	. = ..()
 	radio = new(src)
 	radio.subspace_transmission = TRUE
 	radio.canhear_range = 0
@@ -43,7 +43,7 @@
 			say("Station funds depleted. Halting siphon.")
 			siphoning = FALSE
 		else
-			new /obj/item/stack/spacecash/c200(get_turf(src)) // will autostack
+			new /obj/item/stack/spacecash/c200(drop_location()) // will autostack
 			playsound(src.loc, 'sound/items/poster_being_created.ogg', 100, 1)
 			SSshuttle.points -= 200
 			if(next_warning < world.time && prob(15))
