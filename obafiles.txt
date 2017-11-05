@@ -1,0 +1,10 @@
+_maps/microstation.*
+_maps/map_files/MicroStation/MicroStation.dmm
+code/modules/events/wormholes.dm
+code/modules/events/shuttle_loan.dm
+code/modules/events/immovable_rod.dm
+code/modules/events/anomaly*
+code/modules/paperwork/paper_premade.dm
+code/modules/reagents/chemistry/reagents/alcohol_reagents.dm
+config/*
+obafiles.txt
