@@ -1,6 +1,5 @@
 ## /tg/station codebase; OBA edition
 
-<<<<<<< HEAD
 [![Build Status](https://travis-ci.org/OBA-code/tgstation.png)](https://travis-ci.org/OBA-code/tgstation)
 =======
 [![Build Status](https://travis-ci.org/tgstation/tgstation.png)](https://travis-ci.org/tgstation/tgstation) it's fine [![Krihelimeter](http://www.krihelinator.xyz/badge/tgstation/tgstation)](http://www.krihelinator.xyz)  
