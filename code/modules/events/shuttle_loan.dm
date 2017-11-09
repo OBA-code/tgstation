@@ -4,6 +4,7 @@
 #define DEPARTMENT_RESUPPLY 4
 #define ANTIDOTE_NEEDED 5
 #define PIZZA_DELIVERY 6
+#define RYU_NOTE 7
 
 
 /datum/round_event_control/shuttle_loan
@@ -21,7 +22,7 @@
 	var/thanks_msg = "The cargo shuttle should return in five minutes. Have some supply points for your trouble."
 
 /datum/round_event/shuttle_loan/start()
-	dispatch_type = pick(HIJACK_SYNDIE, RUSKY_PARTY, SPIDER_GIFT, DEPARTMENT_RESUPPLY, ANTIDOTE_NEEDED, PIZZA_DELIVERY)
+	dispatch_type = pick(HIJACK_SYNDIE, RUSKY_PARTY, SPIDER_GIFT, DEPARTMENT_RESUPPLY, ANTIDOTE_NEEDED, PIZZA_DELIVERY, RYU_NOTE)
 
 /datum/round_event/shuttle_loan/announce()
 	SSshuttle.shuttle_loan = src
@@ -40,6 +41,8 @@
 			priority_announce("Cargo: Your station has been chosen for an epidemiological research project. Send us your cargo shuttle to receive your research samples.", "CentCom Research Initiatives")
 		if (PIZZA_DELIVERY)
 			priority_announce("Cargo: It looks like a neighbouring station accidentally delivered their pizza to you instead", "CentCom Spacepizza Division")
+		if (RYU_NOTE)
+			priority_announce("Cargo: Ryukan has aplogised for his ... events. Have a fruit basket!", "???")
 
 /datum/round_event/shuttle_loan/proc/loan_shuttle()
 	priority_announce(thanks_msg, "Cargo shuttle commandeered by CentCom.")
@@ -65,6 +68,8 @@
 			SSshuttle.centcom_message += "Virus samples incoming."
 		if(PIZZA_DELIVERY)
 			SSshuttle.centcom_message += "Pizza delivery for [station_name()]"
+		if(RYU_NOTE)
+			SSshuttle.centcom_message += "Apology incoming."
 
 /datum/round_event/shuttle_loan/tick()
 	if(dispatched)
@@ -180,6 +185,10 @@
 				else
 					shuttle_spawns.Add(/obj/item/pizzabox/margherita)
 
+			if(RYU_NOTE)
+				shuttle_spawns.Add(/obj/item/paper/fluff/other/ryu_note)
+				shuttle_spawns.Add(/datum/supply_pack/misc/fruit_basket)
+				
 		var/false_positive = 0
 		while(shuttle_spawns.len && empty_shuttle_turfs.len)
 			var/turf/T = pick_n_take(empty_shuttle_turfs)
@@ -196,3 +205,4 @@
 #undef DEPARTMENT_RESUPPLY
 #undef ANTIDOTE_NEEDED
 #undef PIZZA_DELIVERY
+#undef RYU_NOTE
