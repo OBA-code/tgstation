@@ -14,7 +14,7 @@ Format:
 endmap
 
 map boxstation
-	default
+	
 	#voteweight 1.5
 endmap
 
@@ -35,4 +35,8 @@ map deltastation
 endmap
 
 map runtimestation
+endmap
+
+map microstation
+	default
 endmap
