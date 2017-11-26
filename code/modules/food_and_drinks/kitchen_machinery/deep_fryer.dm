@@ -122,24 +122,13 @@ God bless America.
 /obj/machinery/deepfryer/attack_ai(mob/user)
 	return
 
-/obj/machinery/deepfryer/attack_ai(mob/user)
-	return
-
 /obj/machinery/deepfryer/attack_hand(mob/user)
 	if(frying)
 		if(frying.loc == src)
 			to_chat(user, "<span class='notice'>You eject [frying] from [src].</span>")
-<<<<<<< HEAD
 			frying.fry(cook_time)
 			icon_state = "fryer_off"
 			user.put_in_hands(frying)
-=======
-			var/obj/item/reagent_containers/food/snacks/deepfryholder/S = new(drop_location())
-			S.fry(frying, reagents, cook_time)
-			icon_state = "fryer_off"
-			if(user.Adjacent(src))
-				user.put_in_hands(S)
->>>>>>> ver2
 			frying = null
 			cook_time = 0
 			frying_fried = FALSE

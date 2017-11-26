@@ -11,11 +11,7 @@
 	var/obj/structure/disposalpipe/trunk/trunk // the attached pipe trunk
 	var/obj/structure/disposalconstruct/stored
 	var/start_eject = 0
-<<<<<<< HEAD
 	var/eject_range = 2
-=======
-	var/eject_range = 3
->>>>>>> ver2
 
 /obj/structure/disposaloutlet/Initialize(mapload, obj/structure/disposalconstruct/make_from)
 	. = ..()
@@ -46,10 +42,7 @@
 // expel the contents of the holder object, then delete it
 // called when the holder exits the outlet
 /obj/structure/disposaloutlet/proc/expel(obj/structure/disposalholder/H)
-<<<<<<< HEAD
 	H.active = FALSE
-=======
->>>>>>> ver2
 	flick("outlet-open", src)
 	if((start_eject + 30) < world.time)
 		start_eject = world.time

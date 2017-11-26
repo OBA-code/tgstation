@@ -624,12 +624,9 @@ GLOBAL_LIST_EMPTY(blood_splatter_icons)
 /atom/proc/crowbar_act(mob/user, obj/item/tool)
 	return
 
-<<<<<<< HEAD
 /atom/proc/multitool_act(mob/user, obj/item/tool)
 	return
 
-=======
->>>>>>> ver2
 /atom/proc/screwdriver_act(mob/user, obj/item/tool)
 	return
 

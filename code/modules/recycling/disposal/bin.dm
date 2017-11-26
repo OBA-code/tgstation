@@ -221,7 +221,6 @@
 
 	for(var/A in H)
 		var/atom/movable/AM = A
-<<<<<<< HEAD:code/modules/recycling/disposal/bin.dm
 
 		target = get_offset_target_turf(loc, rand(5)-rand(5), rand(5)-rand(5))
 
@@ -229,15 +228,6 @@
 		AM.pipe_eject(0)
 		AM.throw_at(target, 5, 1)
 
-=======
-
-		target = get_offset_target_turf(loc, rand(5)-rand(5), rand(5)-rand(5))
-
-		AM.forceMove(T)
-		AM.pipe_eject(0)
-		AM.throw_at(target, 5, 1)
-
->>>>>>> ver2:code/modules/recycling/disposal/bin.dm
 	H.vent_gas(loc)
 	qdel(H)
 

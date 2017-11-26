@@ -29,11 +29,7 @@ SUBSYSTEM_DEF(overlays)
 
 
 /datum/controller/subsystem/overlays/Shutdown()
-<<<<<<< HEAD:code/controllers/subsystem/overlays.dm
 	text2file(render_stats(stats), "[GLOB.log_directory]/overlay.log")
-=======
-	text2file("[GLOB.log_directory]/overlay.log", render_stats(stats))
->>>>>>> ver2:code/controllers/subsystem/overlays.dm
 
 
 /datum/controller/subsystem/overlays/Recover()

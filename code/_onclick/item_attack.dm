@@ -14,11 +14,8 @@
 			return FALSE
 		if(TOOL_CROWBAR)
 			return target.crowbar_act(user, src)
-<<<<<<< HEAD
 		if(TOOL_MULTITOOL)
 			return target.multitool_act(user, src)
-=======
->>>>>>> ver2
 		if(TOOL_SCREWDRIVER)
 			return target.screwdriver_act(user, src)
 		if(TOOL_WRENCH)

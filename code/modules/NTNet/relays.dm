@@ -16,10 +16,6 @@
 	var/list/dos_sources = list()	// Backwards reference for qdel() stuff
 	var/uid
 	var/static/gl_uid = 1
-<<<<<<< HEAD:code/modules/NTNet/relays.dm
-=======
-
->>>>>>> ver2:code/modules/modular_computers/NTNet/NTNet_relay.dm
 
 	// Denial of Service attack variables
 	var/dos_overload = 0		// Amount of DoS "packets" in this relay's buffer
