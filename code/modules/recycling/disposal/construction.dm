@@ -26,6 +26,14 @@
 		setDir(make_from.dir)
 		anchored = TRUE
 
+<<<<<<< HEAD
+=======
+		if(istype(make_from, /obj/structure/disposalpipe))
+			var/obj/structure/disposalpipe/D = make_from
+			if(D.construct_type)
+				pipe_type = D.construct_type
+
+>>>>>>> ver2
 	else
 		if(_pipe_type)
 			pipe_type = _pipe_type

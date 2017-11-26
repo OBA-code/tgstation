@@ -14,6 +14,10 @@
 	layer = DISPOSAL_PIPE_LAYER			// slightly lower than wires and other pipes
 	var/dpdir = NONE					// bitmask of pipe directions
 	var/initialize_dirs = NONE			// bitflags of pipe directions added on init, see \code\_DEFINES\pipe_construction.dm
+<<<<<<< HEAD
+=======
+	var/construct_type					// If set, used as type for pipe constructs. If not set, src.type is used.
+>>>>>>> ver2
 	var/flip_type						// If set, the pipe is flippable and becomes this type when flipped
 	var/obj/structure/disposalconstruct/stored
 
@@ -28,6 +32,17 @@
 	else
 		stored = new /obj/structure/disposalconstruct(src, make_from=src)
 
+<<<<<<< HEAD
+=======
+		// Hack for old map pipes to work, remove after all maps are updated
+		if(flip_type)
+			var/obj/structure/disposalpipe/flip = flip_type
+			if(icon_state == initial(flip.icon_state))
+				initialize_dirs = initial(flip.initialize_dirs)
+				construct_type = flip_type
+
+
+>>>>>>> ver2
 	if(dir in GLOB.diagonals) // Bent pipes already have all the dirs set
 		initialize_dirs = NONE
 
@@ -190,11 +205,35 @@
 		deconstruct()
 
 
+<<<<<<< HEAD
 // Straight/bent pipe segment
+=======
+// Straight pipe segment
+>>>>>>> ver2
 /obj/structure/disposalpipe/segment
 	icon_state = "pipe"
 	initialize_dirs = DISP_DIR_FLIP
 
+<<<<<<< HEAD
+=======
+/obj/structure/disposalpipe/segment/Initialize()
+	// Hacks for old map pipes to work, remove after all maps are updated
+	if(icon_state == "pipe-c")
+		switch(dir)
+			if(NORTH)
+				dir = NORTHEAST
+			if(SOUTH)
+				dir = SOUTHWEST
+			if(EAST)
+				dir = SOUTHEAST
+			if(WEST)
+				dir = NORTHWEST
+
+	if(icon_state != "pipe")
+		icon_state = "pipe"
+	. = ..()
+
+>>>>>>> ver2
 
 // A three-way junction with dir being the dominant direction
 /obj/structure/disposalpipe/junction
@@ -202,6 +241,17 @@
 	initialize_dirs = DISP_DIR_RIGHT | DISP_DIR_FLIP
 	flip_type = /obj/structure/disposalpipe/junction/flip
 
+<<<<<<< HEAD
+=======
+/obj/structure/disposalpipe/junction/Initialize()
+	if(icon_state == "pipe-y")	// Hack for old map pipes to work, remove after all maps are updated
+		initialize_dirs = DISP_DIR_LEFT | DISP_DIR_RIGHT
+		flip_type = null
+		construct_type = /obj/structure/disposalpipe/junction/yjunction
+	. = ..()
+
+
+>>>>>>> ver2
 // next direction to move
 // if coming in from secondary dirs, then next is primary dir
 // if coming in from primary dir, then next is equal chance of other dirs
@@ -289,8 +339,13 @@
 		else
 			var/obj/machinery/disposal/D = linked
 			D.expel(H)	// expel at disposal
+<<<<<<< HEAD
 
 	// Returning null without expelling holder makes the holder expell itself
+=======
+	else
+		expel(H, get_turf(src), 0)	// expel at turf
+>>>>>>> ver2
 	return null
 
 /obj/structure/disposalpipe/trunk/nextdir(obj/structure/disposalholder/H)

@@ -15,6 +15,14 @@
 /obj/item/paper/fluff/jobs/mining/aux_base
 	name = "paper- 'Auxilary Base Construction'"
 	info = "Remember that the base does NOT include the catwalks. We only cleaned up after them other idiots.\n-Management"
+	
+/obj/item/paper/fluff/other
+	name = "paper- UNKNOWN"
+	info = "UNKNOWN"
+	
+/obj/item/paper/fluff/other/ryu_note
+	name = "paper- 'Note from Ryukan'"
+	info = "I'm sorry. I really am. I shouldn't have reacted the way I did, but it happened. I'm sorry. Can we be friends again?"
 
 /obj/item/paper/fluff/jobs/science/accident_count
 	name = "paper- 'Days accident-free'"

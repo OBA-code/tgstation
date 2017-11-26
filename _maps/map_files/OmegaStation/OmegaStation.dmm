@@ -34038,7 +34038,11 @@
 	width = 18
 	},
 /turf/open/space/basic,
+<<<<<<< HEAD
 /area/space/nearstation)
+=======
+/area/space)
+>>>>>>> ver2
 "sws" = (
 /obj/docking_port/stationary{
 	dheight = 9;
@@ -34051,6 +34055,7 @@
 	width = 18
 	},
 /turf/open/space,
+<<<<<<< HEAD
 /area/space/nearstation)
 "swt" = (
 /obj/machinery/atmospherics/pipe/simple/scrubbers/hidden{
@@ -34063,6 +34068,9 @@
 /obj/machinery/rnd/protolathe/department/medical,
 /turf/closed/wall,
 /area/medical/medbay/zone3)
+=======
+/area/space)
+>>>>>>> ver2
 
 (1,1,1) = {"
 aaa

@@ -607,7 +607,11 @@ $(function() {
 		sendVolumeUpdate();
 		internalOutput('<span class="internal boldnshit">Loaded music volume of: '+savedConfig.smusicVolume+'</span>', 'internal');
 	} else {
+<<<<<<< HEAD
 		$('#adminMusic').prop('volume', opts.defaultMusicVolume / 100);
+=======
+		$('#adminMusic').prop('volume', opts.defaultMusicVolume);
+>>>>>>> ver2
 	}
 
 	(function() {
