@@ -37,8 +37,8 @@
 	var/bee_resources = 0
 
 
-/obj/structure/beebox/Initialize()
-	. = ..()
+/obj/structure/beebox/New()
+	..()
 	START_PROCESSING(SSobj, src)
 
 
@@ -55,10 +55,9 @@
 	var/random_reagent = FALSE
 
 
-/obj/structure/beebox/premade/Initialize()
-	. = ..()
+/obj/structure/beebox/premade/New()
+	..()
 
-	icon_state = "beebox"
 	var/datum/reagent/R = null
 	if(random_reagent)
 		R = pick(subtypesof(/datum/reagent))
@@ -81,7 +80,6 @@
 
 
 /obj/structure/beebox/premade/random
-	icon_state = "random_beebox"
 	random_reagent = TRUE
 
 

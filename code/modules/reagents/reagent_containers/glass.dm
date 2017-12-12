@@ -4,7 +4,7 @@
 	possible_transfer_amounts = list(5, 10, 15, 20, 25, 30, 50)
 	volume = 50
 	container_type = OPENCONTAINER_1
-	spillable = TRUE
+	spillable = 1
 	resistance_flags = ACID_PROOF
 
 
@@ -120,7 +120,7 @@
 	. = ..()
 	update_icon()
 
-/obj/item/reagent_containers/glass/beaker/on_reagent_change(changetype)
+/obj/item/reagent_containers/glass/beaker/on_reagent_change()
 	update_icon()
 
 /obj/item/reagent_containers/glass/beaker/update_icon()
@@ -173,6 +173,7 @@
 	materials = list(MAT_METAL=3000)
 	volume = 50
 	amount_per_transfer_from_this = 10
+	origin_tech = "materials=2;engineering=3;plasmatech=3"
 	flags_1 = OPENCONTAINER_1
 
 /obj/item/reagent_containers/glass/beaker/noreact/Initialize()
@@ -190,6 +191,7 @@
 	amount_per_transfer_from_this = 10
 	possible_transfer_amounts = list(5,10,15,20,25,30,50,100,300)
 	flags_1 = OPENCONTAINER_1
+	origin_tech = "bluespace=5;materials=4;plasmatech=4"
 
 /obj/item/reagent_containers/glass/beaker/cryoxadone
 	list_reagents = list("cryoxadone" = 30)
@@ -209,7 +211,7 @@
 	list_reagents = list("silver_sulfadiazine" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/charcoal
-	name = "charcoal reserve tank"
+	name = "antitoxin reserve tank"
 	list_reagents = list("charcoal" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/epinephrine
@@ -235,7 +237,7 @@
 	flags_1 = OPENCONTAINER_1
 	flags_inv = HIDEHAIR
 	slot_flags = SLOT_HEAD
-	resistance_flags = NONE
+	resistance_flags = 0
 	armor = list(melee = 10, bullet = 0, laser = 0, energy = 0, bomb = 0, bio = 0, rad = 0, fire = 75, acid = 50) //Weak melee protection, because you can wear it on your head
 	slot_equipment_priority = list( \
 		slot_back, slot_wear_id,\
@@ -290,6 +292,7 @@
 	materials = list(MAT_GLASS=0)
 	volume = 50
 	amount_per_transfer_from_this = 10
+	origin_tech = null
 
 /obj/item/reagent_containers/glass/beaker/waterbottle/empty
 	list_reagents = list()
@@ -306,101 +309,101 @@
 	list_reagents = list()
 
 /obj/item/reagent_containers/glass/beaker/large/hydrogen
-	name = "hydrogen beaker"
+	name = "hydrogen"
 	list_reagents = list("hydrogen" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/lithium
-	name = "lithium beaker"
+	name = "lithium"
 	list_reagents = list("lithium" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/carbon
-	name = "carbon beaker"
+	name = "carbon"
 	list_reagents = list("carbon" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/nitrogen
-	name = "nitrogen beaker"
+	name = "nitrogen"
 	list_reagents = list("nitrogen" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/oxygen
-	name = "oxygen beaker"
+	name = "oxygen"
 	list_reagents = list("oxygen" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/fluorine
-	name = "fluorine beaker"
+	name = "fluorine"
 	list_reagents = list("fluorine" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/sodium
-	name = "sodium beaker"
+	name = "sodium"
 	list_reagents = list("sodium" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/aluminium
-	name = "aluminium beaker"
+	name = "aluminium"
 	list_reagents = list("aluminium" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/silicon
-	name = "silicon beaker"
+	name = "silicon"
 	list_reagents = list("silicon" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/phosphorus
-	name = "phosphorus beaker"
+	name = "phosphorus"
 	list_reagents = list("phosphorus" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/sulfur
-	name = "sulfur beaker"
+	name = "sulfur"
 	list_reagents = list("sulfur" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/chlorine
-	name = "chlorine beaker"
+	name = "chlorine"
 	list_reagents = list("chlorine" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/potassium
-	name = "potassium beaker"
+	name = "potassium"
 	list_reagents = list("potassium" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/iron
-	name = "iron beaker"
+	name = "iron"
 	list_reagents = list("iron" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/copper
-	name = "copper beaker"
+	name = "copper"
 	list_reagents = list("copper" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/mercury
-	name = "mercury beaker"
+	name = "mercury"
 	list_reagents = list("mercury" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/radium
-	name = "radium beaker"
+	name = "radium"
 	list_reagents = list("radium" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/water
-	name = "water beaker"
+	name = "water"
 	list_reagents = list("water" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/ethanol
-	name = "ethanol beaker"
+	name = "ethanol"
 	list_reagents = list("ethanol" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/sugar
-	name = "sugar beaker"
+	name = "sugar"
 	list_reagents = list("sugar" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/sacid
-	name = "sulphuric acid beaker"
+	name = "sacid"
 	list_reagents = list("sacid" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/welding_fuel
-	name = "welding fuel beaker"
+	name = "welding_fuel"
 	list_reagents = list("welding_fuel" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/silver
-	name = "silver beaker"
+	name = "silver"
 	list_reagents = list("silver" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/iodine
-	name = "iodine beaker"
+	name = "iodine"
 	list_reagents = list("iodine" = 50)
 
 /obj/item/reagent_containers/glass/beaker/large/bromine
-	name = "bromine beaker"
+	name = "bromine"
 	list_reagents = list("bromine" = 50)

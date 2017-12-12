@@ -13,7 +13,8 @@
 /obj/machinery/computer/shuttle/attack_hand(mob/user)
 	if(..(user))
 		return
-	add_fingerprint(usr)
+	src.add_fingerprint(usr)
+
 	var/list/options = params2list(possible_destinations)
 	var/obj/docking_port/mobile/M = SSshuttle.getShuttle(shuttleId)
 	var/dat = "Status: [M ? M.getStatusText() : "*Missing*"]<br><br>"

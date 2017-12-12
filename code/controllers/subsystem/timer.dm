@@ -259,11 +259,11 @@ SUBSYSTEM_DEF(timer)
 			var/datum/timedevent/Last = ctts[cttl]
 			if(Last.timeToRun >= timeToRun)
 				ctts += src
-			else
-				for(var/i in cttl to 1 step -1)
-					var/datum/timedevent/E = ctts[i]
+			else if(cttl > 1)
+				for(var/I in cttl to 1)
+					var/datum/timedevent/E = ctts[I]
 					if(E.timeToRun <= timeToRun)
-						ctts.Insert(i, src)
+						ctts.Insert(src, I)
 						break
 		else
 			ctts += src

@@ -5,7 +5,7 @@
 	body_parts_covered = GROIN
 	fitted = NO_FEMALE_UNIFORM
 	mutantrace_variation = MUTANTRACE_VARIATION
-	can_adjust = FALSE
+	can_adjust = 0
 
 /obj/item/clothing/under/shorts/red
 	name = "red athletic shorts"

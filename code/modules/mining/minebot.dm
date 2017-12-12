@@ -261,6 +261,7 @@
 	icon_state = "door_electronics"
 	icon = 'icons/obj/module.dmi'
 	sentience_type = SENTIENCE_MINEBOT
+	origin_tech = "programming=6"
 
 #undef MINEDRONE_COLLECT
 #undef MINEDRONE_ATTACK

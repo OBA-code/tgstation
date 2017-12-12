@@ -164,8 +164,12 @@ Difficulty: Very Hard
 		return
 	var/turf/startloc = get_turf(src)
 	var/obj/item/projectile/P = new /obj/item/projectile/colossus(startloc)
-	P.preparePixelProjectile(marker, startloc)
+	P.starting = startloc
 	P.firer = src
+	if(marker)
+		P.yo = marker.y - startloc.y
+		P.xo = marker.x - startloc.x
+		P.original = marker
 	if(target)
 		P.original = target
 	P.fire(set_angle)
@@ -612,7 +616,7 @@ Difficulty: Very Hard
 	pass_flags = PASSTABLE | PASSGRILLE | PASSMOB
 	ventcrawler = VENTCRAWLER_ALWAYS
 	mob_size = MOB_SIZE_TINY
-	gold_core_spawnable = HOSTILE_SPAWN
+	gold_core_spawnable = TRUE
 	verb_say = "warps"
 	verb_ask = "floats inquisitively"
 	verb_exclaim = "zaps"

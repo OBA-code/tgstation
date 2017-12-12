@@ -162,7 +162,7 @@
 	update_controls()
 
 /mob/living/simple_animal/bot/floorbot/proc/empty_tiles()
-	var/atom/Tsec = drop_location()
+	var/turf/Tsec = get_turf(src)
 
 	while(specialtiles > initial(tiletype.max_amount))
 		new tiletype(Tsec,initial(tiletype.max_amount))
@@ -363,9 +363,9 @@
 /mob/living/simple_animal/bot/floorbot/explode()
 	on = FALSE
 	visible_message("<span class='boldannounce'>[src] blows apart!</span>")
-	var/atom/Tsec = drop_location()
+	var/turf/Tsec = get_turf(src)
 
-	var/obj/item/storage/toolbox/mechanical/N = new (Tsec)
+	var/obj/item/storage/toolbox/mechanical/N = new /obj/item/storage/toolbox/mechanical(Tsec)
 	N.contents = list()
 
 	new /obj/item/device/assembly/prox_sensor(Tsec)

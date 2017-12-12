@@ -1,8 +1,8 @@
 /mob/CanPass(atom/movable/mover, turf/target)
-	if((mover.pass_flags & PASSMOB))
-		return TRUE
 	if(istype(mover, /obj/item/projectile) || mover.throwing)
 		return (!density || lying)
+	if(mover.checkpass(PASSMOB))
+		return TRUE
 	if(buckled == mover)
 		return TRUE
 	if(ismob(mover))
@@ -112,7 +112,6 @@
 
 #define MOVEMENT_DELAY_BUFFER 0.75
 #define MOVEMENT_DELAY_BUFFER_DELTA 1.25
-
 /client/Move(n, direct)
 	if(world.time < move_delay)
 		return FALSE
@@ -130,13 +129,15 @@
 	if(mob.stat == DEAD)
 		mob.ghostize()
 		return FALSE
+	if(moving)
+		return FALSE
 	if(mob.force_moving)
 		return FALSE
-
-	var/mob/living/L = mob  //Already checked for isliving earlier
-	if(L.incorporeal_move)	//Move though walls
-		Process_Incorpmove(direct)
-		return FALSE
+	if(isliving(mob))
+		var/mob/living/L = mob
+		if(L.incorporeal_move)	//Move though walls
+			Process_Incorpmove(direct)
+			return FALSE
 
 	if(mob.remote_control)					//we're controlling something, our movement is relayed to it
 		return mob.remote_control.relaymove(mob, direct)
@@ -161,8 +162,9 @@
 		return FALSE
 
 	//We are now going to move
+	moving = 1
 	var/delay = mob.movement_delay()
-	if(old_move_delay + (delay*MOVEMENT_DELAY_BUFFER_DELTA) + MOVEMENT_DELAY_BUFFER > world.time)
+	if (old_move_delay + (delay*MOVEMENT_DELAY_BUFFER_DELTA) + MOVEMENT_DELAY_BUFFER > world.time)
 		move_delay = old_move_delay + delay
 	else
 		move_delay = delay + world.time
@@ -179,17 +181,16 @@
 	else
 		. = ..()
 
-	if(.) // If mob is null here, we deserve the runtime
+	moving = 0
+	if(mob && .)
 		if(mob.throwing)
 			mob.throwing.finalize(FALSE)
 
 	if(LAZYLEN(mob.user_movement_hooks))
 		for(var/obj/O in mob.user_movement_hooks)
 			O.intercept_user_move(direct, mob, n, oldloc)
-	
-	var/atom/movable/P = mob.pulling
-	if(P && !ismob(P) && P.density)
-		mob.dir = turn(mob.dir, 180)
+
+	return .
 
 /mob/Moved(oldLoc, dir, Forced = FALSE)
 	. = ..()

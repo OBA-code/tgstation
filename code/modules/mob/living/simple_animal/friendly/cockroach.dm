@@ -18,7 +18,7 @@
 	speak_emote = list("chitters")
 	density = FALSE
 	ventcrawler = VENTCRAWLER_ALWAYS
-	gold_core_spawnable = FRIENDLY_SPAWN
+	gold_core_spawnable = 2
 	verb_say = "chitters"
 	verb_ask = "chitters inquisitively"
 	verb_exclaim = "chitters loudly"

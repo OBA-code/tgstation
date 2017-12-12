@@ -36,7 +36,7 @@
 	faction = list("hostile")
 	deathmessage = "is hacked into pieces!"
 	loot = list(/obj/item/stack/sheet/mineral/wood)
-	gold_core_spawnable = HOSTILE_SPAWN
+	gold_core_spawnable = 1
 	del_on_death = 1
 
 /mob/living/simple_animal/hostile/tree/Life()

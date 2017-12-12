@@ -13,8 +13,10 @@
 	var/list/possible_types = list()
 
 	for(var/datum/round_event_control/E in SSevents.control)
+		if(istype(E, /datum/round_event_control/falsealarm))
+			continue
 		var/datum/round_event/event = E.typepath
-		if(!initial(event.fakeable))
+		if(initial(event.announceWhen) <= 0)
 			continue
 		possible_types += E
 	
@@ -26,11 +28,8 @@
 /datum/round_event/falsealarm
 	announceWhen	= 0
 	endWhen			= 1
-	fakeable = FALSE
 
-/datum/round_event/falsealarm/announce(fake)
-	if(fake) //What are you doing
-		return
+/datum/round_event/falsealarm/announce()
 	var/players_amt = get_active_player_count(alive_check = 1, afk_check = 1, human_check = 1)
 	var/gamemode = SSticker.mode.config_tag
 
@@ -46,7 +45,7 @@
 		var/datum/round_event/Event = new event_control.typepath()
 		message_admins("False Alarm: [Event]")
 		Event.kill() 		//do not process this event - no starts, no ticks, no ends
-		Event.announce(TRUE) 	//just announce it like it's happening
+		Event.announce() 	//just announce it like it's happening
 
 /proc/gather_false_events(players_amt, gamemode)
 	. = list()
@@ -57,6 +56,6 @@
 			continue
 
 		var/datum/round_event/event = E.typepath
-		if(!initial(event.fakeable))
+		if(initial(event.announceWhen) <= 0)
 			continue
 		. += E

@@ -289,9 +289,6 @@
 				fix()
 
 //Random colour tapes
-/obj/item/device/tape/random
-	icon_state = "random_tape"
-
 /obj/item/device/tape/random/New()
 	icon_state = "tape_[pick("white", "blue", "red", "yellow", "purple")]"
 	..()

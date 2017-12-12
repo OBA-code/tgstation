@@ -119,6 +119,7 @@
 			if(!colour2 && !T.density)
 				var/datum/gas_mixture/environment = T.return_air()
 				var/turf_total = environment.total_moles()
+				//var/turf_total = T.co2 + T.oxygen + T.poison + T.sl_gas + T.n2
 
 
 				var/t1 = turf_total / MOLES_CELLSTANDARD * 150
@@ -241,6 +242,9 @@
 							else
 								colour = rgb(255,128,128)
 
+						//if(istype(AM, /obj/structure/blob))
+						//	colour = rgb(255,0,255)
+
 				var/area/A = T.loc
 
 				if(A.fire)
@@ -292,6 +296,10 @@
 
 	src.close(user)
 
+/*			if(seccomp == src)
+				drawmap(user)
+			else
+				user.clearmap()*/
 	return
 
 

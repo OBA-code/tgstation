@@ -32,6 +32,7 @@
 	},
 /area/awaymission/wildwest/vault)
 "ai" = (
+/turf/open/space,
 /turf/closed/indestructible{
 	desc = "The patterns engraved on the wall seem to shift as you try to focus on them. You feel sick.";
 	icon = 'icons/turf/walls/cult_wall.dmi';
@@ -152,7 +153,7 @@
 /area/awaymission/wildwest/vaultdoors)
 "aG" = (
 /turf/closed/mineral,
-/area/space/nearstation)
+/area/space)
 "aH" = (
 /turf/closed/mineral/diamond,
 /area/awaymission/wildwest/mines)
@@ -258,7 +259,7 @@
 /area/awaymission/wildwest/mines)
 "bg" = (
 /turf/closed/wall/mineral/sandstone,
-/area/space/nearstation)
+/area/space)
 "bh" = (
 /obj/structure/closet/crate/large,
 /turf/open/floor/plating,
@@ -306,7 +307,7 @@
 "br" = (
 /obj/structure/lattice,
 /turf/open/space,
-/area/space/nearstation)
+/area/space)
 "bs" = (
 /obj/effect/mine/sound/bwoink,
 /obj/item/ammo_box/c10mm,
@@ -325,14 +326,14 @@
 	icon_state = "fwindow"
 	},
 /turf/open/space,
-/area/space/nearstation)
+/area/space)
 "bw" = (
 /obj/structure/lattice,
 /obj/structure/window/reinforced{
 	icon_state = "fwindow"
 	},
 /turf/open/space,
-/area/space/nearstation)
+/area/space)
 "bx" = (
 /obj/structure/closet/secure_closet/freezer/fridge,
 /turf/open/floor/plasteel/cafeteria{
@@ -434,7 +435,7 @@
 	dir = 4
 	},
 /turf/open/space,
-/area/space/nearstation)
+/area/space)
 "bP" = (
 /turf/closed/wall/mineral/sandstone,
 /area/awaymission/wildwest/gov)
@@ -489,7 +490,7 @@
 	dir = 8
 	},
 /turf/open/space,
-/area/space/nearstation)
+/area/space)
 "bU" = (
 /obj/structure/chair/wood/normal{
 	dir = 4
@@ -512,7 +513,7 @@
 	dir = 4
 	},
 /turf/open/space,
-/area/space/nearstation)
+/area/space)
 "bX" = (
 /obj/structure/window/reinforced{
 	icon_state = "fwindow";
@@ -669,12 +670,12 @@
 	dir = 8
 	},
 /turf/open/space,
-/area/space/nearstation)
+/area/space)
 "cu" = (
 /obj/structure/lattice,
 /obj/structure/lattice,
 /turf/open/space,
-/area/space/nearstation)
+/area/space)
 "cv" = (
 /obj/effect/decal/cleanable/blood/splatter,
 /turf/open/floor/carpet,
@@ -958,7 +959,7 @@
 	dir = 4
 	},
 /turf/open/space,
-/area/space/nearstation)
+/area/space)
 "dp" = (
 /obj/structure/bed,
 /obj/item/bedsheet/brown,
@@ -1215,7 +1216,7 @@
 	dir = 1
 	},
 /turf/open/space,
-/area/space/nearstation)
+/area/space)
 "ee" = (
 /obj/structure/lattice,
 /obj/structure/window/reinforced{
@@ -1223,7 +1224,7 @@
 	dir = 1
 	},
 /turf/open/space,
-/area/space/nearstation)
+/area/space)
 "ef" = (
 /obj/structure/window/reinforced{
 	icon_state = "fwindow";
@@ -1233,7 +1234,7 @@
 	dir = 4
 	},
 /turf/open/space,
-/area/space/nearstation)
+/area/space)
 "eg" = (
 /obj/structure/window/reinforced{
 	icon_state = "fwindow";
@@ -1261,7 +1262,7 @@
 	dir = 8
 	},
 /turf/open/space,
-/area/space/nearstation)
+/area/space)
 "ej" = (
 /obj/effect/decal/cleanable/blood,
 /turf/open/floor/plating/ironsand{
@@ -1681,7 +1682,7 @@
 	icon_state = "fwindow"
 	},
 /turf/open/space,
-/area/space/nearstation)
+/area/space)
 "fz" = (
 /obj/structure/window/reinforced{
 	icon_state = "fwindow";
@@ -1691,7 +1692,7 @@
 	icon_state = "fwindow"
 	},
 /turf/open/space,
-/area/space/nearstation)
+/area/space)
 "fA" = (
 /obj/structure/window/reinforced{
 	icon_state = "fwindow";
@@ -1796,7 +1797,7 @@
 	},
 /obj/structure/lattice,
 /turf/open/space,
-/area/space/nearstation)
+/area/space)
 "fO" = (
 /mob/living/simple_animal/hostile/syndicate,
 /turf/open/floor/plasteel,
@@ -1895,10 +1896,10 @@
 	dir = 8
 	},
 /turf/open/floor/plasteel/airless,
-/area/space/nearstation)
+/area/space)
 "gd" = (
 /turf/open/floor/plasteel/airless,
-/area/space/nearstation)
+/area/space)
 "ge" = (
 /obj/effect/mob_spawn/human/miner/rig,
 /turf/open/floor/plasteel,

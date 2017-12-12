@@ -9,6 +9,7 @@
 	throw_speed = 3
 	throw_range = 7
 	max_amount = 60
+	origin_tech = "materials=1"
 	var/turf_type = null
 	var/mineralType = null
 	novariants = TRUE
@@ -73,6 +74,7 @@
 	singular_name = "grass floor tile"
 	desc = "A patch of grass like they use on space golf courses."
 	icon_state = "tile_grass"
+	origin_tech = "biotech=1"
 	turf_type = /turf/open/floor/grass
 	resistance_flags = FLAMMABLE
 
@@ -83,6 +85,7 @@
 	singular_name = "wood floor tile"
 	desc = "An easy to fit wood floor tile."
 	icon_state = "tile-wood"
+	origin_tech = "biotech=1"
 	turf_type = /turf/open/floor/wood
 	resistance_flags = FLAMMABLE
 
@@ -92,6 +95,7 @@
 	singular_name = "basalt floor tile"
 	desc = "Artificially made ashy soil themed on a hostile environment."
 	icon_state = "tile_basalt"
+	origin_tech = "materials=1"
 	turf_type = /turf/open/floor/grass/fakebasalt
 
 //Carpets
@@ -142,6 +146,7 @@
 	desc = "A high-traction floor tile. It feels rubbery in your hand."
 	icon_state = "tile_noslip"
 	turf_type = /turf/open/floor/noslip
+	origin_tech = "materials=3"
 	merge_type = /obj/item/stack/tile/noslip
 
 /obj/item/stack/tile/noslip/thirty

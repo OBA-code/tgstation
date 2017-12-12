@@ -38,8 +38,6 @@
 	if(isnull(pixel_turf))
 		return
 	if(!can_see(A))
-		if(isturf(A)) //On unmodified clients clicking the static overlay clicks the turf underneath
-			return //So there's no point messaging admins
 		message_admins("[key_name_admin(src)] might be running a modified client! (failed can_see on AI click of [A]([ADMIN_COORDJMP(pixel_turf)]))")
 		var/message = "[key_name(src)] might be running a modified client! (failed can_see on AI click of [A]([COORD(pixel_turf)]))"
 		log_admin(message)
@@ -80,6 +78,12 @@
 		set_waypoint(A)
 		return
 
+	/*
+		AI restrained() currently does nothing
+	if(restrained())
+		RestrainedClickOn(A)
+	else
+	*/
 	A.attack_ai(src)
 
 /*
@@ -132,35 +136,36 @@
 /obj/machinery/door/airlock/AICtrlClick() // Bolts doors
 	if(emagged)
 		return
-	
 	if(locked)
-		bolt_raise(usr)
+		Topic("aiEnable=4", list("aiEnable"="4"), 1)// 1 meaning no window (consistency!)
 	else
-		bolt_drop(usr)
+		Topic("aiDisable=4", list("aiDisable"="4"), 1)
 
 /obj/machinery/door/airlock/AIAltClick() // Eletrifies doors.
 	if(emagged)
 		return
-
 	if(!secondsElectrified)
-		shock_perm(usr)
+		// permanent shock
+		Topic("aiEnable=6", list("aiEnable"="6"), 1) // 1 meaning no window (consistency!)
 	else
-		shock_restore(usr)
+		// disable/6 is not in Topic; disable/5 disables both temporary and permenant shock
+		Topic("aiDisable=5", list("aiDisable"="5"), 1)
 
 /obj/machinery/door/airlock/AIShiftClick()  // Opens and closes doors!
 	if(emagged)
 		return
-
-	user_toggle_open(usr)
+	if(density)
+		Topic("aiEnable=7", list("aiEnable"="7"), 1) // 1 meaning no window (consistency!)
+	else
+		Topic("aiDisable=7", list("aiDisable"="7"), 1)
 
 /obj/machinery/door/airlock/AICtrlShiftClick()  // Sets/Unsets Emergency Access Override
 	if(emagged)
 		return
-	
 	if(!emergency)
-		emergency_on(usr)
+		Topic("aiEnable=11", list("aiEnable"="11"), 1) // 1 meaning no window (consistency!)
 	else
-		emergency_off(usr)
+		Topic("aiDisable=11", list("aiDisable"="11"), 1)
 
 /* APC */
 /obj/machinery/power/apc/AICtrlClick() // turns off/on APCs.

@@ -11,6 +11,7 @@
 	icon_state = "vest_stealth"
 	item_state = "armor"
 	blood_overlay_type = "armor"
+	origin_tech = "magnets=7;biotech=4;powerstorage=4;abductor=4"
 	armor = list(melee = 15, bullet = 15, laser = 15, energy = 15, bomb = 15, bio = 15, rad = 15, fire = 70, acid = 70)
 	actions_types = list(/datum/action/item_action/hands_free/activate)
 	allowed = list(
@@ -154,6 +155,7 @@
 	item_state = "silencer"
 	lefthand_file = 'icons/mob/inhands/antag/abductor_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/antag/abductor_righthand.dmi'
+	origin_tech = "engineering=7;magnets=4;bluespace=4;abductor=3"
 	var/mode = GIZMO_SCAN
 	var/mob/living/marked = null
 	var/obj/machinery/abductor/console/console
@@ -242,6 +244,7 @@
 	item_state = "gizmo"
 	lefthand_file = 'icons/mob/inhands/antag/abductor_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/antag/abductor_righthand.dmi'
+	origin_tech = "materials=4;programming=7;abductor=3"
 
 /obj/item/device/abductor/silencer/attack(mob/living/M, mob/user)
 	if(!AbductorCheck(user))
@@ -296,6 +299,7 @@
 	pin = /obj/item/device/firing_pin/abductor
 	icon_state = "alienpistol"
 	item_state = "alienpistol"
+	origin_tech = "combat=4;magnets=7;powerstorage=3;abductor=3"
 	trigger_guard = TRIGGER_GUARD_ALLOW_ALL
 
 /obj/item/paper/guides/antag/abductor
@@ -342,6 +346,7 @@ Congratulations! You are now trained for invasive xenobiology research!"}
 	lefthand_file = 'icons/mob/inhands/antag/abductor_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/antag/abductor_righthand.dmi'
 	slot_flags = SLOT_BELT
+	origin_tech = "materials=4;combat=4;biotech=7;abductor=4"
 	force = 7
 	w_class = WEIGHT_CLASS_NORMAL
 	actions_types = list(/datum/action/item_action/toggle_mode)
@@ -491,6 +496,7 @@ Congratulations! You are now trained for invasive xenobiology research!"}
 	righthand_file = 'icons/mob/inhands/equipment/security_righthand.dmi'
 	breakouttime = 450
 	trashtype = /obj/item/restraints/handcuffs/energy/used
+	origin_tech = "materials=4;magnets=5;abductor=2"
 
 /obj/item/restraints/handcuffs/energy/used
 	flags_1 = DROPDEL_1
@@ -518,6 +524,7 @@ Congratulations! You are now trained for invasive xenobiology research!"}
 /obj/item/device/radio/headset/abductor
 	name = "alien headset"
 	desc = "An advanced alien headset designed to monitor communications of human space stations. Why does it have a microphone? No one knows."
+	origin_tech = "magnets=2;abductor=3"
 	icon = 'icons/obj/abductor.dmi'
 	icon_state = "abductor_headset"
 	item_state = "abductor_headset"
@@ -538,30 +545,35 @@ Congratulations! You are now trained for invasive xenobiology research!"}
 	name = "alien scalpel"
 	desc = "It's a gleaming sharp knife made out of silvery-green metal."
 	icon = 'icons/obj/abductor.dmi'
+	origin_tech = "materials=2;biotech=2;abductor=2"
 	toolspeed = 0.25
 
 /obj/item/hemostat/alien
 	name = "alien hemostat"
 	desc = "You've never seen this before."
 	icon = 'icons/obj/abductor.dmi'
+	origin_tech = "materials=2;biotech=2;abductor=2"
 	toolspeed = 0.25
 
 /obj/item/retractor/alien
 	name = "alien retractor"
 	desc = "You're not sure if you want the veil pulled back."
 	icon = 'icons/obj/abductor.dmi'
+	origin_tech = "materials=2;biotech=2;abductor=2"
 	toolspeed = 0.25
 
 /obj/item/circular_saw/alien
 	name = "alien saw"
 	desc = "Do the aliens also lose this, and need to find an alien hatchet?"
 	icon = 'icons/obj/abductor.dmi'
+	origin_tech = "materials=2;biotech=2;abductor=2"
 	toolspeed = 0.25
 
 /obj/item/surgicaldrill/alien
 	name = "alien drill"
 	desc = "Maybe alien surgeons have finally found a use for the drill."
 	icon = 'icons/obj/abductor.dmi'
+	origin_tech = "materials=2;biotech=2;abductor=2"
 	toolspeed = 0.25
 
 /obj/item/cautery/alien
@@ -569,6 +581,7 @@ Congratulations! You are now trained for invasive xenobiology research!"}
 	desc = "Why would bloodless aliens have a tool to stop bleeding? \
 		Unless..."
 	icon = 'icons/obj/abductor.dmi'
+	origin_tech = "materials=2;biotech=2;abductor=2"
 	toolspeed = 0.25
 
 /obj/item/clothing/head/helmet/abductor
@@ -577,6 +590,7 @@ Congratulations! You are now trained for invasive xenobiology research!"}
 	icon_state = "alienhelmet"
 	item_state = "alienhelmet"
 	blockTracking = 1
+	origin_tech = "materials=7;magnets=4;abductor=3"
 	flags_inv = HIDEMASK|HIDEEARS|HIDEEYES|HIDEFACE|HIDEHAIR|HIDEFACIALHAIR
 
 // Operating Table / Beds / Lockers

@@ -129,9 +129,6 @@
 
 
 //random clusterbuster spawner
-/obj/item/grenade/clusterbuster/random
-	icon_state = "random_clusterbang"
-
 /obj/item/grenade/clusterbuster/random/New()
 	var/real_type = pick(subtypesof(/obj/item/grenade/clusterbuster))
 	new real_type(loc)

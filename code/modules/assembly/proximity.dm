@@ -3,6 +3,7 @@
 	desc = "Used for scanning and alerting when someone enters a certain proximity."
 	icon_state = "prox"
 	materials = list(MAT_METAL=800, MAT_GLASS=200)
+	origin_tech = "magnets=1;engineering=1"
 	attachable = 1
 
 	var/scanning = 0
@@ -52,7 +53,7 @@
 
 
 /obj/item/device/assembly/prox_sensor/sense()
-	if(!scanning || !secured || next_activate > world.time)
+	if(!secured || next_activate > world.time)
 		return 0
 	pulse(0)
 	audible_message("[icon2html(src, hearers(src))] *beep* *beep*", null, 3)

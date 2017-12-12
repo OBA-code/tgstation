@@ -42,7 +42,7 @@
 /obj/item/trash/plate
 	name = "plate"
 	icon_state = "plate"
-	resistance_flags = NONE
+	resistance_flags = 0
 
 /obj/item/trash/pistachios
 	name = "pistachios pack"
@@ -55,7 +55,7 @@
 /obj/item/trash/tray
 	name = "tray"
 	icon_state = "tray"
-	resistance_flags = NONE
+	resistance_flags = 0
 
 /obj/item/trash/candle
 	name = "candle"
@@ -65,7 +65,7 @@
 /obj/item/trash/can
 	name = "crushed can"
 	icon_state = "cola"
-	resistance_flags = NONE
+	resistance_flags = 0
 
 /obj/item/trash/attack(mob/M, mob/living/user)
 	return

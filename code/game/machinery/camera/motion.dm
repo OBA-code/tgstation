@@ -50,8 +50,7 @@
 
 /obj/machinery/camera/proc/cancelAlarm()
 	if (detectTime == -1)
-		for (var/i in GLOB.silicon_mobs)
-			var/mob/living/silicon/aiPlayer = i
+		for (var/mob/living/silicon/aiPlayer in GLOB.player_list)
 			if (status)
 				aiPlayer.cancelAlarm("Motion", get_area(src), src)
 	detectTime = 0
@@ -71,3 +70,4 @@
 	if (!area_motion)
 		if(isliving(AM))
 			newTarget(AM)
+

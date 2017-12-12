@@ -16,6 +16,7 @@
 /turf/closed/wall,
 /area/ruin/powered)
 "ae" = (
+/turf/template_noop,
 /turf/closed/wall/mineral/plastitanium{
 	dir = 1;
 	icon_state = "diagonalWall3"
@@ -274,6 +275,7 @@
 /turf/open/floor/mineral/plastitanium/airless,
 /area/ruin/unpowered/no_grav)
 "aX" = (
+/turf/template_noop,
 /turf/open/floor/plating/airless{
 	icon = 'icons/obj/smooth_structures/lattice.dmi';
 	icon_plating = "lattice";
@@ -299,6 +301,7 @@
 /turf/open/floor/plasteel,
 /area/ruin/powered)
 "bb" = (
+/turf/template_noop,
 /turf/closed/wall/mineral/plastitanium{
 	dir = 4;
 	icon_state = "diagonalWall3"
@@ -438,6 +441,7 @@
 /turf/open/floor/mineral/titanium/blue/airless,
 /area/ruin/unpowered)
 "bz" = (
+/turf/open/floor/mineral/titanium/blue,
 /turf/closed/wall/mineral/titanium/interior,
 /area/ruin/unpowered)
 "bA" = (
@@ -529,6 +533,7 @@
 	},
 /area/ruin/unpowered)
 "bP" = (
+/turf/template_noop,
 /turf/closed/wall/mineral/plastitanium{
 	dir = 8;
 	icon_state = "diagonalWall3"
@@ -605,9 +610,7 @@
 /turf/open/floor/mineral/titanium/blue/airless,
 /area/ruin/unpowered)
 "bZ" = (
-/obj/machinery/computer{
-	dir = 8
-	},
+/obj/machinery/computer,
 /turf/open/floor/mineral/titanium/blue/airless,
 /area/ruin/unpowered)
 "ca" = (
@@ -1153,24 +1156,6 @@
 	},
 /turf/open/floor/plating/asteroid/airless,
 /area/ruin/unpowered/no_grav)
-"dA" = (
-/obj/machinery/computer{
-	dir = 1
-	},
-/turf/open/floor/plasteel,
-/area/ruin/powered)
-"dB" = (
-/obj/machinery/computer{
-	dir = 8
-	},
-/turf/open/floor/mineral/plastitanium,
-/area/ruin/powered)
-"dC" = (
-/obj/machinery/computer{
-	dir = 8
-	},
-/turf/open/floor/mineral/plastitanium,
-/area/ruin/powered)
 
 (1,1,1) = {"
 aa
@@ -1862,7 +1847,7 @@ aa
 aa
 ab
 ce
-dB
+cf
 ce
 ab
 aa
@@ -4284,7 +4269,7 @@ ab
 ay
 aG
 aM
-dA
+ay
 ab
 aa
 aa
@@ -4501,7 +4486,7 @@ aa
 aa
 ab
 ce
-dC
+cf
 ce
 ab
 aa

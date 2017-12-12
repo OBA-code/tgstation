@@ -9,6 +9,7 @@
  */
 /obj/item/stack
 	icon = 'icons/obj/stack_objects.dmi'
+	origin_tech = "materials=1"
 	gender = PLURAL
 	var/list/datum/stack_recipe/recipes
 	var/singular_name

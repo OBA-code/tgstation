@@ -122,9 +122,7 @@
 /turf/open/floor/plating/airless,
 /area/awaymission/BMPship/Midship)
 "aA" = (
-/obj/machinery/computer/operating{
-	dir = 8
-	},
+/obj/machinery/computer/operating,
 /obj/structure/cable{
 	icon_state = "0-8"
 	},
@@ -1149,10 +1147,9 @@
 /turf/open/floor/plasteel/bar,
 /area/awaymission/BMPship/Midship)
 "dO" = (
-/obj/effect/turf_decal/loading_area{
+/turf/open/floor/plasteel/loadingarea/dirtydirty{
 	dir = 4
 	},
-/turf/open/floor/plasteel/floorgrime,
 /area/awaymission/BMPship/Midship)
 "dP" = (
 /obj/machinery/conveyor{
@@ -1195,7 +1192,8 @@
 /area/awaymission/BMPship/Midship)
 "dU" = (
 /obj/structure/disposalpipe/segment{
-	dir = 10
+	dir = 2;
+	icon_state = "pipe-c"
 	},
 /turf/open/floor/plasteel/bar,
 /area/awaymission/BMPship/Midship)
@@ -1319,7 +1317,8 @@
 /area/awaymission/BMPship/Midship)
 "em" = (
 /obj/structure/disposalpipe/segment{
-	dir = 5
+	dir = 1;
+	icon_state = "pipe-c"
 	},
 /turf/open/floor/plasteel/bar,
 /area/awaymission/BMPship/Midship)
@@ -1571,7 +1570,8 @@
 /area/awaymission/BMPship/Midship)
 "eW" = (
 /obj/structure/disposalpipe/segment{
-	dir = 6
+	dir = 4;
+	icon_state = "pipe-c"
 	},
 /turf/open/floor/plasteel/bar,
 /area/awaymission/BMPship/Midship)
@@ -1630,6 +1630,11 @@
 /obj/structure/kitchenspike,
 /turf/open/floor/plasteel/bar,
 /area/awaymission/BMPship/Midship)
+"fh" = (
+/turf/open/floor/plasteel/loadingarea/dirty{
+	dir = 4
+	},
+/area/awaymission/BMPship/Midship)
 "fi" = (
 /obj/machinery/conveyor{
 	dir = 4;
@@ -1655,7 +1660,8 @@
 /area/awaymission/BMPship/Midship)
 "fl" = (
 /obj/structure/disposalpipe/segment{
-	dir = 9
+	dir = 8;
+	icon_state = "pipe-c"
 	},
 /turf/open/floor/plasteel/bar,
 /area/awaymission/BMPship/Midship)
@@ -1849,8 +1855,7 @@
 /area/awaymission/BMPship)
 "fT" = (
 /obj/structure/frame/computer{
-	anchored = 1;
-	dir = 1
+	anchored = 1
 	},
 /turf/open/floor/plating/airless{
 	icon_state = "panelscorched"
@@ -1858,8 +1863,7 @@
 /area/awaymission/BMPship/Fore)
 "fU" = (
 /obj/structure/frame/computer{
-	anchored = 1;
-	dir = 1
+	anchored = 1
 	},
 /turf/open/floor/plating/airless{
 	icon_state = "platingdmg1"
@@ -2302,13 +2306,6 @@
 "hw" = (
 /turf/closed/mineral/clown,
 /area/awaymission/BMPship)
-"hx" = (
-/obj/structure/frame/computer{
-	anchored = 1;
-	dir = 4
-	},
-/turf/open/floor/carpet,
-/area/awaymission/BMPship/Fore)
 
 (1,1,1) = {"
 aa
@@ -2687,7 +2684,7 @@ aa
 cF
 aT
 bV
-hx
+da
 ee
 ee
 bV
@@ -2735,7 +2732,7 @@ aa
 aa
 aa
 aI
-aH
+cG
 bV
 bV
 dH
@@ -2845,12 +2842,12 @@ eg
 bV
 bV
 bV
-bI
+fc
 fv
 fJ
 aH
 aH
-aQ
+gk
 gF
 gR
 aH
@@ -3042,10 +3039,10 @@ bJ
 bV
 bV
 cI
-co
+db
 dv
 dI
-co
+db
 ex
 bV
 eU
@@ -3146,7 +3143,7 @@ ce
 ce
 ce
 dw
-dh
+dy
 ce
 ce
 ce
@@ -3247,7 +3244,7 @@ bZ
 bZ
 bZ
 dc
-dh
+dy
 dB
 dB
 dB
@@ -3298,7 +3295,7 @@ ca
 cq
 cq
 dd
-dh
+dy
 dB
 eh
 eh
@@ -3349,7 +3346,7 @@ cb
 cq
 cJ
 dd
-dh
+dy
 dB
 eh
 ey
@@ -3400,7 +3397,7 @@ cc
 cq
 cq
 de
-dh
+dy
 dB
 eh
 ej
@@ -3451,7 +3448,7 @@ ca
 cr
 cq
 dd
-dh
+dy
 dB
 ei
 ei
@@ -3502,7 +3499,7 @@ cd
 cd
 cd
 df
-dh
+dy
 dL
 ej
 ej
@@ -3607,7 +3604,7 @@ ce
 ce
 ce
 ek
-dh
+dy
 ce
 ce
 fg
@@ -3709,7 +3706,7 @@ ce
 ce
 ce
 ce
-dh
+dy
 ce
 ce
 ce
@@ -3814,9 +3811,9 @@ ce
 ce
 ce
 ce
-dO
+fh
 ce
-dh
+dy
 ce
 fm
 at
@@ -3867,7 +3864,7 @@ ce
 dA
 fi
 fB
-dh
+dy
 ce
 fm
 gt
@@ -3918,7 +3915,7 @@ eL
 dB
 fj
 dB
-dh
+dy
 ce
 fm
 gs
@@ -3969,7 +3966,7 @@ ce
 dB
 fk
 dB
-dh
+dy
 fV
 fm
 gu
@@ -4020,7 +4017,7 @@ ce
 dB
 fk
 dB
-dh
+dy
 ce
 fm
 at
@@ -4071,7 +4068,7 @@ ce
 dB
 fk
 dB
-dh
+dy
 ce
 fm
 gs
@@ -4331,7 +4328,7 @@ ce
 fm
 gy
 at
-bd
+gV
 at
 hi
 fm
@@ -4433,11 +4430,11 @@ ac
 cE
 gz
 gg
-gB
+gX
 cE
 hj
 ad
-af
+ho
 aj
 hu
 dk
@@ -4484,7 +4481,7 @@ ac
 cE
 cE
 cE
-gB
+gX
 cE
 hk
 ad
@@ -4529,13 +4526,13 @@ eD
 eD
 eq
 fn
-eN
+fD
 cw
 fY
 cE
 al
 cE
-gB
+gX
 hb
 cE
 ad
@@ -4580,13 +4577,13 @@ al
 er
 eY
 fo
-eN
+fD
 cw
 ac
 cE
 cE
 gN
-gB
+gX
 hc
 al
 ad
@@ -4631,13 +4628,13 @@ eE
 al
 al
 fo
-eN
+fD
 cw
 ac
 gf
 cE
 cE
-gB
+gX
 cE
 cE
 ad
@@ -4694,7 +4691,7 @@ cE
 fY
 al
 hs
-ad
+ht
 ae
 aa
 aa
@@ -4744,7 +4741,7 @@ cE
 cE
 ad
 hr
-ad
+ht
 ae
 aa
 aa
@@ -4930,17 +4927,17 @@ cn
 cD
 cD
 dl
-cD
+dE
 dZ
 dZ
-cD
-cD
+dE
+dE
 fa
 dZ
-cD
-br
+dE
+fR
 ga
-cD
+dE
 gC
 cE
 ad
@@ -4980,7 +4977,7 @@ bU
 ad
 cE
 cC
-bF
+dm
 al
 al
 al
@@ -5136,7 +5133,7 @@ cX
 dp
 dF
 ec
-dF
+eu
 dF
 eR
 cX

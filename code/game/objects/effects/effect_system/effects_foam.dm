@@ -295,7 +295,7 @@
 			Item.extinguish()
 
 /obj/structure/foamedmetal/resin/CanPass(atom/movable/mover, turf/target)
-	if(istype(mover) && (mover.pass_flags & PASSGLASS))
+	if(istype(mover) && mover.checkpass(PASSGLASS))
 		return TRUE
 	. = ..()
 

@@ -1,5 +1,3 @@
-
-
 /atom/proc/temperature_expose(datum/gas_mixture/air, exposed_temperature, exposed_volume)
 	return null
 
@@ -96,7 +94,7 @@
 			AT.fire_act(temperature, volume)
 	return
 
-#define INSUFFICIENT(path) (!location.air.gases[path] || location.air.gases[path][MOLES] < 0.5)
+
 /obj/effect/hotspot/process()
 	if(just_spawned)
 		just_spawned = FALSE
@@ -113,7 +111,9 @@
 	if((temperature < FIRE_MINIMUM_TEMPERATURE_TO_EXIST) || (volume <= 1))
 		qdel(src)
 		return
-	if(!location.air || (INSUFFICIENT(/datum/gas/plasma) && INSUFFICIENT(/datum/gas/tritium)) || INSUFFICIENT(/datum/gas/oxygen))
+
+	//Nothing to burn
+	if(!(location.air) || !(location.air.gases[/datum/gas/plasma] || location.air.gases[/datum/gas/tritium]) || !location.air.gases[/datum/gas/oxygen])
 		qdel(src)
 		return
 
@@ -179,9 +179,6 @@
 		var/mob/living/L = AM
 		L.fire_act(temperature, volume)
 
-/obj/effect/hotspot/singularity_pull()
-	return
-
 /obj/effect/dummy/fire
 	name = "fire"
 	desc = "OWWWWWW. IT BURNS. Tell a coder if you're seeing this."
@@ -193,4 +190,3 @@
 	. = ..()
 	if(!isliving(loc))
 		return INITIALIZE_HINT_QDEL
-#undef INSUFFICIENT

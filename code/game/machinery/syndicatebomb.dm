@@ -274,6 +274,7 @@
 	lefthand_file = 'icons/mob/inhands/equipment/shields_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/equipment/shields_righthand.dmi'
 	w_class = WEIGHT_CLASS_NORMAL
+	origin_tech = "syndicate=5;combat=6"
 	resistance_flags = FLAMMABLE //Burnable (but the casing isn't)
 	var/adminlog = null
 	var/range_heavy = 3
@@ -307,6 +308,7 @@
 /obj/item/bombcore/training
 	name = "dummy payload"
 	desc = "A Nanotrasen replica of a syndicate payload. Its not intended to explode but to announce that it WOULD have exploded, then rewire itself to allow for more training."
+	origin_tech = null
 	var/defusals = 0
 	var/attempts = 0
 
@@ -345,6 +347,7 @@
 /obj/item/bombcore/badmin
 	name = "badmin payload"
 	desc = "If you're seeing this someone has either made a mistake or gotten dangerously savvy with var editing!"
+	origin_tech = null
 
 /obj/item/bombcore/badmin/defuse() //because we wouldn't want them being harvested by players
 	var/obj/machinery/syndicatebomb/B = loc
@@ -387,6 +390,7 @@
 /obj/item/bombcore/chemical
 	name = "chemical payload"
 	desc = "An explosive payload designed to spread chemicals, dangerous or otherwise, across a large area. Properties of the core may vary with grenade casing type, and must be loaded before use."
+	origin_tech = "combat=4;materials=3"
 	icon_state = "chemcore"
 	var/list/beakers = list()
 	var/max_beakers = 1 // Read on about grenade casing properties below
@@ -518,6 +522,7 @@
 	lefthand_file = 'icons/mob/inhands/misc/devices_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/misc/devices_righthand.dmi'
 	w_class = WEIGHT_CLASS_TINY
+	origin_tech = "syndicate=3"
 	var/timer = 0
 	var/detonated =	0
 	var/existant =	0

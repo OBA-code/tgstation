@@ -2,7 +2,7 @@
 	gender = PLURAL
 	body_parts_covered = GROIN|LEGS
 	fitted = NO_FEMALE_UNIFORM
-	can_adjust = FALSE
+	can_adjust = 0
 
 /obj/item/clothing/under/pants/classicjeans
 	name = "classic jeans"

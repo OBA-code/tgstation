@@ -86,12 +86,6 @@
 
 	qdel(src)
 
-/obj/effect/nettingportal/singularity_act()
-	return
-
-/obj/effect/nettingportal/singularity_pull()
-	return
-
 
 /obj/item/projectile/energy/trap
 	name = "energy snare"

@@ -1,5 +1,3 @@
-#define FIREALARM_COOLDOWN 67 // Chosen fairly arbitrarily, it is the length of the audio in FireAlarm.ogg. The actual track length is 7 seconds 8ms but but the audio stops at 6s 700ms
-
 /obj/item/electronics/firealarm
 	name = "fire alarm electronics"
 	desc = "A fire alarm circuit. Can handle heat levels up to 40 degrees celsius."
@@ -27,8 +25,7 @@
 	var/detecting = 1
 	var/buildstage = 2 // 2 = complete, 1 = no wires, 0 = circuit gone
 	resistance_flags = FIRE_PROOF
-	var/last_alarm = 0
-	var/area/myarea = null
+
 
 /obj/machinery/firealarm/New(loc, dir, building)
 	..()
@@ -40,12 +37,6 @@
 		pixel_x = (dir & 3)? 0 : (dir == 4 ? -24 : 24)
 		pixel_y = (dir & 3)? (dir ==1 ? -24 : 24) : 0
 	update_icon()
-	myarea = get_area(src)
-	LAZYADD(myarea.firealarms, src)
-
-/obj/machinery/firealarm/Destroy()
-	LAZYREMOVE(myarea.firealarms, src)
-	return ..()
 
 /obj/machinery/firealarm/power_change()
 	..()
@@ -73,6 +64,7 @@
 		if(src.z in GLOB.station_z_levels)
 			add_overlay("overlay_[GLOB.security_level]")
 		else
+			//var/green = SEC_LEVEL_GREEN
 			add_overlay("overlay_[SEC_LEVEL_GREEN]")
 
 		if(detecting)
@@ -95,23 +87,28 @@
 	playsound(src, "sparks", 50, 1)
 
 /obj/machinery/firealarm/temperature_expose(datum/gas_mixture/air, temperature, volume)
-	if((temperature > T0C + 200 || temperature < BODYTEMP_COLD_DAMAGE_LIMIT) && (last_alarm+FIREALARM_COOLDOWN < world.time) && !emagged && detecting && !stat)
+	if(!emagged && detecting && !stat && (temperature > T0C + 200 || temperature < BODYTEMP_COLD_DAMAGE_LIMIT))
 		alarm()
 	..()
 
 /obj/machinery/firealarm/proc/alarm()
-	if(!is_operational() && (last_alarm+FIREALARM_COOLDOWN < world.time))
+	if(!is_operational())
 		return
-	last_alarm = world.time
 	var/area/A = get_area(src)
 	A.firealert(src)
 	playsound(src.loc, 'goon/sound/machinery/FireAlarm.ogg', 75)
+
+/obj/machinery/firealarm/proc/alarm_in(time)
+	addtimer(CALLBACK(src, .proc/alarm), time)
 
 /obj/machinery/firealarm/proc/reset()
 	if(!is_operational())
 		return
 	var/area/A = get_area(src)
 	A.firereset(src)
+
+/obj/machinery/firealarm/proc/reset_in(time)
+	addtimer(CALLBACK(src, .proc/reset), time)
 
 /obj/machinery/firealarm/ui_interact(mob/user, ui_key = "main", datum/tgui/ui = null, force_open = FALSE, \
 									datum/tgui/master_ui = null, datum/ui_state/state = GLOB.default_state)
@@ -251,14 +248,8 @@
 			if(prob(33))
 				alarm()
 
-/obj/machinery/firealarm/singularity_pull(S, current_size)
-	if (current_size >= STAGE_FIVE) // If the singulo is strong enough to pull anchored objects, the fire alarm experiences integrity failure
-		deconstruct()
-	..()
-
 /obj/machinery/firealarm/obj_break(damage_flag)
 	if(!(stat & BROKEN) && !(flags_1 & NODECONSTRUCT_1) && buildstage != 0) //can't break the electronics if there isn't any inside.
-		LAZYREMOVE(myarea.firealarms, src)
 		stat |= BROKEN
 		update_icon()
 

@@ -194,7 +194,7 @@
 		use_beaker = !use_beaker
 
 	else if(href_list["eject"] && (!isnull(reagent_glass)))
-		reagent_glass.forceMove(drop_location())
+		reagent_glass.loc = get_turf(src)
 		reagent_glass = null
 
 	else if(href_list["togglevoice"])
@@ -343,7 +343,7 @@
 	if(C.stat == DEAD || (C.status_flags & FAKEDEATH))
 		return FALSE	//welp too late for them!
 	
-	if(!(loc == C.loc) && !(isturf(C.loc) && isturf(loc)))
+	if(!(loc == C.loc) || !(isturf(C.loc) && isturf(loc)))
 		return FALSE
 
 	if(C.suiciding)
@@ -516,7 +516,7 @@
 /mob/living/simple_animal/bot/medbot/explode()
 	on = FALSE
 	visible_message("<span class='boldannounce'>[src] blows apart!</span>")
-	var/atom/Tsec = drop_location()
+	var/turf/Tsec = get_turf(src)
 
 	new /obj/item/storage/firstaid(Tsec)
 
@@ -525,7 +525,7 @@
 	new /obj/item/device/healthanalyzer(Tsec)
 
 	if(reagent_glass)
-		reagent_glass.forceMove(Tsec)
+		reagent_glass.loc = Tsec
 		reagent_glass = null
 
 	if(prob(50))

@@ -38,9 +38,7 @@
 /turf/open/floor/mineral/titanium/blue,
 /area/ruin/space/has_grav/powered/mechtransport)
 "j" = (
-/obj/machinery/computer/shuttle{
-	dir = 8
-	},
+/obj/machinery/computer/shuttle,
 /turf/open/floor/mineral/titanium/blue,
 /area/ruin/space/has_grav/powered/mechtransport)
 "k" = (
@@ -148,9 +146,7 @@
 /turf/template_noop,
 /area/template_noop)
 "J" = (
-/obj/machinery/computer/mecha{
-	dir = 8
-	},
+/obj/machinery/computer/mecha,
 /turf/open/floor/mineral/titanium/blue,
 /area/ruin/space/has_grav/powered/mechtransport)
 "K" = (

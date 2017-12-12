@@ -78,9 +78,11 @@
 /turf/closed/wall/mineral/titanium,
 /area/shuttle/supply)
 "l" = (
+/turf/open/floor/mineral/titanium/blue,
 /turf/closed/wall/mineral/titanium/interior,
 /area/shuttle/supply)
 "m" = (
+/turf/open/floor/plasteel/shuttle,
 /turf/closed/wall/mineral/titanium/interior{
 	icon_state = "swall_f6"
 	},
@@ -105,8 +107,8 @@
 /turf/closed/wall/mineral/titanium,
 /area/shuttle/supply)
 "s" = (
-/turf/template_noop,
-/area/template_noop)
+/turf/open/space,
+/area/space)
 "t" = (
 /obj/structure/shuttle/engine/propulsion/burst/left,
 /turf/open/floor/plating/airless,

@@ -154,7 +154,6 @@
 	has_gravity = TRUE
 	noteleport = TRUE
 	hidden = TRUE
-	ambientsounds = REEBE
 
 /area/reebe/city_of_cogs
 	name = "City of Cogs"

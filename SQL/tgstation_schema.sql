@@ -163,13 +163,12 @@ DROP TABLE IF EXISTS `feedback`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `feedback` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `datetime` datetime NOT NULL,
-  `round_id` int(11) unsigned NOT NULL,
-  `key_name` varchar(32) NOT NULL,
-  `key_type` enum('text', 'amount', 'tally', 'nested tally', 'associative') NOT NULL,
-  `version` tinyint(3) unsigned NOT NULL,
-  `json` json NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `time` datetime NOT NULL,
+  `round_id` int(8) NOT NULL,
+  `var_name` varchar(32) NOT NULL,
+  `var_value` int(16) DEFAULT NULL,
+  `details` text,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;

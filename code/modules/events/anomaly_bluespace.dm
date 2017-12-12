@@ -9,7 +9,7 @@
 	announceWhen = 10
 
 
-/datum/round_event/anomaly/anomaly_bluespace/announce(fake)
+/datum/round_event/anomaly/anomaly_bluespace/announce()
 	priority_announce("Unstable bluespace anomaly detected on long range scanners. Expected location: [impact_area.name].", "Anomaly Alert")
 
 

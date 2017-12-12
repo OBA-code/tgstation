@@ -2,10 +2,9 @@
 	dupe_mode = COMPONENT_DUPE_ALLOWED
 
 	var/cleanable
-	var/description
 	var/mutable_appearance/pic
 
-/datum/component/decal/Initialize(_icon, _icon_state, _dir, _cleanable=CLEAN_GOD, _color, _layer=TURF_LAYER, _description)
+/datum/component/decal/Initialize(_icon, _icon_state, _dir, _cleanable=CLEAN_GOD, _color, _layer=TURF_LAYER)
 	if(!isatom(parent) || !_icon || !_icon_state)
 		. = COMPONENT_INCOMPATIBLE
 		CRASH("A turf decal was applied incorrectly to [parent.type]: icon:[_icon ? _icon : "none"] icon_state:[_icon_state ? _icon_state : "none"]")
@@ -16,7 +15,6 @@
 	pic.color = _color
 
 	cleanable = _cleanable
-	description = _description
 
 	apply()
 
@@ -24,8 +22,6 @@
 		RegisterSignal(COMSIG_ATOM_DIR_CHANGE, .proc/rotate_react)
 	if(_cleanable)
 		RegisterSignal(COMSIG_COMPONENT_CLEAN_ACT, .proc/clean_react)
-	if(_description)
-		RegisterSignal(COMSIG_PARENT_EXAMINE, .proc/examine)
 
 /datum/component/decal/Destroy()
 	remove()
@@ -55,6 +51,3 @@
 /datum/component/decal/proc/clean_react(strength)
 	if(strength >= cleanable)
 		qdel(src)
-
-/datum/component/decal/proc/examine(mob/user)
-	to_chat(user, description)

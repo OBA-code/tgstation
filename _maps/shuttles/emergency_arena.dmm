@@ -17,8 +17,8 @@
 /turf/open/indestructible/necropolis/air,
 /area/shuttle_arena)
 "f" = (
-/turf/template_noop,
-/area/template_noop)
+/turf/open/space,
+/area/space)
 "g" = (
 /turf/closed/indestructible/necropolis,
 /area/shuttle/escape{

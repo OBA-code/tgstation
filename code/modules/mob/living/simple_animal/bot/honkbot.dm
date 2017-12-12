@@ -327,14 +327,14 @@ Maintenance panel panel is [open ? "opened" : "closed"]"},
 
 	walk_to(src,0)
 	visible_message("<span class='boldannounce'>[src] blows apart!</span>")
-	var/atom/Tsec = drop_location()
+	var/turf/Tsec = get_turf(src)
 	//doesn't drop cardboard nor its assembly, since its a very frail material.
 	if(prob(50))
-		new /obj/item/bodypart/l_arm/robot(Tsec)
+		new /obj/item/bodypart/l_arm/robot/(Tsec)
 	new /obj/item/bikehorn(Tsec)
 	new /obj/item/device/assembly/prox_sensor(Tsec)
 
-	var/datum/effect_system/spark_spread/s = new
+	var/datum/effect_system/spark_spread/s = new /datum/effect_system/spark_spread
 	s.set_up(3, 1, src)
 	s.start()
 

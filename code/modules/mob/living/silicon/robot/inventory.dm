@@ -7,6 +7,7 @@
 
 
 
+/*-------TODOOOOOOOOOO--------*/ //fuck yooooooooooooou
 /mob/living/silicon/robot/proc/uneq_module(obj/item/O)
 	if(!O)
 		return 0

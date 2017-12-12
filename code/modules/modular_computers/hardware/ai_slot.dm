@@ -4,6 +4,7 @@
 	power_usage = 100 //W
 	icon_state = "card_mini"
 	w_class = WEIGHT_CLASS_SMALL
+	origin_tech = "programming=2"
 	device_type = MC_AI
 
 	var/obj/item/device/aicard/stored_card = null

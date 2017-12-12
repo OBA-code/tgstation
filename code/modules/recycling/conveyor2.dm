@@ -179,6 +179,12 @@
 	if(C)
 		C.set_operable(stepdir, id, op)
 
+/*
+/obj/machinery/conveyor/verb/destroy()
+	set src in view()
+	src.broken()
+*/
+
 /obj/machinery/conveyor/power_change()
 	..()
 	update()

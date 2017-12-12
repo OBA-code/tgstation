@@ -6,6 +6,7 @@
 	materials = list(MAT_METAL=6000, MAT_GLASS=3000)
 	flags_1 = CONDUCT_1
 	w_class = WEIGHT_CLASS_TINY
+	origin_tech = "materials=1;biotech=1"
 
 
 /obj/item/retractor/augment
@@ -16,6 +17,7 @@
 	materials = list(MAT_METAL=6000, MAT_GLASS=3000)
 	flags_1 = CONDUCT_1
 	w_class = WEIGHT_CLASS_TINY
+	origin_tech = "materials=1;biotech=1"
 	toolspeed = 0.5
 
 
@@ -27,6 +29,7 @@
 	materials = list(MAT_METAL=5000, MAT_GLASS=2500)
 	flags_1 = CONDUCT_1
 	w_class = WEIGHT_CLASS_TINY
+	origin_tech = "materials=1;biotech=1"
 	attack_verb = list("attacked", "pinched")
 
 
@@ -38,6 +41,7 @@
 	materials = list(MAT_METAL=5000, MAT_GLASS=2500)
 	flags_1 = CONDUCT_1
 	w_class = WEIGHT_CLASS_TINY
+	origin_tech = "materials=1;biotech=1"
 	toolspeed = 0.5
 	attack_verb = list("attacked", "pinched")
 
@@ -50,6 +54,7 @@
 	materials = list(MAT_METAL=2500, MAT_GLASS=750)
 	flags_1 = CONDUCT_1
 	w_class = WEIGHT_CLASS_TINY
+	origin_tech = "materials=1;biotech=1"
 	attack_verb = list("burnt")
 
 
@@ -61,6 +66,7 @@
 	materials = list(MAT_METAL=2500, MAT_GLASS=750)
 	flags_1 = CONDUCT_1
 	w_class = WEIGHT_CLASS_TINY
+	origin_tech = "materials=1;biotech=1"
 	toolspeed = 0.5
 	attack_verb = list("burnt")
 
@@ -77,6 +83,7 @@
 	flags_1 = CONDUCT_1
 	force = 15
 	w_class = WEIGHT_CLASS_NORMAL
+	origin_tech = "materials=1;biotech=1"
 	attack_verb = list("drilled")
 
 
@@ -90,6 +97,7 @@
 	flags_1 = CONDUCT_1
 	force = 10
 	w_class = WEIGHT_CLASS_SMALL
+	origin_tech = "materials=1;biotech=1"
 	toolspeed = 0.5
 	attack_verb = list("drilled")
 
@@ -108,6 +116,7 @@
 	throw_speed = 3
 	throw_range = 5
 	materials = list(MAT_METAL=4000, MAT_GLASS=1000)
+	origin_tech = "materials=1;biotech=1"
 	attack_verb = list("attacked", "slashed", "stabbed", "sliced", "torn", "ripped", "diced", "cut")
 	hitsound = 'sound/weapons/bladeslice.ogg'
 	sharpness = IS_SHARP_ACCURATE
@@ -124,6 +133,7 @@
 	throw_speed = 3
 	throw_range = 5
 	materials = list(MAT_METAL=4000, MAT_GLASS=1000)
+	origin_tech = "materials=1;biotech=1"
 	attack_verb = list("attacked", "slashed", "stabbed", "sliced", "torn", "ripped", "diced", "cut")
 	toolspeed = 0.5
 	hitsound = 'sound/weapons/bladeslice.ogg'
@@ -150,6 +160,7 @@
 	throw_speed = 2
 	throw_range = 5
 	materials = list(MAT_METAL=10000, MAT_GLASS=6000)
+	origin_tech = "biotech=1;combat=1"
 	attack_verb = list("attacked", "slashed", "sawed", "cut")
 	sharpness = IS_SHARP
 
@@ -167,6 +178,7 @@
 	throw_speed = 2
 	throw_range = 5
 	materials = list(MAT_METAL=10000, MAT_GLASS=6000)
+	origin_tech = "biotech=1;combat=1"
 	toolspeed = 0.5
 	attack_verb = list("attacked", "slashed", "sawed", "cut")
 	sharpness = IS_SHARP
@@ -177,6 +189,7 @@
 	icon = 'icons/obj/surgery.dmi'
 	icon_state = "surgical_drapes"
 	w_class = WEIGHT_CLASS_TINY
+	origin_tech = "biotech=1"
 	attack_verb = list("slapped")
 
 /obj/item/surgical_drapes/attack(mob/living/M, mob/user)

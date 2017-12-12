@@ -236,7 +236,7 @@
 	throw_range = 5
 	w_class = WEIGHT_CLASS_SMALL
 	attack_verb = list("warned", "cautioned", "smashed")
-	resistance_flags = NONE
+	resistance_flags = 0
 
 /obj/item/clothing/head/santa
 	name = "santa hat"

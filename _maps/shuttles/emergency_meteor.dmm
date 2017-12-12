@@ -1,7 +1,7 @@
-//MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE
+//MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE 
 "a" = (
-/turf/template_noop,
-/area/template_noop)
+/turf/open/space,
+/area/space)
 "b" = (
 /turf/closed/mineral,
 /area/shuttle/escape{
@@ -23,7 +23,6 @@
 	})
 "e" = (
 /obj/machinery/computer/emergency_shuttle{
-	dir = 4;
 	use_power = 0
 	},
 /turf/open/floor/plating/asteroid,

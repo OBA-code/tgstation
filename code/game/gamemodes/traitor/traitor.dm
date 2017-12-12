@@ -103,11 +103,11 @@
 			var/TC_uses = 0
 			var/uplink_true = FALSE
 			var/purchases = ""
-			for(var/datum/component/uplink/H in GLOB.uplinks)
+			for(var/obj/item/device/uplink/H in GLOB.uplinks)
 				if(H && H.owner && H.owner == traitor.key)
 					TC_uses += H.spent_telecrystals
 					uplink_true = TRUE
-					purchases += H.purchase_log.generate_render(FALSE)
+					purchases += H.purchase_log
 
 			var/objectives = ""
 			if(traitor.objectives.len)//If the traitor had no objectives, don't need to process this.
@@ -115,10 +115,10 @@
 				for(var/datum/objective/objective in traitor.objectives)
 					if(objective.check_completion())
 						objectives += "<br><B>Objective #[count]</B>: [objective.explanation_text] <font color='green'><B>Success!</B></font>"
-						SSblackbox.record_feedback("nested tally", "traitor_objective", 1, list("[objective.type]", "SUCCESS"))
+						SSblackbox.add_details("traitor_objective","[objective.type]|SUCCESS")
 					else
 						objectives += "<br><B>Objective #[count]</B>: [objective.explanation_text] <font color='red'>Fail.</font>"
-						SSblackbox.record_feedback("nested tally", "traitor_objective", 1, list("[objective.type]", "FAIL"))
+						SSblackbox.add_details("traitor_objective","[objective.type]|FAIL")
 						traitorwin = FALSE
 					count++
 
@@ -139,10 +139,10 @@
 
 			if(traitorwin)
 				text += "<br><font color='green'><B>The [special_role_text] was successful!</B></font>"
-				SSblackbox.record_feedback("tally", "traitor_success", 1, "SUCCESS")
+				SSblackbox.add_details("traitor_success","SUCCESS")
 			else
 				text += "<br><font color='red'><B>The [special_role_text] has failed!</B></font>"
-				SSblackbox.record_feedback("tally", "traitor_success", 1, "FAIL")
+				SSblackbox.add_details("traitor_success","FAIL")
 				SEND_SOUND(traitor.current, 'sound/ambience/ambifailure.ogg')
 
 			text += "<br>"

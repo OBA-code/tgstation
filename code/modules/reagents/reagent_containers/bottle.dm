@@ -15,7 +15,7 @@
 		icon_state = "bottle"
 	update_icon()
 
-/obj/item/reagent_containers/glass/bottle/on_reagent_change(changetype)
+/obj/item/reagent_containers/glass/bottle/on_reagent_change()
 	update_icon()
 
 /obj/item/reagent_containers/glass/bottle/update_icon()
@@ -73,8 +73,8 @@
 	list_reagents = list("chloralhydrate" = 15)
 
 /obj/item/reagent_containers/glass/bottle/charcoal
-	name = "charcoal bottle"
-	desc = "A small bottle of charcoal, which removes toxins and other chemicals from the bloodstream."
+	name = "antitoxin bottle"
+	desc = "A small bottle of charcoal."
 	list_reagents = list("charcoal" = 30)
 
 /obj/item/reagent_containers/glass/bottle/mutagen

@@ -58,7 +58,7 @@
 	if(src.l_arm && src.r_arm)
 		if(src.l_leg && src.r_leg)
 			if(src.chest && src.head)
-				SSblackbox.record_feedback("amount", "cyborg_frames_built", 1)
+				SSblackbox.inc("cyborg_frames_built",1)
 				return 1
 	return 0
 
@@ -234,7 +234,9 @@
 				qdel(O.mmi)
 			O.mmi = W //and give the real mmi to the borg.
 			O.updatename()
-			SSblackbox.record_feedback("amount", "cyborg_birth", 1)
+
+			SSblackbox.inc("cyborg_birth",1)
+
 			forceMove(O)
 			O.robot_suit = src
 
@@ -333,3 +335,4 @@
 
 	add_fingerprint(usr)
 	Interact(usr)
+

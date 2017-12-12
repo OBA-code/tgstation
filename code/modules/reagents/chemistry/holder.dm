@@ -1,4 +1,5 @@
 
+
 ///////////////////////////////////////////////////////////////////////////////////
 
 /datum/reagents
@@ -377,8 +378,8 @@
 						remove_reagent(B, (multiplier * cached_required_reagents[B]), safety = 1)
 
 					for(var/P in C.results)
+						SSblackbox.add_details("chemical_reaction", "[P]|[cached_results[P]*multiplier]")
 						multiplier = max(multiplier, 1) //this shouldnt happen ...
-						SSblackbox.record_feedback("tally", "chemical_reaction", cached_results[P]*multiplier, P)
 						add_reagent(P, cached_results[P]*multiplier, null, chem_temp)
 
 					var/list/seen = viewers(4, get_turf(my_atom))
@@ -428,7 +429,7 @@
 			reagent_list -= R
 			update_total()
 			if(my_atom)
-				my_atom.on_reagent_change(DEL_REAGENT)
+				my_atom.on_reagent_change()
 				check_ignoreslow(my_atom)
 				check_gofast(my_atom)
 				check_goreallyfast(my_atom)
@@ -526,7 +527,7 @@
 			R.volume += amount
 			update_total()
 			if(my_atom)
-				my_atom.on_reagent_change(ADD_REAGENT)
+				my_atom.on_reagent_change()
 			R.on_merge(data, amount)
 			if(!no_react)
 				handle_reactions()
@@ -545,7 +546,7 @@
 
 		update_total()
 		if(my_atom)
-			my_atom.on_reagent_change(ADD_REAGENT)
+			my_atom.on_reagent_change()
 		if(!no_react)
 			handle_reactions()
 		if(isliving(my_atom))
@@ -587,7 +588,7 @@
 			if(!safety)//So it does not handle reactions when it need not to
 				handle_reactions()
 			if(my_atom)
-				my_atom.on_reagent_change(REM_REAGENT)
+				my_atom.on_reagent_change()
 			return TRUE
 
 	return FALSE
@@ -732,7 +733,7 @@
 					out += "[taste_desc]"
 
 	return english_list(out, "something indescribable")
-
+	
 /datum/reagents/proc/expose_temperature(var/temperature, var/coeff=0.02)
 	var/temp_delta = (temperature - chem_temp) * coeff
 	if(temp_delta > 0)

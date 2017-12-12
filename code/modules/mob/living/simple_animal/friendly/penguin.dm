@@ -22,7 +22,7 @@
 	icon_living = "penguin"
 	icon_dead = "penguin_dead"
 	butcher_results = list()
-	gold_core_spawnable = FRIENDLY_SPAWN
+	gold_core_spawnable = 2
 
 /mob/living/simple_animal/pet/penguin/emperor/shamebrero
 	name = "Shamebrero penguin"

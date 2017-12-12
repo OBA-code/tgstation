@@ -26,9 +26,8 @@
 #define MAX_CATALYST_EFFICENCY				9
 #define PLASMA_FUSED_COEFFICENT				0.08
 #define CATALYST_COEFFICENT					0.01
-#define FUSION_PURITY_THRESHOLD				0.95
+#define FUSION_PURITY_THRESHOLD				0.9
 #define FUSION_HEAT_DROPOFF					20000+T0C
-#define NOBLIUM_FORMATION_ENERGY			2e9 //1 Mole of Noblium takes the planck energy to condense.
 /datum/controller/subsystem/air/var/list/gas_reactions //this is our singleton of all reactions
 
 /proc/init_gas_reactions()
@@ -198,7 +197,7 @@
 		/datum/gas/tritium = MINIMUM_HEAT_CAPACITY
 	)
 
-/datum/gas_reaction/fusion/react(datum/gas_mixture/air, turf/open/location)
+/datum/gas_reaction/fusion/react(datum/gas_mixture/air)
 	var/list/cached_gases = air.gases
 	var/temperature = air.temperature
 
@@ -211,23 +210,22 @@
 	var/reaction_energy = THERMAL_ENERGY(air)
 	var/moles_impurities = air.total_moles()-(cached_gases[/datum/gas/plasma][MOLES]+cached_gases[/datum/gas/tritium][MOLES])
 
-	var/plasma_fused = (PLASMA_FUSED_COEFFICENT*catalyst_efficency)*(temperature/PLASMA_BINDING_ENERGY)/10
-	var/tritium_catalyzed = (CATALYST_COEFFICENT*catalyst_efficency)*(temperature/PLASMA_BINDING_ENERGY)/40
+	var/plasma_fused = (PLASMA_FUSED_COEFFICENT*catalyst_efficency)*(temperature/PLASMA_BINDING_ENERGY)*4
+	var/tritium_catalyzed = (CATALYST_COEFFICENT*catalyst_efficency)*(temperature/PLASMA_BINDING_ENERGY)
 	var/oxygen_added = tritium_catalyzed
-	var/waste_added = max((plasma_fused-oxygen_added)-((air.total_moles()*air.heat_capacity())/PLASMA_BINDING_ENERGY),0)
+	var/waste_added = (plasma_fused-oxygen_added)-((air.total_moles()*air.heat_capacity())/PLASMA_BINDING_ENERGY)
 	reaction_energy = max(reaction_energy+((catalyst_efficency*cached_gases[/datum/gas/plasma][MOLES])/((moles_impurities/catalyst_efficency)+2)*10)+((plasma_fused/((moles_impurities/catalyst_efficency)))*PLASMA_BINDING_ENERGY),0)
 
-	air.assert_gases(/datum/gas/oxygen, /datum/gas/carbon_dioxide, /datum/gas/water_vapor, /datum/gas/nitrous_oxide, /datum/gas/nitryl)
+	air.assert_gases(/datum/gas/oxygen, /datum/gas/nitrogen, /datum/gas/water_vapor, /datum/gas/nitrous_oxide, /datum/gas/nitryl)
 	//Fusion produces an absurd amount of waste products now, requiring active filtration.
 	cached_gases[/datum/gas/plasma][MOLES] = max(cached_gases[/datum/gas/plasma][MOLES] - plasma_fused,0)
 	cached_gases[/datum/gas/tritium][MOLES] = max(cached_gases[/datum/gas/tritium][MOLES] - tritium_catalyzed,0)
 	cached_gases[/datum/gas/oxygen][MOLES] += oxygen_added
+	cached_gases[/datum/gas/nitrogen][MOLES] += waste_added
 	cached_gases[/datum/gas/water_vapor][MOLES] += waste_added
 	cached_gases[/datum/gas/nitrous_oxide][MOLES] += waste_added
 	cached_gases[/datum/gas/nitryl][MOLES] += waste_added
-	cached_gases[/datum/gas/carbon_dioxide][MOLES] += waste_added
-	if (location)
-		radiation_pulse(location, reaction_energy/(PLASMA_BINDING_ENERGY*MAX_CATALYST_EFFICENCY))
+
 	if(reaction_energy > 0)
 		var/new_heat_capacity = air.heat_capacity()
 		if(new_heat_capacity > MINIMUM_HEAT_CAPACITY)
@@ -290,8 +288,8 @@
 
 	ASSERT_GAS(/datum/gas/bz,air)
 	cached_gases[/datum/gas/bz][MOLES]+= reaction_efficency
-	cached_gases[/datum/gas/tritium][MOLES] = max(cached_gases[/datum/gas/tritium][MOLES]- reaction_efficency,0)
-	cached_gases[/datum/gas/plasma][MOLES] = max(cached_gases[/datum/gas/plasma][MOLES] - (2*reaction_efficency),0)
+	cached_gases[/datum/gas/tritium][MOLES] = max(cached_gases[/datum/gas/tritium][MOLES]- 2*reaction_efficency,0)
+	cached_gases[/datum/gas/plasma][MOLES] = max(cached_gases[/datum/gas/plasma][MOLES] - reaction_efficency,0)
 
 
 	if(energy_released > 0)
@@ -348,7 +346,7 @@
 	air.assert_gases(/datum/gas/hypernoblium,/datum/gas/bz)
 	var/old_heat_capacity = air.heat_capacity()
 	var/nob_formed = (cached_gases[/datum/gas/nitrogen][MOLES]*cached_gases[/datum/gas/tritium][MOLES])/100
-	var/energy_taken = nob_formed*(NOBLIUM_FORMATION_ENERGY/(max(cached_gases[/datum/gas/bz][MOLES],1)))
+	var/energy_taken = nob_formed*(10000000/(max(cached_gases[/datum/gas/bz][MOLES],1)))
 	cached_gases[/datum/gas/tritium][MOLES] = max(cached_gases[/datum/gas/tritium][MOLES]- 10*nob_formed,0)
 	cached_gases[/datum/gas/nitrogen][MOLES] = max(cached_gases[/datum/gas/nitrogen][MOLES]- 20*nob_formed,0)
 	cached_gases[/datum/gas/hypernoblium][MOLES]+= nob_formed
@@ -358,8 +356,6 @@
 		var/new_heat_capacity = air.heat_capacity()
 		if(new_heat_capacity > MINIMUM_HEAT_CAPACITY)
 			air.temperature = max(((air.temperature*old_heat_capacity - energy_taken)/new_heat_capacity),TCMB)
-
-
 #undef REACTING
 #undef NO_REACTION
 #undef OXYGEN_BURN_RATE_BASE
@@ -386,4 +382,3 @@
 #undef CATALYST_COEFFICENT
 #undef FUSION_PURITY_THRESHOLD
 #undef FUSION_HEAT_DROPOFF
-#undef NOBLIUM_FORMATION_ENERGY

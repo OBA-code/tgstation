@@ -2,6 +2,7 @@
 	name = "body egg"
 	desc = "All slimy and yuck."
 	icon_state = "innards"
+	origin_tech = "biotech=5"
 	zone = "chest"
 	slot = "parasite_egg"
 

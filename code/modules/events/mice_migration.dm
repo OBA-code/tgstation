@@ -4,10 +4,11 @@
 	weight = 10
 
 /datum/round_event/mice_migration
+	announceWhen = 0
 	var/minimum_mice = 5
 	var/maximum_mice = 15
 
-/datum/round_event/mice_migration/announce(fake)
+/datum/round_event/mice_migration/announce()
 	var/cause = pick("space-winter", "budget-cuts", "Ragnarok",
 		"space being cold", "\[REDACTED\]", "climate change",
 		"bad luck")
@@ -21,7 +22,7 @@
 
 	priority_announce("Due to [cause], [plural] [name] have [movement] \
 		into the [location].", "Migration Alert",
-		'sound/effects/mousesqueek.ogg')
+		'sound/effects/mousesqueek.ogg', 100, 1)
 
 /datum/round_event/mice_migration/start()
 	SSsqueak.trigger_migration(rand(minimum_mice, maximum_mice))

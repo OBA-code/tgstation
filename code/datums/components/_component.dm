@@ -10,21 +10,13 @@
 		qdel(src)
 		CRASH("[type] instantiated!")
 
-	//check for common mishaps
-	if(!isnum(dupe_mode))
-		qdel(src)
-		CRASH("[type]: Invalid dupe_mode!")
-	if(dupe_type && !ispath(dupe_type))
-		qdel(src)
-		CRASH("[type]: Invalid dupe_type!")
-
 	parent = P
 	var/list/arguments = args.Copy()
 	arguments.Cut(1, 2)
 	if(Initialize(arglist(arguments)) == COMPONENT_INCOMPATIBLE)
 		qdel(src, TRUE, TRUE)
 		return
-
+	
 	_CheckDupesAndJoinParent(P)
 
 /datum/component/proc/_CheckDupesAndJoinParent()
@@ -53,12 +45,12 @@
 	if(!old)
 		//let the others know
 		P.SendSignal(COMSIG_COMPONENT_ADDED, src)
-
+	
 	//lazy init the parent's dc list
 	var/list/dc = P.datum_components
 	if(!dc)
 		P.datum_components = dc = list()
-
+	
 	//set up the typecache
 	var/our_type = type
 	for(var/I in _GetInverseTypeList(our_type))
@@ -122,7 +114,7 @@
 	if(!procs)
 		procs = list()
 		signal_procs = procs
-
+	
 	var/list/sig_types = islist(sig_type_or_types) ? sig_type_or_types : list(sig_type_or_types)
 	for(var/sig_type in sig_types)
 		if(!override)
@@ -145,14 +137,10 @@
 	return
 
 /datum/component/proc/_GetInverseTypeList(our_type = type)
-	#if DM_VERSION >= 513
-	#warning 512 is definitely stable now, remove the old code
-	#endif
-
-	#if DM_VERSION < 512
-	//remove this when we use 512 full time
+#if DM_VERSION > 511
+#warning Remove this hack for http://www.byond.com/forum/?post=73469
+#endif
 	set invisibility = 101
-	#endif
 	//we can do this one simple trick
 	var/current_type = parent_type
 	. = list(our_type, current_type)
@@ -185,7 +173,7 @@
 		for(var/I in target)
 			var/datum/component/C = I
 			if(!C.enabled)
-				continue
+				continue			
 			var/list/sps = C.signal_procs
 			var/datum/callback/CB = LAZYACCESS(sps, sigtype)
 			if(!CB)
@@ -263,6 +251,3 @@
 			target.TakeComponent(I)
 	else
 		target.TakeComponent(comps)
-
-/datum/component/ui_host()
-	return parent

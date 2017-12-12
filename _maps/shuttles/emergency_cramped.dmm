@@ -14,19 +14,17 @@
 /turf/open/floor/plating,
 /area/shuttle/escape)
 "d" = (
-/turf/open/floor/plasteel/dark,
+/turf/open/floor/plasteel/black,
 /area/shuttle/escape)
 "e" = (
 /obj/structure/chair{
 	dir = 1
 	},
-/turf/open/floor/plasteel/dark,
+/turf/open/floor/plasteel/black,
 /area/shuttle/escape)
 "f" = (
-/obj/machinery/computer/emergency_shuttle{
-	dir = 8
-	},
-/turf/open/floor/plasteel/dark,
+/obj/machinery/computer/emergency_shuttle,
+/turf/open/floor/plasteel/black,
 /area/shuttle/escape)
 "g" = (
 /obj/structure/window/reinforced,
@@ -36,11 +34,11 @@
 /obj/structure/extinguisher_cabinet{
 	pixel_x = -30
 	},
-/turf/open/floor/plasteel/dark,
+/turf/open/floor/plasteel/black,
 /area/shuttle/escape)
 "h" = (
 /obj/machinery/door/window/southleft,
-/turf/open/floor/plasteel/dark,
+/turf/open/floor/plasteel/black,
 /area/shuttle/escape)
 "i" = (
 /obj/structure/table/reinforced,
@@ -48,7 +46,7 @@
 /obj/item/device/gps{
 	gpstag = "STV5"
 	},
-/turf/open/floor/plasteel/dark,
+/turf/open/floor/plasteel/black,
 /area/shuttle/escape)
 "j" = (
 /obj/machinery/status_display,

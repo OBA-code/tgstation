@@ -5,7 +5,6 @@
 	var/datum/action/innate/cult/comm/communion = new
 	var/datum/action/innate/cult/mastervote/vote = new
 	job_rank = ROLE_CULTIST
-	var/ignore_implant = FALSE
 
 /datum/antagonist/cult/Destroy()
 	QDEL_NULL(communion)
@@ -66,7 +65,7 @@
 
 /datum/antagonist/cult/can_be_owned(datum/mind/new_owner)
 	. = ..()
-	if(. && !ignore_implant)
+	if(.)
 		. = is_convertable_to_cult(new_owner.current)
 
 /datum/antagonist/cult/on_gain()
@@ -122,7 +121,6 @@
 	var/datum/action/innate/cult/master/finalreck/reckoning = new
 	var/datum/action/innate/cult/master/cultmark/bloodmark = new
 	var/datum/action/innate/cult/master/pulse/throwing = new
-	ignore_implant = TRUE
 
 /datum/antagonist/cult/master/Destroy()
 	QDEL_NULL(reckoning)

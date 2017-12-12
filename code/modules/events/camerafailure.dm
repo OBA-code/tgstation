@@ -8,7 +8,7 @@
 /datum/round_event/camera_failure
 	startWhen = 1
 	endWhen = 2
-	fakeable = FALSE
+	announceWhen = 0
 
 /datum/round_event/camera_failure/tick()
 	var/iterations = 1

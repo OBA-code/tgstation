@@ -2,6 +2,7 @@
 	name = "blast door controller"
 	desc = "A small electronic device able to control a blast door remotely."
 	icon_state = "control"
+	origin_tech = "magnets=1;programming=2"
 	attachable = 1
 	var/id = null
 	var/can_change_id = 0

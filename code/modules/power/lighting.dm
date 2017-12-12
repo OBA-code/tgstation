@@ -193,24 +193,23 @@
 /obj/machinery/light/built
 	icon_state = "tube-empty"
 
-/obj/machinery/light/built/Initialize()
-	. = ..()	
+/obj/machinery/light/built/New()
 	status = LIGHT_EMPTY
 	update(0)
+	..()
 
 /obj/machinery/light/small/built
 	icon_state = "bulb-empty"
 
-/obj/machinery/light/small/built/Initialize()
-	. = ..()
+/obj/machinery/light/small/built/New()
 	status = LIGHT_EMPTY
 	update(0)
-
+	..()
 
 
 // create a new lighting fixture
-/obj/machinery/light/Initialize()
-	. = ..()
+/obj/machinery/light/New()
+	..()
 	spawn(2)
 		switch(fitting)
 			if("tube")
@@ -626,8 +625,8 @@
 			desc = "A broken [name]."
 
 
-/obj/item/light/Initialize()
-	. = ..()
+/obj/item/light/New()
+	..()
 	update()
 
 

@@ -99,6 +99,7 @@
 
 	LAZYCLEARLIST(overlays)
 	LAZYCLEARLIST(priority_overlays)
+	//SSoverlays.processing -= src	//we COULD do this, but it's better to just let it fall out of the processing queue
 
 	QDEL_NULL(light)
 
@@ -257,6 +258,8 @@
 
 	if(desc)
 		to_chat(user, desc)
+	// *****RM
+	//to_chat(user, "[name]: Dn:[density] dir:[dir] cont:[contents] icon:[icon] is:[icon_state] loc:[loc]")
 
 	if(reagents && (is_open_container() || is_transparent())) //is_open_container() isn't really the right proc for this, but w/e
 		to_chat(user, "It contains:")
@@ -617,21 +620,4 @@ GLOBAL_LIST_EMPTY(blood_splatter_icons)
 	SendSignal(COMSIG_ATOM_ENTERED, AM, oldLoc)
 
 /atom/proc/return_temperature()
-	return
-
-// Default tool behaviors proc
-
-/atom/proc/crowbar_act(mob/user, obj/item/tool)
-	return
-
-/atom/proc/multitool_act(mob/user, obj/item/tool)
-	return
-
-/atom/proc/screwdriver_act(mob/user, obj/item/tool)
-	return
-
-/atom/proc/wrench_act(mob/user, obj/item/tool)
-	return
-
-/atom/proc/wirecutter_act(mob/user, obj/item/tool)
 	return

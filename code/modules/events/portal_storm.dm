@@ -37,7 +37,7 @@
 	var/mutable_appearance/storm
 
 /datum/round_event/portal_storm/setup()
-	storm = mutable_appearance('icons/obj/tesla_engine/energy_ball.dmi', "energy_ball_fast", FLY_LAYER)
+	storm = 	storm = mutable_appearance('icons/obj/tesla_engine/energy_ball.dmi', "energy_ball_fast", FLY_LAYER)
 	storm.color = "#00FF00"
 
 	station_areas = get_areas_in_z(ZLEVEL_STATION_PRIMARY)
@@ -66,7 +66,7 @@
 
 	next_boss_spawn = startWhen + Ceiling(2 * number_of_hostiles / number_of_bosses)
 
-/datum/round_event/portal_storm/announce(fake)
+/datum/round_event/portal_storm/announce()
 	set waitfor = 0
 	sound_to_playing_players('sound/magic/lightning_chargeup.ogg')
 	sleep(80)

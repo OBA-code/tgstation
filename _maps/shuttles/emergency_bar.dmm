@@ -1,7 +1,7 @@
 //MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE
 "aa" = (
-/turf/template_noop,
-/area/template_noop)
+/turf/open/space,
+/area/space)
 "ab" = (
 /turf/closed/wall/mineral/titanium,
 /area/shuttle/escape)
@@ -52,9 +52,7 @@
 /turf/open/floor/plasteel/freezer,
 /area/shuttle/escape)
 "al" = (
-/obj/machinery/computer/atmos_alert{
-	dir = 4
-	},
+/obj/machinery/computer/atmos_alert,
 /turf/open/floor/carpet,
 /area/shuttle/escape)
 "am" = (
@@ -73,15 +71,11 @@
 /turf/open/floor/carpet,
 /area/shuttle/escape)
 "ap" = (
-/obj/machinery/computer/security{
-	dir = 8
-	},
+/obj/machinery/computer/security,
 /turf/open/floor/carpet,
 /area/shuttle/escape)
 "aq" = (
-/obj/machinery/computer/crew{
-	dir = 4
-	},
+/obj/machinery/computer/crew,
 /turf/open/floor/carpet,
 /area/shuttle/escape)
 "ar" = (
@@ -113,9 +107,7 @@
 /turf/open/floor/carpet,
 /area/shuttle/escape)
 "au" = (
-/obj/machinery/computer/communications{
-	dir = 8
-	},
+/obj/machinery/computer/communications,
 /turf/open/floor/carpet,
 /area/shuttle/escape)
 "av" = (
@@ -453,6 +445,7 @@
 /turf/open/floor/mineral/titanium,
 /area/shuttle/escape)
 "bA" = (
+/turf/open/space,
 /turf/closed/wall/mineral/plastitanium{
 	icon_state = "diagonalWall3"
 	},
@@ -468,6 +461,7 @@
 /turf/open/floor/plating/airless,
 /area/shuttle/escape)
 "bD" = (
+/turf/open/space,
 /turf/closed/wall/mineral/plastitanium{
 	dir = 4;
 	icon_state = "diagonalWall3"

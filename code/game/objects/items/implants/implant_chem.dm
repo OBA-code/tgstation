@@ -2,6 +2,7 @@
 	name = "chem implant"
 	desc = "Injects things."
 	icon_state = "reagents"
+	origin_tech = "materials=3;biotech=4"
 	container_type = OPENCONTAINER_1
 
 /obj/item/implant/chem/get_data()

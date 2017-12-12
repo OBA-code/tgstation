@@ -1,9 +1,6 @@
 /obj/item/clothing/under/color
 	desc = "A standard issue colored jumpsuit. Variety is the spice of life!"
 
-/obj/item/clothing/under/color/random
-	icon_state = "random_jumpsuit"
-
 /obj/item/clothing/under/color/random/New()
 	..()
 	var/obj/item/clothing/under/color/C = pick(subtypesof(/obj/item/clothing/under/color) - /obj/item/clothing/under/color/random)
@@ -17,7 +14,7 @@
 	icon_state = "black"
 	item_state = "bl_suit"
 	item_color = "black"
-	resistance_flags = NONE
+	resistance_flags = 0
 
 /obj/item/clothing/under/color/black/ghost
 	flags_1 = NODROP_1|DROPDEL_1
@@ -129,4 +126,4 @@
 	icon_state = "rainbow"
 	item_state = "rainbow"
 	item_color = "rainbow"
-	can_adjust = FALSE
+	can_adjust = 0

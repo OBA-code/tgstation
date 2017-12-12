@@ -1,7 +1,7 @@
 //MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE
 "aa" = (
-/turf/template_noop,
-/area/template_noop)
+/turf/open/space,
+/area/space)
 "ab" = (
 /turf/closed/wall,
 /area/shuttle/escape)
@@ -37,9 +37,7 @@
 /turf/open/floor/mineral/titanium,
 /area/shuttle/escape)
 "ai" = (
-/obj/machinery/computer/crew{
-	dir = 4
-	},
+/obj/machinery/computer/crew,
 /turf/open/floor/mineral/titanium,
 /area/shuttle/escape)
 "aj" = (
@@ -65,9 +63,7 @@
 /turf/open/floor/mineral/titanium,
 /area/shuttle/escape)
 "an" = (
-/obj/machinery/computer/security{
-	dir = 4
-	},
+/obj/machinery/computer/security,
 /turf/open/floor/mineral/titanium,
 /area/shuttle/escape)
 "ao" = (

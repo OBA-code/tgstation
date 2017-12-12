@@ -72,9 +72,6 @@
 	else
 		return ..()
 
-/obj/item/storage/wallet/random
-	icon_state = "random_wallet"
-
 /obj/item/storage/wallet/random/PopulateContents()
 	var/item1_type = pick( /obj/item/stack/spacecash/c10, /obj/item/stack/spacecash/c100, /obj/item/stack/spacecash/c1000, /obj/item/stack/spacecash/c20, /obj/item/stack/spacecash/c200, /obj/item/stack/spacecash/c50, /obj/item/stack/spacecash/c500)
 	var/item2_type
@@ -89,4 +86,3 @@
 			new item2_type(src)
 		if(item3_type)
 			new item3_type(src)
-	update_icon()

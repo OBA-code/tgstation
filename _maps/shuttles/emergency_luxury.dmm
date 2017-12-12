@@ -1,7 +1,7 @@
 //MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE
 "aa" = (
-/turf/template_noop,
-/area/template_noop)
+/turf/open/space,
+/area/space)
 "ab" = (
 /turf/closed/indestructible/riveted/uranium,
 /area/shuttle/escape/luxury)
@@ -124,9 +124,7 @@
 /turf/open/floor/mineral/gold,
 /area/shuttle/escape/luxury)
 "aw" = (
-/obj/machinery/computer/communications{
-	dir = 8
-	},
+/obj/machinery/computer/communications,
 /turf/open/floor/mineral/gold,
 /area/shuttle/escape/luxury)
 "ax" = (
@@ -205,9 +203,7 @@
 /turf/open/floor/carpet,
 /area/shuttle/escape/luxury)
 "aM" = (
-/obj/machinery/computer/emergency_shuttle{
-	dir = 8
-	},
+/obj/machinery/computer/emergency_shuttle,
 /turf/open/floor/mineral/gold,
 /area/shuttle/escape/luxury)
 "aN" = (
@@ -286,9 +282,7 @@
 /turf/open/floor/carpet,
 /area/shuttle/escape/luxury)
 "bc" = (
-/obj/machinery/computer/station_alert{
-	dir = 8
-	},
+/obj/machinery/computer/station_alert,
 /turf/open/floor/mineral/gold,
 /area/shuttle/escape/luxury)
 "bd" = (
@@ -298,9 +292,7 @@
 /turf/open/floor/carpet,
 /area/shuttle/escape/luxury)
 "be" = (
-/obj/machinery/computer/crew{
-	dir = 8
-	},
+/obj/machinery/computer/crew,
 /turf/open/floor/mineral/gold,
 /area/shuttle/escape/luxury)
 "bf" = (
@@ -440,7 +432,7 @@ aj
 aj
 aj
 aj
-bj
+bn
 aj
 aj
 ak
@@ -699,7 +691,7 @@ bd
 aj
 aj
 bg
-bp
+bq
 ab
 "}
 (21,1,1) = {"
@@ -755,12 +747,12 @@ ab
 al
 aj
 aq
-bk
+bm
 aw
 aM
 bc
 be
-bk
+bo
 aj
 aj
 ak

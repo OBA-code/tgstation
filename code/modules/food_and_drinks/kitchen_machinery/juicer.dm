@@ -135,7 +135,7 @@
 	if (!beaker)
 		return
 	src.verbs -= /obj/machinery/juicer/verb/detach
-	beaker.forceMove(drop_location())
+	beaker.loc = src.loc
 	beaker = null
 	update_icon()
 
@@ -166,22 +166,22 @@
 		if (beaker.reagents.total_volume >= beaker.reagents.maximum_volume)
 			break
 
-/obj/structure/closet/crate/juice/PopulateContents()
+/obj/structure/closet/crate/juice/New()
 	..()
-	new /obj/machinery/juicer(src)
-	new /obj/item/reagent_containers/food/snacks/grown/tomato(src)
-	new /obj/item/reagent_containers/food/snacks/grown/carrot(src)
-	new /obj/item/reagent_containers/food/snacks/grown/berries(src)
-	new /obj/item/reagent_containers/food/snacks/grown/banana(src)
-	new /obj/item/reagent_containers/food/snacks/grown/grapes(src)
-	new /obj/item/reagent_containers/food/snacks/grown/tomato(src)
-	new /obj/item/reagent_containers/food/snacks/grown/carrot(src)
-	new /obj/item/reagent_containers/food/snacks/grown/berries(src)
-	new /obj/item/reagent_containers/food/snacks/grown/banana(src)
-	new /obj/item/reagent_containers/food/snacks/grown/grapes(src)
-	new /obj/item/reagent_containers/food/snacks/grown/tomato(src)
-	new /obj/item/reagent_containers/food/snacks/grown/carrot(src)
-	new /obj/item/reagent_containers/food/snacks/grown/berries(src)
-	new /obj/item/reagent_containers/food/snacks/grown/banana(src)
-	new /obj/item/reagent_containers/food/snacks/grown/grapes(src)
+	new/obj/machinery/juicer(src)
+	new/obj/item/reagent_containers/food/snacks/grown/tomato(src)
+	new/obj/item/reagent_containers/food/snacks/grown/carrot(src)
+	new/obj/item/reagent_containers/food/snacks/grown/berries(src)
+	new/obj/item/reagent_containers/food/snacks/grown/banana(src)
+	new/obj/item/reagent_containers/food/snacks/grown/grapes(src)
+	new/obj/item/reagent_containers/food/snacks/grown/tomato(src)
+	new/obj/item/reagent_containers/food/snacks/grown/carrot(src)
+	new/obj/item/reagent_containers/food/snacks/grown/berries(src)
+	new/obj/item/reagent_containers/food/snacks/grown/banana(src)
+	new/obj/item/reagent_containers/food/snacks/grown/grapes(src)
+	new/obj/item/reagent_containers/food/snacks/grown/tomato(src)
+	new/obj/item/reagent_containers/food/snacks/grown/carrot(src)
+	new/obj/item/reagent_containers/food/snacks/grown/berries(src)
+	new/obj/item/reagent_containers/food/snacks/grown/banana(src)
+	new/obj/item/reagent_containers/food/snacks/grown/grapes(src)
 

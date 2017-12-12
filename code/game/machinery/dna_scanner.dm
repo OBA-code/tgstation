@@ -84,8 +84,8 @@
 		open_machine()
 
 /obj/machinery/dna_scannernew/proc/locate_computer(type_)
-	for(var/direction in GLOB.cardinals)
-		var/C = locate(type_, get_step(src, direction))
+	for(dir in list(NORTH,EAST,SOUTH,WEST))
+		var/C = locate(type_, get_step(src, dir))
 		if(C)
 			return C
 	return null

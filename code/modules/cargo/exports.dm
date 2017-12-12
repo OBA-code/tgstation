@@ -126,10 +126,14 @@ Credit dupes that require a lot of manual work shouldn't be removed, unless they
 	var/the_cost = get_cost(O)
 	var/amount = get_amount(O)
 	total_cost += the_cost
-	total_amount += amount
+	if(istype(O, /datum/export/material))
+		total_amount += amount*MINERAL_MATERIAL_AMOUNT
+	else
+		total_amount += amount
 
 	cost *= GLOB.E**(-1*k_elasticity*amount)		//marginal cost modifier
-	SSblackbox.record_feedback("nested tally", "export_sold_cost", 1, list("[O.type]", "[the_cost]"))
+	SSblackbox.add_details("export_sold_amount","[O.type]|[amount]")
+	SSblackbox.add_details("export_sold_cost","[O.type]|[the_cost]")
 
 // Total printout for the cargo console.
 // Called before the end of current export cycle.

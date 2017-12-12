@@ -6,31 +6,37 @@
 /turf/open/floor/plating/asteroid/basalt/lava_land_surface,
 /area/lavaland/surface/outdoors)
 "c" = (
+/turf/open/floor/plating/asteroid/basalt/lava_land_surface,
 /turf/closed/indestructible/abductor{
 	icon_state = "alien20"
 	},
 /area/lavaland/surface/outdoors)
 "d" = (
+/turf/open/floor/plating/asteroid/basalt/lava_land_surface,
 /turf/closed/indestructible/abductor{
 	icon_state = "alien21"
 	},
 /area/ruin/unpowered)
 "e" = (
+/turf/open/floor/plating/asteroid/basalt/lava_land_surface,
 /turf/closed/indestructible/abductor{
 	icon_state = "alien22"
 	},
 /area/ruin/unpowered)
 "f" = (
+/turf/open/floor/plating/asteroid/basalt/lava_land_surface,
 /turf/closed/indestructible/abductor{
 	icon_state = "alien23"
 	},
 /area/ruin/unpowered)
 "g" = (
+/turf/open/floor/plating/asteroid/basalt/lava_land_surface,
 /turf/closed/indestructible/abductor{
 	icon_state = "alien24"
 	},
 /area/lavaland/surface/outdoors)
 "h" = (
+/turf/open/floor/plating/asteroid/basalt/lava_land_surface,
 /turf/closed/indestructible/abductor{
 	icon_state = "alien16"
 	},
@@ -67,6 +73,7 @@
 	},
 /area/ruin/unpowered)
 "n" = (
+/turf/open/floor/plating/asteroid/basalt/lava_land_surface,
 /turf/closed/indestructible/abductor{
 	icon_state = "alien19"
 	},
@@ -90,6 +97,7 @@
 	},
 /area/ruin/unpowered)
 "r" = (
+/turf/open/floor/plating/asteroid/basalt/lava_land_surface,
 /turf/closed/indestructible/abductor{
 	icon_state = "alien14"
 	},
@@ -110,6 +118,7 @@
 	},
 /area/ruin/unpowered)
 "u" = (
+/turf/open/floor/plating/asteroid/basalt/lava_land_surface,
 /turf/closed/indestructible/abductor{
 	icon_state = "alien12"
 	},
@@ -129,6 +138,7 @@
 	},
 /area/ruin/unpowered)
 "x" = (
+/turf/open/floor/plating/asteroid/basalt/lava_land_surface,
 /turf/closed/indestructible/abductor{
 	icon_state = "alien10"
 	},
@@ -159,26 +169,31 @@
 	},
 /area/ruin/unpowered)
 "C" = (
+/turf/open/floor/plating/asteroid/basalt/lava_land_surface,
 /turf/closed/indestructible/abductor{
 	icon_state = "alien9"
 	},
 /area/lavaland/surface/outdoors)
 "D" = (
+/turf/open/floor/plating/asteroid/basalt/lava_land_surface,
 /turf/closed/indestructible/abductor{
 	icon_state = "alien2"
 	},
 /area/ruin/unpowered)
 "E" = (
+/turf/open/floor/plating/asteroid/basalt/lava_land_surface,
 /turf/closed/indestructible/abductor{
 	icon_state = "alien3"
 	},
 /area/ruin/unpowered)
 "F" = (
+/turf/open/floor/plating/asteroid/basalt/lava_land_surface,
 /turf/closed/indestructible/abductor{
 	icon_state = "alien4"
 	},
 /area/ruin/unpowered)
 "G" = (
+/turf/open/floor/plating/asteroid/basalt/lava_land_surface,
 /turf/closed/indestructible/abductor{
 	icon_state = "alien5"
 	},

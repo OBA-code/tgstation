@@ -369,8 +369,7 @@ GLOBAL_LIST_EMPTY(gravity_generators) // We will keep track of this by adding ne
 /obj/machinery/gravity_generator/main/proc/shake_everyone()
 	var/turf/T = get_turf(src)
 	var/sound/alert_sound = sound('sound/effects/alert.ogg')
-	for(var/i in GLOB.mob_list)
-		var/mob/M = i
+	for(var/mob/M in GLOB.mob_list)
 		if(M.z != z)
 			continue
 		M.update_gravity(M.mob_has_gravity())

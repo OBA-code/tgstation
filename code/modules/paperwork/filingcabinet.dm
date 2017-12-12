@@ -101,6 +101,7 @@
 	if(href_list["retrieve"])
 		usr << browse("", "window=filingcabinet") // Close the menu
 
+		//var/retrieveindex = text2num(href_list["retrieve"])
 		var/obj/item/P = locate(href_list["retrieve"])//contents[retrieveindex]
 		if(istype(P) && P.loc == src && in_range(src, usr))
 			usr.put_in_hands(P)
@@ -184,9 +185,9 @@ GLOBAL_LIST_EMPTY(employmentCabinets)
 	icon_state = "employmentcabinet"
 	var/virgin = 1
 
-/obj/structure/filingcabinet/employment/Initialize()
-	. = ..()	
+/obj/structure/filingcabinet/employment/New()
 	GLOB.employmentCabinets += src
+	return ..()
 
 /obj/structure/filingcabinet/employment/Destroy()
 	GLOB.employmentCabinets -= src

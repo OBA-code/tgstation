@@ -12,10 +12,9 @@
 	var/gulp_size = 5 //This is now officially broken ... need to think of a nice way to fix it.
 	possible_transfer_amounts = list(5,10,15,20,25,30,50)
 	volume = 50
-	resistance_flags = NONE
-	var/isGlass = TRUE //Whether the 'bottle' is made of glass or not so that milk cartons dont shatter when someone gets hit by it
+	resistance_flags = 0
 
-/obj/item/reagent_containers/food/drinks/on_reagent_change(changetype)
+/obj/item/reagent_containers/food/drinks/on_reagent_change()
 	if (gulp_size < 5)
 		gulp_size = 5
 	else
@@ -97,27 +96,7 @@
 		to_chat(user, "<span class='notice'>You heat [name] with [I]!</span>")
 	..()
 
-/obj/item/reagent_containers/food/drinks/throw_impact(atom/target, mob/thrower)
-	. = ..()
-	if(!.) //if the bottle wasn't caught
-		smash(target, thrower, TRUE)
 
-/obj/item/reagent_containers/food/drinks/proc/smash(atom/target, mob/thrower, ranged = FALSE)
-	if(!isGlass)
-		return
-	if(bartender_check(target) && ranged)
-		return
-	var/obj/item/broken_bottle/B = new (loc)
-	B.icon_state = icon_state
-	var/icon/I = new('icons/obj/drinks.dmi', src.icon_state)
-	I.Blend(B.broken_outline, ICON_OVERLAY, rand(5), 1)
-	I.SwapColor(rgb(255, 0, 220, 255), rgb(0, 0, 0, 0))
-	B.icon = I
-	if(prob(33))
-		new/obj/item/shard(drop_location())
-	playsound(src, "shatter", 70, 1)
-	transfer_fingerprints_to(B)
-	qdel(src)
 
 
 
@@ -140,9 +119,8 @@
 	volume = 5
 	flags_1 = CONDUCT_1
 	container_type = OPENCONTAINER_1
-	spillable = TRUE
+	spillable = 1
 	resistance_flags = FIRE_PROOF
-	isGlass = FALSE
 
 /obj/item/reagent_containers/food/drinks/trophy/gold_cup
 	name = "gold cup"
@@ -188,26 +166,24 @@
 	desc = "Careful, the beverage you're about to enjoy is extremely hot."
 	icon_state = "coffee"
 	list_reagents = list("coffee" = 30)
-	spillable = TRUE
+	spillable = 1
 	resistance_flags = FREEZE_PROOF
-	isGlass = FALSE
 
 /obj/item/reagent_containers/food/drinks/ice
 	name = "Ice Cup"
 	desc = "Careful, cold ice, do not chew."
 	icon_state = "coffee"
 	list_reagents = list("ice" = 30)
-	spillable = TRUE
-	isGlass = FALSE
+	spillable = 1
 
 /obj/item/reagent_containers/food/drinks/mug/ // parent type is literally just so empty mug sprites are a thing
 	name = "mug"
 	desc = "A drink served in a classy mug."
 	icon_state = "tea"
 	item_state = "coffee"
-	spillable = TRUE
+	spillable = 1
 
-/obj/item/reagent_containers/food/drinks/mug/on_reagent_change(changetype)
+/obj/item/reagent_containers/food/drinks/mug/on_reagent_change()
 	if(reagents.total_volume)
 		icon_state = "tea"
 	else
@@ -233,7 +209,6 @@
 	icon_state = "ramen"
 	list_reagents = list("dry_ramen" = 30)
 	foodtype = GRAIN
-	isGlass = FALSE
 
 /obj/item/reagent_containers/food/drinks/beer
 	name = "Space Beer"
@@ -256,10 +231,9 @@
 	icon_state = "water_cup_e"
 	possible_transfer_amounts = list()
 	volume = 10
-	spillable = TRUE
-	isGlass = FALSE
+	spillable = 1
 
-/obj/item/reagent_containers/food/drinks/sillycup/on_reagent_change(changetype)
+/obj/item/reagent_containers/food/drinks/sillycup/on_reagent_change()
 	if(reagents.total_volume)
 		icon_state = "water_cup"
 	else
@@ -271,23 +245,7 @@
 	icon_state = "juicebox"
 	volume = 15 //I figure if you have to craft these it should at least be slightly better than something you can get for free from a watercooler
 
-/obj/item/reagent_containers/food/drinks/sillycup/smallcarton/smash(atom/target, mob/thrower, ranged = FALSE)
-	if(bartender_check(target) && ranged)
-		return
-	var/obj/item/broken_bottle/B = new (loc)
-	B.icon_state = icon_state
-	var/icon/I = new('icons/obj/drinks.dmi', src.icon_state)
-	I.Blend(B.broken_outline, ICON_OVERLAY, rand(5), 1)
-	I.SwapColor(rgb(255, 0, 220, 255), rgb(0, 0, 0, 0))
-	B.icon = I
-	B.name = "broken carton"
-	B.force = 0
-	B.throwforce = 0
-	B.desc = "A carton with the bottom half burst open. Might give you a papercut."
-	transfer_fingerprints_to(B)
-	qdel(src)
-
-/obj/item/reagent_containers/food/drinks/sillycup/smallcarton/on_reagent_change(changetype)
+/obj/item/reagent_containers/food/drinks/sillycup/smallcarton/on_reagent_change()
 	if (reagents.reagent_list.len)
 		switch(reagents.get_master_reagent_id())
 			if("orangejuice")
@@ -339,7 +297,6 @@
 	materials = list(MAT_METAL=1500)
 	amount_per_transfer_from_this = 10
 	volume = 100
-	isGlass = FALSE
 
 /obj/item/reagent_containers/food/drinks/flask
 	name = "flask"
@@ -347,7 +304,6 @@
 	icon_state = "flask"
 	materials = list(MAT_METAL=250)
 	volume = 60
-	isGlass = FALSE
 
 /obj/item/reagent_containers/food/drinks/flask/gold
 	name = "captain's flask"
@@ -366,7 +322,7 @@
 	desc = "A cup with the british flag emblazoned on it."
 	icon_state = "britcup"
 	volume = 30
-	spillable = TRUE
+	spillable = 1
 
 ///Lavaland bowls and bottles///
 
@@ -376,8 +332,7 @@
 	icon = 'icons/obj/lavaland/ash_flora.dmi'
 	icon_state = "mushroom_bowl"
 	w_class = WEIGHT_CLASS_SMALL
-	resistance_flags = NONE
-	isGlass = FALSE
+	resistance_flags = 0
 
 
 //////////////////////////soda_cans//
@@ -389,7 +344,6 @@
 	righthand_file = 'icons/mob/inhands/misc/food_righthand.dmi'
 	container_type = NONE
 	spillable = FALSE
-	isGlass = FALSE
 
 /obj/item/reagent_containers/food/drinks/soda_cans/attack(mob/M, mob/user)
 	if(M == user && !src.reagents.total_volume && user.a_intent == INTENT_HARM && user.zone_selected == "head")
@@ -437,8 +391,8 @@
 	list_reagents = list("lemon_lime" = 30)
 	foodtype = FRUIT
 
-/obj/item/reagent_containers/food/drinks/soda_cans/lemon_lime/Initialize()
-	. = ..()
+/obj/item/reagent_containers/food/drinks/soda_cans/lemon_lime/New()
+	..()
 	name = "Lemon-Lime Soda"
 
 /obj/item/reagent_containers/food/drinks/soda_cans/space_up

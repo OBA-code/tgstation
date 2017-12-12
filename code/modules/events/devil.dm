@@ -6,7 +6,6 @@
 /datum/round_event/ghost_role/devil
 	var/success_spawn = 0
 	role_name = "devil"
-	fakeable = FALSE
 
 /datum/round_event/ghost_role/devil/kill()
 	if(!success_spawn && control)

@@ -8,15 +8,9 @@
 	var/set_luminosity = 8
 	var/set_cap = 0
 
-/obj/effect/light_emitter/Initialize()
-	. = ..()
+/obj/effect/light_emitter/New()
+	..()
 	set_light(set_luminosity, set_cap)
-
-/obj/effect/light_emitter/singularity_pull()
-	return
-
-/obj/effect/light_emitter/singularity_act()
-	return
 
 /**********************Miner Lockers**************************/
 

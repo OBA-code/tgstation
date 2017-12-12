@@ -1,4 +1,4 @@
-/proc/priority_announce(text, title = "", sound = 'sound/ai/attention.ogg', type , sender_override)
+/proc/priority_announce(text, title = "", sound = 'sound/ai/attention.ogg', type)
 	if(!text)
 		return
 
@@ -13,18 +13,13 @@
 		GLOB.news_network.SubmitArticle(text, "Captain's Announcement", "Station Announcements", null)
 
 	else
-		if(!sender_override)
-			announcement += "<h1 class='alert'>[command_name()] Update</h1>"
-		else
-			announcement += "<h1 class='alert'>[sender_override]</h1>"
+		announcement += "<h1 class='alert'>[command_name()] Update</h1>"
 		if (title && length(title) > 0)
 			announcement += "<br><h2 class='alert'>[html_encode(title)]</h2>"
-		
-		if(!sender_override)
-			if(title == "")
-				GLOB.news_network.SubmitArticle(text, "Central Command Update", "Station Announcements", null)
-			else
-				GLOB.news_network.SubmitArticle(title + "<br><br>" + text, "Central Command", "Station Announcements", null)
+		if(title == "")
+			GLOB.news_network.SubmitArticle(text, "Central Command Update", "Station Announcements", null)
+		else
+			GLOB.news_network.SubmitArticle(title + "<br><br>" + text, "Central Command", "Station Announcements", null)
 
 	announcement += "<br><span class='alert'>[html_encode(text)]</span><br>"
 	announcement += "<br>"
@@ -43,11 +38,16 @@
 	if(announce)
 		priority_announce("A report has been downloaded and printed out at all communications consoles.", "Incoming Classified Message", 'sound/ai/commandreport.ogg')
 
-	var/datum/comm_message/M  = new
-	M.title = title
-	M.content =  text
-	
-	SScommunications.send_message(M)
+	for(var/obj/machinery/computer/communications/C in GLOB.machines)
+		if(!(C.stat & (BROKEN|NOPOWER)) && (C.z in GLOB.station_z_levels))
+			var/obj/item/paper/P = new /obj/item/paper(C.loc)
+			P.name = "paper - '[title]'"
+			P.info = text
+			var/datum/comm_message/message = new
+			message.title = title
+			message.content = text
+			C.add_message(message)
+			P.update_icon()
 
 /proc/minor_announce(message, title = "Attention:", alert)
 	if(!message)

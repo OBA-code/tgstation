@@ -276,8 +276,8 @@
 	icon = 'icons/obj/food/soupsalad.dmi'
 	icon_state = "wishsoup"
 
-/obj/item/reagent_containers/food/snacks/customizable/soup/Initialize()
-	. = ..()
+/obj/item/reagent_containers/food/snacks/customizable/soup/New()
+	..()
 	eatverb = pick("slurp","sip","suck","inhale","drink")
 
 
@@ -313,7 +313,7 @@
 		. = ..()
 	return
 
-/obj/item/reagent_containers/glass/bowl/on_reagent_change(changetype)
+/obj/item/reagent_containers/glass/bowl/on_reagent_change()
 	..()
 	update_icon()
 
